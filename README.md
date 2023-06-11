@@ -1,4 +1,5 @@
 <h3>Course name  : Advance Programming in Web Technology</h3>
+<h3>Section      : B</h3>
 <h3>Project name : Merchandise Management System</h3>
 
 <h3>Group members:</h3>

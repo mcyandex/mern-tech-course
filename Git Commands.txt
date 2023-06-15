@@ -1,9 +1,13 @@
-move to branch: git checkout branchName
+Check branch    : git branch
+
+move to branch  : git checkout branchName
+
 Update with main: git pull origin main
-push to branch;
+
+push to branch  :
 	1. git add .
 	2. git commit -m "Changes"
 	3. git push --set-upstream origin branchName ///// git push -u origin branchName
 
-   *** Go to github and create pull request and merge
+   *** Go to github and create pull request and then merge
    *** If conflicts appear... contact with team mates

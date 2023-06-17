@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
-export class AdminDTO{
+export class UserDTO{
     @IsNotEmpty({message:"This filed is required"})
     @Matches(/^[a-zA-Z]+$/, {message:"enter a proper name"})
     name: string;

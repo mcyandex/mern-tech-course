@@ -1,14 +1,14 @@
 import {IsNotEmpty} from "class-validator";
 
-export class BandManagerDTO{
+export class GigManagerDTO{
     id: string
-    bandId:string
+    gigId:string
     userId:string
 }
 
-export class BandManagerRegistrationDTO{
+export class GigManagerRegistrationDTO{
     @IsNotEmpty()
-    bandId:string
+    gigId:string
     
     @IsNotEmpty()
     userId:string

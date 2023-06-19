@@ -32,7 +32,7 @@ export class AdminController {
   }
 
   @Get('deletesize/:id')
-  deleteSize(@Param() id: number): string {
+  deleteSize(@Param() id: string): string {
     return this.sizeService.deleteSize(id);
   }
 
@@ -58,7 +58,7 @@ export class AdminController {
   }
 
   @Get('deleteunit/:id')
-  deleteUnit(@Param() id: number): string {
+  deleteUnit(@Param() id: string): string {
     return this.unitService.deleteUnit(id);
   }
 
@@ -67,7 +67,7 @@ export class AdminController {
     return this.unitService.updateUnit(data);
   }
 
-  //Color CRUD
+
 
   //Admin Registration section
   @Post('adduser')

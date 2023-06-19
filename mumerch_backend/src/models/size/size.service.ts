@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { SizeDTO } from './size.dto';
 import { Console } from 'console';
 
+
 @Injectable()
 export class SizeService {
+
   getSize(): SizeDTO {
     return {id:"100",name:"M",updatedBy:"elahi"};
   }

@@ -67,6 +67,8 @@ export class AdminController {
     return this.unitService.updateUnit(data);
   }
 
+  //Color CRUD
+
   //Admin Registration section
   @Post('adduser')
   @UsePipes(new ValidationPipe())

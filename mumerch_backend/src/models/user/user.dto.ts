@@ -33,3 +33,11 @@ export class UserDTO{
 
     designation: string;
 }
+
+export class UserResgistrationDTO{
+    @IsNotEmpty({message:"Name must have a value"})
+    name:string
+    @IsNotEmpty({message:"Email must have a value"})
+    @IsEmail()
+    email:string
+}

@@ -15,6 +15,12 @@ import { DesignationService } from "src/models/designation/designation.service";
 import { DivisionDTO } from "src/models/division/division.dto";
 import { DivisionService } from "src/models/division/division.service";
 import { EmployeeResgistrationDTO } from "src/models/employee/employee.dto";
+import { ColorDTO } from "src/models/color/color.dto";
+import { ColorService } from "src/models/color/color.service";
+import { CategoryDTO } from "src/models/category/category.dto";
+import { CategoryService } from "src/models/category/category.service";
+import { BandDTO } from "src/models/band/band.dto";
+import { BandService } from "src/models/band/band.service";
 
 @Controller('admin')
 export class AdminController {
@@ -23,7 +29,10 @@ export class AdminController {
     private readonly userService: UserService,
     private readonly departmentService: DepartmentService,
     private readonly designationService: DesignationService,
-    private readonly divisionService: DivisionService) { }
+    private readonly divisionService: DivisionService,
+    private readonly colorService: ColorService,
+    private readonly categoryService: CategoryService,
+    private readonly bandService: BandService) { }
 
   //Size CRUD part
   @Get('getsize')
@@ -50,6 +59,78 @@ export class AdminController {
   updateSize(@Body() data: SizeDTO): string {
     return this.sizeService.updateSize(data);
   }
+
+  // Color CRUD part
+  @Get('getcolor')
+  getColor(): ColorDTO {
+    return this.colorService.getColor();
+  }
+
+  @Post('addcolor')
+  addColor(@Body() data: ColorDTO): string {
+    return this.colorService.addColor(data);
+  }
+
+  @Get('deletecolor/:id')
+  deleteColor(@Param() id: string): string {
+    return this.colorService.deleteColor(id);
+  }
+
+  @Put('updatecolor')
+  updateColor(@Body() data: ColorDTO): string {
+    return this.colorService.updateColor(data);
+  }
+
+  // Category CRUD operation
+
+  @Get('getcategory')
+  getCategory(@Body() data: CategoryDTO): string {
+    return this.categoryService.getCategory(data);
+  }
+
+  @Post('addcategory')
+  addCategory(@Body() data: CategoryDTO): string {
+    return this.categoryService.addCategory(data);
+  }
+
+  @Get('deletecategory/:id')
+  deleteCategory(@Param() id: string): string {
+    return this.categoryService.deleteCategory(id);
+  }
+
+  @Put('updatecategory')
+  updateCategory(@Body() data: CategoryDTO): string {
+    return this.categoryService.updateCategory(data);
+  } 
+
+  // Band's CRUD OPERATION
+  @Get('getband')
+  getBand(@Body() data: BandDTO): string {
+    return this.bandService.getBand();
+  }
+
+  @Get('getband/:id')
+  getBandById(@Param() id: string): string {
+    return this.bandService.getBandById(id);
+  }
+
+  @Post('addband')
+  addBand(@Body() data: BandDTO): string {
+    return this.bandService.addBand(data);
+  }
+
+  @Get('deleteband/:id')
+  deleteBand(@Param() id: string): string {
+    return this.bandService.deleteBand(id);
+  }
+
+  @Put('updateband')
+  updateBand(@Body() data: BandDTO): string {
+    return this.bandService.updateBand(data);
+  }
+
+
+
 
   //Unit CRUD part
   @Get('getunit')
@@ -185,6 +266,4 @@ export class AdminController {
    updateDivision(@Body() data: DivisionDTO): string {
      return this.divisionService.updateDivision(data);
    }
-
-
 }

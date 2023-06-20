@@ -4,21 +4,22 @@ import { Console } from 'console';
 
 @Injectable()
 export class ColorService{
+
     getColor(): ColorDTO {
         return {id:"1",name:"Orange",updatedBy:"aneen", updatedAt:"1:00am"};
       }
     
     
-      updateSize(data: ColorDTO): string{
+      updateColor(data: ColorDTO): string{
         return data.name;
       }
     
-      deleteSize(id: string): string{
+      deleteColor(id: string): string{
         console.log(id)
         return "deleted";
       }
     
-      addSize(data: ColorDTO): string{
+      addColor(data: ColorDTO): string{
         return data.name;
       }
 }

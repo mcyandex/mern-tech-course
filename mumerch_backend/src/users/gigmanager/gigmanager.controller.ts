@@ -3,23 +3,21 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { GigDTO, GigResgistrationDTO } from "src/models/gig/gig.dto";
 import { GigService } from "src/models/gig/gig.service";
-import { SizeDTO } from "src/models/size/size.dto";
-import { UnitService } from "src/models/unit/unit.service";
 
 @Controller('gig')
-export class GigController {
+export class GigManagerController {
   constructor(private readonly gigService: GigService 
     ) { }
 
 //gig CRUD part
   @Get('getgig')
-  getGig(): GigDTO {
-    return this.getGig();
+  getGig(): string {
+    return this.gigService.getGig();
   }
 
   @Get('getgig/:name')
-  getGigById(@Param() id: string): GigDTO {
-    return this.getGigById(id);
+  getGigById(@Param() id: string): string {
+    return this.gigService.getGigById(id);
   }
 
   @Post('addgig')
@@ -29,12 +27,12 @@ export class GigController {
 
   @Get('deletegig/:id')
   deleteGig(@Param() id: string): string {
-    return this.deleteGig(id);
+    return this.gigService.deleteGig(id);
   }
 
   @Put('updategig')
-  updateGig(@Body() data: GigDTO): string {
-    return this.updateGig(data);
+  updateGig(@Body() data: GigDTO): GigDTO {
+    return this.gigService.updateGig(data);
   }
 
   //GigManager Registration section

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { GigManagerService } from 'src/models/gigManager/gigManager.service';
+import { GigManagerController } from './gigmanager.controller';
+import { GigService } from 'src/models/gig/gig.service';
 
 @Module({
   imports: [],
-  controllers: [GigManagerModule],
-  providers: [GigManagerService],
+  controllers: [GigManagerController],
+  providers: [GigService],
 })
 export class GigManagerModule {}

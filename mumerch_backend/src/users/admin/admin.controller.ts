@@ -266,6 +266,4 @@ export class AdminController {
    updateDivision(@Body() data: DivisionDTO): string {
      return this.divisionService.updateDivision(data);
    }
-
-
 }

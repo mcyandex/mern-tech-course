@@ -26,7 +26,7 @@ export class GigService {
   // }
 
   deleteGig(id: string): string{
-    return "-- deleted";
+    return "-- deleted --gig";
   }
 
   // addGig(data: GigDTO): string{

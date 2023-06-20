@@ -16,7 +16,7 @@ export class GigManagerService {
   }
 
   deleteGigManager(id: string): string{
-    return "-- deleted";
+    return "-- deleted -- gigm";
   }
 
   addGigManager(data: GigManagerDTO): string{

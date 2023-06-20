@@ -14,7 +14,7 @@ export class GigService {
     return "Specific Gig fot ID: "+id;
   }
 
-  updateGig(data: GigResgistrationDTO): GigResgistrationDTO{
+  updateGig(data: GigDTO): GigDTO{
     return data;
   }
 

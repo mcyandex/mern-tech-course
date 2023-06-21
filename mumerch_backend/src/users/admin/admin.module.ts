@@ -12,9 +12,11 @@ import { BandService } from 'src/models/band/band.service';
 import { CategoryService } from 'src/models/category/category.service';
 import { ColorService } from 'src/models/color/color.service';
 import { CustomerService } from 'src/models/customer/customer.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UnitEntity } from 'src/models/unit/unit.entity';
 
 @Module({
-  imports: [],
+  imports: [TypeOrmModule.forFeature([UnitEntity])],
   controllers: [AdminController],
   providers: [UnitService, SizeService, UserService, ProductService, DepartmentService, DivisionService, DesignationService, EmployeeService, BandService, CategoryService, ColorService, CustomerService],
 })

@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class UserDTO{
     @IsNotEmpty({message:"Name must have a value"})
@@ -16,7 +16,7 @@ export class UserDTO{
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper mothername"})
     motherName:string
 
-    @IsDate()
+    @IsDateString()
     dateOfBirth: Date
 
     @IsNotEmpty({message:"Blood Group must have a value"})
@@ -27,9 +27,7 @@ export class UserDTO{
     @Matches(/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/, {message:"Enter a proper Password with length 6 with 1 special character from this set [@,$,&,!,_,-]"})
     password:string
 
-    @IsNotEmpty({message:"User name must have a value"})
-    @IsString({message:"User name must have a string"})
-    @Matches(/^[a-zA-Z0-9]+$/, {message:"User name can contain only letters and numbers"})
+
     username:string
 
     @IsNotEmpty({message:"Usertype name must have a value"})
@@ -65,7 +63,7 @@ export class UserResgistrationDTO{
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper mothername"})
     motherName:string
 
-    @IsDate()
+    @IsDateString()
     dateOfBirth: Date
 
     @IsNotEmpty({message:"Blood Group must have a value"})

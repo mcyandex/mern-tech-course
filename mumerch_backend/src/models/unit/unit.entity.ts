@@ -1,9 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity('Unit')
-export class UnitEntity{
-    @PrimaryGeneratedColumn()
-    id: number
-    @Column()
-    name:string
+export class UnitEntity {
+
+  @PrimaryColumn()
+  id: string;
+  @Column()
+  name:string
+  @Column()
+  updatedBy:string
+
 }

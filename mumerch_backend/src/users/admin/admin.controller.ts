@@ -1,9 +1,8 @@
 
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Module, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UnitService } from "src/models/unit/unit.service";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
-import { UnitDTO } from "src/models/unit/unit.dto";
 import { UserResgistrationDTO } from "src/models/user/user.dto";
 import { UserService } from "src/models/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -14,19 +13,18 @@ import { DesignationDTO } from "src/models/designation/designation.dto";
 import { DesignationService } from "src/models/designation/designation.service";
 import { DivisionDTO } from "src/models/division/division.dto";
 import { DivisionService } from "src/models/division/division.service";
-import { EmployeeResgistrationDTO } from "src/models/employee/employee.dto";
 import { ColorDTO } from "src/models/color/color.dto";
 import { ColorService } from "src/models/color/color.service";
 import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
+import { UnitDTO } from "src/models/unit/unit.dto";
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly unitService: UnitService,
     private readonly sizeService: SizeService,
-    private readonly userService: UserService,
     private readonly departmentService: DepartmentService,
     private readonly designationService: DesignationService,
     private readonly divisionService: DivisionService,
@@ -101,7 +99,7 @@ export class AdminController {
   @Put('updatecategory')
   updateCategory(@Body() data: CategoryDTO): string {
     return this.categoryService.updateCategory(data);
-  } 
+  }
 
   // Band's CRUD OPERATION
   @Get('getband')
@@ -129,64 +127,66 @@ export class AdminController {
     return this.bandService.updateBand(data);
   }
 
-
-
-
   //Unit CRUD part
   @Get('getunit')
-  getUnit(): UnitDTO {
-    return this.unitService.getUnit();
+  getUnit(): Promise<string> {
+    return this.unitService.findLastId();
   }
 
-  @Get('getunit/:name')
-  getUnitByName(@Param() name: string): UnitDTO {
-    return this.unitService.getUnitByName(name);
-  }
+  // @Get('getunit/:name')
+  // getUnitByName(@Param() name: string): UnitDTO {
+  //   return this.unitService.getUnitByName(name);
+  // }
 
   @Post('addunit')
-  addUnit(@Body() data: UnitDTO): string {
+  addUnit(@Body() data: UnitDTO): any {
+    console.log(data)
     return this.unitService.addUnit(data);
   }
 
-  @Get('deleteunit/:id')
-  deleteUnit(@Param() id: string): string {
-    return this.unitService.deleteUnit(id);
-  }
+  // @Get('deleteunit/:id')
+  // deleteUnit(@Param() id: string): string {
+  //   return this.unitService.deleteUnit(id);
+  // }
 
-  @Put('updateunit')
-  updateUnit(@Body() data: UnitDTO): string {
-    return this.unitService.updateUnit(data);
-  }
+  // @Put('updateunit')
+  // updateUnit(@Body() data: UnitDTO): string {
+  //   return this.unitService.updateUnit(data);
+  // }
 
 
 
-  //Admin Registration section
+  //User Registration section
   @Post('adduser')
-  @UsePipes(new ValidationPipe())
-  @UseInterceptors(FileInterceptor('myfile',
-    {
+  @UseInterceptors(
+    FileInterceptor('myfile', {
       fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
           cb(null, true);
-        else {
+        } else {
           cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
       },
-      limits: { fileSize: 800000 },
+      limits: { fileSize: 8000000 },
       storage: diskStorage({
         destination: './uploads/users',
         filename: function (req, file, cb) {
-          const name = file.originalname.split('.')[0];
+          let name = req.body.username;
+          console.log(name)
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
-        },
-      })
-    }
-  ))
-  addUser(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: UserResgistrationDTO): string {
-    //console.log(myfileobj);
-    console.log(myfileobj.filename);
-    return data.email;
+        }, // Bind the current context to the filename function
+      }),
+    }),
+  )
+  addUser(
+    @UploadedFile(new ValidationPipe()) myfileobj: Express.Multer.File,
+    @Body(new ValidationPipe()) data: UserResgistrationDTO,
+  ): string {
+    console.log(myfileobj);
+    return "MM-0923-0001";
   }
+
+
 
   //Department CRUD part
   @Get('getdepartment')
@@ -241,29 +241,29 @@ export class AdminController {
   }
 
 
-   //Division CRUD part
-   @Get('getdivision')
-   getDivision(): DivisionDTO {
-     return this.divisionService.getDivision();
-   }
- 
-   @Get('getdivision/:name')
-   getDivisionByName(@Param() name: string): DivisionDTO {
-     return this.divisionService.getDivisionByName(name);
-   }
- 
-   @Post('adddivision')
-   addDivision(@Body() data: DivisionDTO): string {
-     return this.divisionService.addDivision(data);
-   }
- 
-   @Get('deletedivision/:id')
-   deleteDivision(@Param() id: string): string {
-     return this.divisionService.deleteDivision(id);
-   }
- 
-   @Put('updatedivision')
-   updateDivision(@Body() data: DivisionDTO): string {
-     return this.divisionService.updateDivision(data);
-   }
+  //Division CRUD part
+  @Get('getdivision')
+  getDivision(): DivisionDTO {
+    return this.divisionService.getDivision();
+  }
+
+  @Get('getdivision/:name')
+  getDivisionByName(@Param() name: string): DivisionDTO {
+    return this.divisionService.getDivisionByName(name);
+  }
+
+  @Post('adddivision')
+  addDivision(@Body() data: DivisionDTO): string {
+    return this.divisionService.addDivision(data);
+  }
+
+  @Get('deletedivision/:id')
+  deleteDivision(@Param() id: string): string {
+    return this.divisionService.deleteDivision(id);
+  }
+
+  @Put('updatedivision')
+  updateDivision(@Body() data: DivisionDTO): string {
+    return this.divisionService.updateDivision(data);
+  }
 }

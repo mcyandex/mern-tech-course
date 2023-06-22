@@ -1,9 +1,8 @@
 
-import { Body, Controller, Delete, Get, Module, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Module, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UnitService } from "src/models/unit/unit.service";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
-import { UserResgistrationDTO } from "src/models/user/user.dto";
 import { UserService } from "src/models/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
@@ -20,17 +19,22 @@ import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
 import { UnitDTO } from "src/models/unit/unit.dto";
+import * as fs from 'fs-extra';
+import { UserDTO } from "src/models/user/user.dto";
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly unitService: UnitService,
+  constructor(
+    private readonly unitService: UnitService,
     private readonly sizeService: SizeService,
     private readonly departmentService: DepartmentService,
     private readonly designationService: DesignationService,
     private readonly divisionService: DivisionService,
     private readonly colorService: ColorService,
     private readonly categoryService: CategoryService,
-    private readonly bandService: BandService) { }
+    private readonly bandService: BandService,
+    private readonly userService: UserService
+  ) { }
 
   //Size CRUD part
   @Get('getsize')
@@ -129,9 +133,9 @@ export class AdminController {
 
   //Unit CRUD part
   @Get('getunit')
-  getUnit(): Promise<string> {
-    return this.unitService.findLastId();
-  }
+  // getUnit(): Promise<string> {
+  //   return this.unitService.addUnit();
+  // }
 
   // @Get('getunit/:name')
   // getUnitByName(@Param() name: string): UnitDTO {
@@ -154,8 +158,6 @@ export class AdminController {
   //   return this.unitService.updateUnit(data);
   // }
 
-
-
   //User Registration section
   @Post('adduser')
   @UseInterceptors(
@@ -169,23 +171,45 @@ export class AdminController {
       },
       limits: { fileSize: 8000000 },
       storage: diskStorage({
-        destination: './uploads/users',
+        destination: './temp/user',
         filename: function (req, file, cb) {
           let name = req.body.username;
-          console.log(name)
+          console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
-        }, // Bind the current context to the filename function
+        },
       }),
-    }),
+    })
   )
-  addUser(
+  async addUser(
     @UploadedFile(new ValidationPipe()) myfileobj: Express.Multer.File,
-    @Body(new ValidationPipe()) data: UserResgistrationDTO,
-  ): string {
-    console.log(myfileobj);
-    return "MM-0923-0001";
+    @Body(new ValidationPipe()) data: UserDTO): Promise<UserDTO> {
+    try {
+      const lastID = await this.userService.findLastUserId();
+      const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
+      
+      data.id = lastID
+      data.image=newFileName
+
+      const filePath = `./uploads/users/${newFileName}`;
+      await fs.promises.rename(myfileobj.path, filePath);
+
+      myfileobj.originalname = newFileName;
+      myfileobj.filename = newFileName;
+      myfileobj.path = filePath;
+
+      console.log(myfileobj);
+      return this.userService.addUser(data);
+    }
+    catch (error) {
+      throw new Error('Failed to add user.');
+    }
   }
 
+  @Get('/getuser')
+  async getAllUsers(@Res() res: Response): Promise<UserDTO[]> {
+    const users = await this.userService.getAllUsers();
+    return users;
+  }
 
 
   //Department CRUD part

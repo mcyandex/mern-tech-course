@@ -14,9 +14,10 @@ import { ColorService } from 'src/models/color/color.service';
 import { CustomerService } from 'src/models/customer/customer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UnitEntity } from 'src/models/unit/unit.entity';
+import { UserEntity } from 'src/models/user/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UnitEntity])],
+  imports: [TypeOrmModule.forFeature([UnitEntity, UserEntity])],
   controllers: [AdminController],
   providers: [UnitService, SizeService, UserService, ProductService, DepartmentService, DivisionService, DesignationService, EmployeeService, BandService, CategoryService, ColorService, CustomerService],
 })

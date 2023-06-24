@@ -1,13 +1,13 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { UserEntity } from "../user/user.entity";
 
 @Entity('Unit')
 export class UnitEntity {
 
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name:string
-  @Column()
-  updatedBy:string
-
+  @ManyToOne(()=>UserEntity, user=>user.units, {cascade:true})
+  user:UserEntity
 }

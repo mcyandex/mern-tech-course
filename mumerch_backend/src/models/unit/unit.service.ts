@@ -2,14 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnitEntity } from './unit.entity';
 import { Repository } from 'typeorm';
-import { UnitDTO } from './unit.dto';
+import { UnitDTO, UnitRegistrationDTO } from './unit.dto';
 import { LessThan } from 'typeorm';
+import { UserEntity } from '../user/user.entity';
 
 @Injectable()
 export class UnitService {
   constructor(
-    @InjectRepository(UnitEntity)
-    private unitRepo: Repository<UnitEntity>){}
+    @InjectRepository(UnitEntity) private unitRepo: Repository<UnitEntity>,
+    @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
+  ){}
 
   // getUnit(): UnitDTO {
   //   return {id:"100",name:"M",updatedBy:"elahi"};
@@ -29,7 +31,7 @@ export class UnitService {
 
   
   
-  async addUnit(data: UnitDTO): Promise<UnitEntity>{
-    return this.unitRepo.save(data);
+  async addUnit(data: UnitEntity): Promise<any>{
+    return await this.unitRepo.save(data);
   }
 }

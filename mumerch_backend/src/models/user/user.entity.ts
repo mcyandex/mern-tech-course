@@ -1,4 +1,6 @@
-import { Collection, Column, Entity, PrimaryColumn } from "typeorm";
+import { Collection, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { UnitEntity } from "../unit/unit.entity";
+import { UnitDTO } from "../unit/unit.dto";
 
 @Entity('User')
 export class UserEntity {
@@ -30,4 +32,6 @@ export class UserEntity {
   image: string
   @Column()
   designation: string
+  @OneToMany(()=>UnitEntity, unit=>unit.user)
+  units:UnitEntity[]
 }

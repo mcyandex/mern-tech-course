@@ -18,9 +18,12 @@ import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
-import { UnitDTO } from "src/models/unit/unit.dto";
+import { UnitDTO, UnitRegistrationDTO } from "src/models/unit/unit.dto";
 import * as fs from 'fs-extra';
 import { UserDTO } from "src/models/user/user.dto";
+import { promises } from "dns";
+import { UnitEntity } from "src/models/unit/unit.entity";
+import { UserEntity } from "src/models/user/user.entity";
 
 @Controller('admin')
 export class AdminController {
@@ -132,7 +135,7 @@ export class AdminController {
   }
 
   //Unit CRUD part
-  @Get('getunit')
+  //@Get('getunit')
   // getUnit(): Promise<string> {
   //   return this.unitService.addUnit();
   // }
@@ -142,9 +145,11 @@ export class AdminController {
   //   return this.unitService.getUnitByName(name);
   // }
 
-  @Post('addunit')
-  addUnit(@Body() data: UnitDTO): any {
-    console.log(data)
+  @Post('addunit/:userId')
+  async addUnit(@Body() data: UnitEntity, @Param('id') userId:string): Promise<any> {
+    const user = await this.userService.getUserById(userId)
+    console.log(user)
+    data.user = user
     return this.unitService.addUnit(data);
   }
 
@@ -186,9 +191,9 @@ export class AdminController {
     try {
       const lastID = await this.userService.findLastUserId();
       const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
-      
+
       data.id = lastID
-      data.image=newFileName
+      data.image = newFileName
 
       const filePath = `./uploads/users/${newFileName}`;
       await fs.promises.rename(myfileobj.path, filePath);
@@ -206,9 +211,14 @@ export class AdminController {
   }
 
   @Get('/getuser')
-  async getAllUsers(@Res() res: Response): Promise<UserDTO[]> {
-    const users = await this.userService.getAllUsers();
-    return users;
+  async getAllUsers(): Promise<UserDTO[]> {
+    return this.userService.getAllUsers();;
+  }
+
+  @Get('/getuserbyid/:id')
+  async getUserById(@Param('id') id:string): Promise<UserEntity> {
+    console.log(id)
+    return this.userService.getUserById(id);
   }
 
 

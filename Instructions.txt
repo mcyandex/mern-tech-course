@@ -1,0 +1,14 @@
+--------------------------------------- Packages ---------------------------------------
+***go to mumerch_backend folder first:
+***open `cmd` here and run these commands
+# npm install ---> to add npm module after clone
+# npm install class-validator class-transformer ---> for validation and transformation
+# npm i -D @types/multer ---> working with file
+# npm install fs-extra ---> additional file modification
+# npm i @nestjs/config @nestjs/typeorm typeorm pg ---> work with Db and typeOrm
+
+
+----------------------------------------- Run ------------------------------------------
+# npm run ---> run general mode, restart required after changes
+# npm run start:dev ---> run in development mode, auto changes merged
+

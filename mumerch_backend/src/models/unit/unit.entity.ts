@@ -9,5 +9,6 @@ export class UnitEntity {
   @Column()
   name:string
   @ManyToOne(()=>UserEntity, user=>user.units, {cascade:true})
+  @JoinColumn()
   user:UserEntity
 }

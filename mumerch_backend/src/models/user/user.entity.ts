@@ -1,6 +1,5 @@
 import { Collection, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { UnitEntity } from "../unit/unit.entity";
-import { UnitDTO } from "../unit/unit.dto";
 
 @Entity('User')
 export class UserEntity {

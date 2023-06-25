@@ -24,6 +24,7 @@ import { UserDTO } from "src/models/user/user.dto";
 import { promises } from "dns";
 import { UnitEntity } from "src/models/unit/unit.entity";
 import { UserEntity } from "src/models/user/user.entity";
+import { DeleteResult } from "typeorm";
 
 @Controller('admin')
 export class AdminController {
@@ -135,15 +136,20 @@ export class AdminController {
   }
 
   //Unit CRUD part
-  //@Get('getunit')
-  // getUnit(): Promise<string> {
-  //   return this.unitService.addUnit();
-  // }
+  @Get('getunit')
+  async getUnit(): Promise<UnitEntity[]> {
+    return await this.unitService.getUnit();
+  }
+  @Get('getunitwithuserinfo')
+  async getUnitWithUserInfo(): Promise<UnitEntity[]> {
+    return await this.unitService.getUnit();
+  }
 
-  // @Get('getunit/:name')
-  // getUnitByName(@Param() name: string): UnitDTO {
-  //   return this.unitService.getUnitByName(name);
-  // }
+  @Get('getunit/:name')
+  async getUnitByName(@Param('name') name: string): Promise<UnitDTO[]> {
+    console.log(name)
+    return await this.unitService.getUnitByName(name);
+  }
 
   @Post('addunit/:userId')
   async addUnit(@Body() data: UnitEntity, @Param('id') userId:string): Promise<any> {
@@ -153,15 +159,15 @@ export class AdminController {
     return this.unitService.addUnit(data);
   }
 
-  // @Get('deleteunit/:id')
-  // deleteUnit(@Param() id: string): string {
-  //   return this.unitService.deleteUnit(id);
-  // }
+  @Get('deleteunit/:id')
+  async deleteUnit(@Param() id: string): Promise<DeleteResult> {
+    return this.unitService.deleteUnit(id);
+  }
 
-  // @Put('updateunit')
-  // updateUnit(@Body() data: UnitDTO): string {
-  //   return this.unitService.updateUnit(data);
-  // }
+  @Post('updateunit')
+  updateUnit(@Query() qry:any,@Body() data: UnitDTO): Promise<UnitDTO> {
+    return this.unitService.updateUnit(qry, data);
+  }
 
   //User Registration section
   @Post('adduser')

@@ -1,39 +1,32 @@
 
 import { BadRequestException, Body, Controller, Delete, Get, Module, NotFoundException, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
-import { UnitService } from "src/models/unit/unit.service";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { UserService } from "src/models/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
-import { DepartmentDTO } from "src/models/department/department.dto";
-import { DepartmentService } from "src/models/department/department.service";
 import { DesignationDTO } from "src/models/designation/designation.dto";
 import { DesignationService } from "src/models/designation/designation.service";
-import { DivisionDTO } from "src/models/division/division.dto";
-import { DivisionService } from "src/models/division/division.service";
 import { ColorDTO } from "src/models/color/color.dto";
 import { ColorService } from "src/models/color/color.service";
 import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
-import { UnitDTO, UnitRegistrationDTO } from "src/models/unit/unit.dto";
 import * as fs from 'fs-extra';
 import { UserDTO } from "src/models/user/user.dto";
-import { promises } from "dns";
-import { UnitEntity } from "src/models/unit/unit.entity";
 import { UserEntity } from "src/models/user/user.entity";
 import { DeleteResult } from "typeorm";
+import { UnitEntity } from "src/models/unit/unit.entity";
+import { UnitService } from "src/models/unit/unit.service";
+import { UnitDTO } from "src/models/unit/unit.dto";
 
 @Controller('admin')
 export class AdminController {
   constructor(
-    private readonly unitService: UnitService,
     private readonly sizeService: SizeService,
-    private readonly departmentService: DepartmentService,
+    private readonly unitService: UnitService,
     private readonly designationService: DesignationService,
-    private readonly divisionService: DivisionService,
     private readonly colorService: ColorService,
     private readonly categoryService: CategoryService,
     private readonly bandService: BandService,
@@ -235,33 +228,6 @@ export class AdminController {
     return this.userService.getUserById(id);
   }
 
-
-  //Department CRUD part
-  @Get('getdepartment')
-  getDepartment(): DepartmentDTO {
-    return this.departmentService.getDepartment();
-  }
-
-  @Get('getdepartment/:name')
-  getDepartmentByName(@Param() name: string): DepartmentDTO {
-    return this.departmentService.getDepartmentByName(name);
-  }
-
-  @Post('adddepartment')
-  addDepartment(@Body() data: DepartmentDTO): string {
-    return this.departmentService.addDepartment(data);
-  }
-
-  @Get('deletedepartment/:id')
-  deleteDepartment(@Param() id: string): string {
-    return this.departmentService.deleteDepartment(id);
-  }
-
-  @Put('updatedepartment')
-  updateDepartment(@Body() data: DepartmentDTO): string {
-    return this.departmentService.updateDepartment(data);
-  }
-
   //Designation CRUD part
   @Get('getdesignation')
   getDesignation(): DesignationDTO {
@@ -286,32 +252,5 @@ export class AdminController {
   @Put('updatedesignation')
   updateDesignation(@Body() data: DesignationDTO): string {
     return this.designationService.updateDesignation(data);
-  }
-
-
-  //Division CRUD part
-  @Get('getdivision')
-  getDivision(): DivisionDTO {
-    return this.divisionService.getDivision();
-  }
-
-  @Get('getdivision/:name')
-  getDivisionByName(@Param() name: string): DivisionDTO {
-    return this.divisionService.getDivisionByName(name);
-  }
-
-  @Post('adddivision')
-  addDivision(@Body() data: DivisionDTO): string {
-    return this.divisionService.addDivision(data);
-  }
-
-  @Get('deletedivision/:id')
-  deleteDivision(@Param() id: string): string {
-    return this.divisionService.deleteDivision(id);
-  }
-
-  @Put('updatedivision')
-  updateDivision(@Body() data: DivisionDTO): string {
-    return this.divisionService.updateDivision(data);
   }
 }

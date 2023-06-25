@@ -1,5 +1,5 @@
 
-import { BadRequestException, Body, Controller, Delete, Get, Module, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Module, NotFoundException, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UnitService } from "src/models/unit/unit.service";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
@@ -142,7 +142,7 @@ export class AdminController {
   }
   @Get('getunitwithuserinfo')
   async getUnitWithUserInfo(): Promise<UnitEntity[]> {
-    return await this.unitService.getUnit();
+    return await this.unitService.getUnitWithUserInfo();
   }
 
   @Get('getunit/:name')
@@ -159,14 +159,22 @@ export class AdminController {
     return this.unitService.addUnit(data);
   }
 
-  @Get('deleteunit/:id')
+  @Delete('deleteunit/:id')
   async deleteUnit(@Param() id: string): Promise<DeleteResult> {
     return this.unitService.deleteUnit(id);
   }
 
-  @Post('updateunit')
-  updateUnit(@Query() qry:any,@Body() data: UnitDTO): Promise<UnitDTO> {
-    return this.unitService.updateUnit(qry, data);
+  @Put('updateunit')
+  async updateUnit(@Query() qry:any,@Body() data: UnitDTO): Promise<UnitDTO> {
+    const user = await this.userService.getUserById(qry.userId)
+    if(user==null){
+      throw new NotFoundException('User not recognised')
+    }
+    else{
+      data.id=qry.id
+      data.user=user
+      return this.unitService.updateUnit(qry, data);
+    }
   }
 
   //User Registration section

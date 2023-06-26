@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './user.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, ILike, Repository } from 'typeorm';
 import { UserDTO } from './user.dto';
+import { retry } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -47,19 +48,29 @@ export class UserService {
     }
   }
 
-  updateUser(data: UserDTO): UserDTO {
-    return data;
-  }
-
-  async addUser(user: UserDTO): Promise<UserDTO> {
-    return this.userRepo.save(user);
-  }
-
-  async getAllUsers(): Promise<UserEntity[]> {
+  getUser(): Promise<UserEntity[]> {
     return this.userRepo.find();
   }
-
-  async getUserById(id:string):Promise<UserEntity>{
-    return await this.userRepo.findOneBy({id:id});
+  getUserByName(name: string): Promise<UserDTO[]> {
+    let finalName = name + '%'
+    console.log(finalName)
+    return this.userRepo.find({
+      where: {
+        name: ILike(`${finalName}`)
+      },
+    })
+  }
+  getUserById(id:string): Promise<UserDTO>{
+    return this.userRepo.findOneBy({id:id})
+  }
+  async updateUser(qry: any, data: UserDTO): Promise<UserDTO> {
+    await this.userRepo.update(qry.id, data)
+    return await this.userRepo.findOneBy({ id: qry.id })
+  }
+  deleteUser(id: string): Promise<DeleteResult> {
+    return this.userRepo.delete(id);
+  }
+  addUser(data: UserDTO): Promise<UserDTO> {
+    return this.userRepo.save(data);
   }
 }

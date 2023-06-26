@@ -15,7 +15,6 @@ import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
 import * as fs from 'fs-extra';
 import { UserDTO } from "src/models/user/user.dto";
-import { UserEntity } from "src/models/user/user.entity";
 import { DeleteResult } from "typeorm";
 import { UnitEntity } from "src/models/unit/unit.entity";
 import { UnitService } from "src/models/unit/unit.service";
@@ -145,7 +144,7 @@ export class AdminController {
   }
 
   @Post('addunit/:userId')
-  async addUnit(@Body() data: UnitEntity, @Param('id') userId:string): Promise<any> {
+  async addUnit(@Body() data: UnitDTO, @Param('id') userId:string): Promise<any> {
     const user = await this.userService.getUserById(userId)
     console.log(user)
     data.user = user
@@ -219,11 +218,11 @@ export class AdminController {
 
   @Get('/getuser')
   async getAllUsers(): Promise<UserDTO[]> {
-    return this.userService.getAllUsers();;
+    return this.userService.getUser();;
   }
 
   @Get('/getuserbyid/:id')
-  async getUserById(@Param('id') id:string): Promise<UserEntity> {
+  async getUserById(@Param('id') id:string): Promise<UserDTO> {
     console.log(id)
     return this.userService.getUserById(id);
   }

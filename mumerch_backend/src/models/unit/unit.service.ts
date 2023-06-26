@@ -32,7 +32,7 @@ export class UnitService {
   async deleteUnit(id: string): Promise<DeleteResult> {
     return await this.unitRepo.delete(id);
   }
-  async addUnit(data: UnitEntity): Promise<UnitDTO> {
+  async addUnit(data: UnitDTO): Promise<UnitDTO> {
     return await this.unitRepo.save(data);
   }
 }

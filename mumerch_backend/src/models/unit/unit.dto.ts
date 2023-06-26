@@ -9,12 +9,12 @@ export class UnitDTO{
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
     name: string;
     id: string;
-    user:UserEntity
+    user:UserDTO
 }
 export class UnitRegistrationDTO{
     @IsNotEmpty({message:"Name must have a value"})
     @IsString({message:"Name must have a string"})
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
     name: string;
-    user:UserEntity;
+    user:UserDTO;
 }

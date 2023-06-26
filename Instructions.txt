@@ -6,6 +6,11 @@
 # npm i -D @types/multer ---> working with file
 # npm install fs-extra ---> additional file modification
 # npm i @nestjs/config @nestjs/typeorm typeorm pg ---> work with Db and typeOrm
+# npm i bcrypt ---> to use hashing
+# npm i -D @types/bcrypt
+# npm i express-session
+# npm i -D @types/express-session
+
 
 
 ----------------------------------------- Run ------------------------------------------

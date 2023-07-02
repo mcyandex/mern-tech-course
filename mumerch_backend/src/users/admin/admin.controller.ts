@@ -1,5 +1,5 @@
 
-import { BadRequestException, Body, Controller, Delete, Get, Module, NotFoundException, Param, Post, Put, Query, Request, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { UserService } from "src/models/user/user.service";
@@ -13,18 +13,14 @@ import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
-import * as fs from 'fs-extra';
 import { UserDTO } from "src/models/user/user.dto";
-import { DeleteResult } from "typeorm";
-import { UnitEntity } from "src/models/unit/unit.entity";
-import { UnitService } from "src/models/unit/unit.service";
-import { UnitDTO } from "src/models/unit/unit.dto";
+import * as fs from 'fs-extra';
+import * as bcrypt from 'bcrypt';
 
 @Controller('admin')
 export class AdminController {
   constructor(
     private readonly sizeService: SizeService,
-    private readonly unitService: UnitService,
     private readonly designationService: DesignationService,
     private readonly colorService: ColorService,
     private readonly categoryService: CategoryService,
@@ -127,50 +123,9 @@ export class AdminController {
     return this.bandService.updateBand(data);
   }
 
-  //Unit CRUD part
-  @Get('getunit')
-  async getUnit(): Promise<UnitEntity[]> {
-    return await this.unitService.getUnit();
-  }
-  @Get('getunitwithuserinfo')
-  async getUnitWithUserInfo(): Promise<UnitEntity[]> {
-    return await this.unitService.getUnitWithUserInfo();
-  }
-
-  @Get('getunit/:name')
-  async getUnitByName(@Param('name') name: string): Promise<UnitDTO[]> {
-    console.log(name)
-    return await this.unitService.getUnitByName(name);
-  }
-
-  @Post('addunit/:userId')
-  async addUnit(@Body() data: UnitDTO, @Param('id') userId:string): Promise<any> {
-    const user = await this.userService.getUserById(userId)
-    console.log(user)
-    data.user = user
-    return this.unitService.addUnit(data);
-  }
-
-  @Delete('deleteunit/:id')
-  async deleteUnit(@Param() id: string): Promise<DeleteResult> {
-    return this.unitService.deleteUnit(id);
-  }
-
-  @Put('updateunit')
-  async updateUnit(@Query() qry:any,@Body() data: UnitDTO): Promise<UnitDTO> {
-    const user = await this.userService.getUserById(qry.userId)
-    if(user==null){
-      throw new NotFoundException('User not recognised')
-    }
-    else{
-      data.id=qry.id
-      data.user=user
-      return this.unitService.updateUnit(qry, data);
-    }
-  }
-
   //User Registration section
   @Post('adduser')
+  @UsePipes(new ValidationPipe())
   @UseInterceptors(
     FileInterceptor('myfile', {
       fileFilter: (req, file, cb) => {
@@ -182,9 +137,9 @@ export class AdminController {
       },
       limits: { fileSize: 8000000 },
       storage: diskStorage({
-        destination: './temp/user',
+        destination: './temp/users',
         filename: function (req, file, cb) {
-          let name = req.body.username;
+          let name = req.body.name;
           console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
         },
@@ -192,39 +147,38 @@ export class AdminController {
     })
   )
   async addUser(
-    @UploadedFile(new ValidationPipe()) myfileobj: Express.Multer.File,
-    @Body(new ValidationPipe()) data: UserDTO): Promise<UserDTO> {
-    try {
+    @UploadedFile() myfileobj: Express.Multer.File,
+    @Body() data: UserDTO): Promise<UserDTO> {
+      if (!myfileobj || myfileobj.size == 0) {
+        throw new BadRequestException('Empty file');
+      }
       const lastID = await this.userService.findLastUserId();
       const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
 
+      const salt = await bcrypt.genSalt();
+      const hassedpassed = await bcrypt.hash(data.password, salt);
+
       data.id = lastID
       data.image = newFileName
+      data.password = hassedpassed
 
-      const filePath = `./uploads/users/${newFileName}`;
+      const destinationDir = './uploads/users';
+      const filePath = `${destinationDir}/${newFileName}`;
+
+      if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+      }
       await fs.promises.rename(myfileobj.path, filePath);
-
-      myfileobj.originalname = newFileName;
-      myfileobj.filename = newFileName;
-      myfileobj.path = filePath;
-
-      console.log(myfileobj);
       return this.userService.addUser(data);
-    }
-    catch (error) {
-      throw new Error('Failed to add user.');
-    }
   }
+
+  //update
+  //--->param:id, no file empty validation, direct update
 
   @Get('/getuser')
   async getAllUsers(): Promise<UserDTO[]> {
-    return this.userService.getUser();;
-  }
-
-  @Get('/getuserbyid/:id')
-  async getUserById(@Param('id') id:string): Promise<UserDTO> {
-    console.log(id)
-    return this.userService.getUserById(id);
+    const users = await this.userService.getUser();
+    return users;
   }
 
   //Designation CRUD part

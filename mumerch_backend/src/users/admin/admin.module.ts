@@ -10,12 +10,10 @@ import { ColorService } from 'src/models/color/color.service';
 import { CustomerService } from 'src/models/customer/customer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/models/user/user.entity';
-import { UnitEntity } from 'src/models/unit/unit.entity';
-import { UnitService } from 'src/models/unit/unit.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UnitEntity, UserEntity])],
-  controllers: [AdminController],
-  providers: [UnitService, SizeService, UserService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService],
+  imports: [TypeOrmModule.forFeature([ UserEntity ])],
+  controllers: [ AdminController ],
+  providers: [ SizeService, UserService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService ],
 })
 export class AdminModule {}

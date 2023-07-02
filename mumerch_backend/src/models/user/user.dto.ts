@@ -1,5 +1,4 @@
 import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
-import { UnitEntity } from "../unit/unit.entity";
 
 export class UserDTO{
     @IsNotEmpty({message:"Name must have a value"})
@@ -35,9 +34,9 @@ export class UserDTO{
     @IsEmail({},{message:"Give a proper email"})
     email:string
 
-    @IsNotEmpty({message:"User name must have a value"})
-    @IsString({message:"User name must have a string"})
-    @Matches(/^01[6-9|3|4]\d{8}$/, {message:"User name can contain only letters and numbers"})
+    @IsNotEmpty({message:"Phone name must have a value"})
+    @IsString({message:"Phone name must have a string"})
+    @Matches(/^01[6-9|3|4]\d{8}$/, {message:"Phone name can contain only letters and numbers"})
     phoneNumber:string
 
     image:string

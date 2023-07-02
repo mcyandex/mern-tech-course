@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BandManagerDTO } from "./bandManager.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { BandManagerEntity } from "./bandManager.entity";
 import { DeleteResult, Repository } from "typeorm";
 
 @Injectable()
@@ -27,15 +26,8 @@ export class BandManagerService {
 
 
   constructor(
-    @InjectRepository(BandManagerEntity) private bandManagerRepo: Repository<BandManagerEntity>,
+    //@InjectRepository(BandManagerEntity) private bandManagerRepo: Repository<BandManagerEntity>,
   ) {}
-
-  async getBandManagerWithUserInfo(): Promise<BandManagerEntity[]> {
-    return await this.bandManagerRepo.find({ relations: ['user'] });
-  }
-  async getBandManager(): Promise<BandManagerEntity[]> {
-    return await this.bandManagerRepo.find();
-  }
 
   // async updateBandManager(qry:any, data: BandManagerDTO): Promise<BandManagerDTO> {
   //   await this.bandManagerRepo.update(qry.id, data)

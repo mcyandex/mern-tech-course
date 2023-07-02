@@ -1,6 +1,4 @@
 import { Collection, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
-import { UnitEntity } from "../unit/unit.entity";
-import { BandManagerEntity } from "../bandManager/bandManager.entity";
 
 @Entity('User')
 export class UserEntity {
@@ -32,9 +30,4 @@ export class UserEntity {
   image: string
   @Column()
   designation: string
-  @OneToMany(()=>UnitEntity, unit=>unit.user)
-  units:UnitEntity[]
-
-  @ManyToOne(()=>BandManagerEntity, bandManager=>bandManager.users)
-  bandManager:BandManagerEntity[]
 }

@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { LoginDTO } from "../login/login.dto";
 
 
 export class ColorDTO{
@@ -6,7 +7,6 @@ export class ColorDTO{
 
     id: string;
 
-    updatedBy: string;
 
-    updatedAt: string;
+    login:LoginDTO
 }

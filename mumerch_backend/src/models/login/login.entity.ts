@@ -1,20 +1,13 @@
 import { Collection, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { UserProfileEntity } from "../userProfile/userProfile.entity";
 
-@Entity('User')
-export class UserEntity {
+@Entity('Login')
+export class LoginEntity {
 
   @PrimaryColumn()
   id: string;
   @Column()
   name:string
-  @Column()
-  fatherName: string
-  @Column()
-  motherName: string
-  @Column()
-  dateOfBirth: Date
-  @Column()
-  bloodGroup: string
   @Column()
   password: string
   @Column()
@@ -26,8 +19,8 @@ export class UserEntity {
   //@Column({unique:true})
   phoneNumber: string
   @Column()
-  //@Column({unique:true})
-  image: string
-  @Column()
   designation: string
+  @OneToOne(() => UserProfileEntity, user => user.login)
+  user: UserProfileEntity;
+  
 }

@@ -4,10 +4,12 @@ import { BandManagerModule } from './users/bandmanager/bandmanager.module';
 import { GigManagerModule } from './users/gigmanager/gigmanager.module';
 import { EmployeeModule } from './users/employee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './users/authentication/auth.module';
 
 @Module({
-  imports: [AdminModule, EmployeeModule,BandManagerModule, GigManagerModule,TypeOrmModule.forRoot(
-    { type: 'postgres',
+  imports: [AdminModule, EmployeeModule, BandManagerModule, GigManagerModule, AuthModule, TypeOrmModule.forRoot(
+    {
+      type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
@@ -20,4 +22,4 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

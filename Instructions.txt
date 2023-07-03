@@ -16,4 +16,6 @@
 ----------------------------------------- Run ------------------------------------------
 # npm run ---> run general mode, restart required after changes
 # npm run start:dev ---> run in development mode, auto changes merged
+# if cmd is deleted mistakenly,
+	taskkill /f /im node.exe ---> to off the previously runnung server first, then run again
 

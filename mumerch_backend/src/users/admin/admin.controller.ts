@@ -1,8 +1,7 @@
 
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
-import { UserService } from "src/models/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { DesignationDTO } from "src/models/designation/designation.dto";
@@ -13,11 +12,15 @@ import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { BandService } from "src/models/band/band.service";
-import { UserDTO } from "src/models/user/user.dto";
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
+import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
+import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
+import { LoginService } from "src/models/login/login.service";
+import { SessionAdminGuard } from "./SessionAdminGaurd.gaurd";
 
 @Controller('admin')
+//@UseGuards(SessionAdminGuard)
 export class AdminController {
   constructor(
     private readonly sizeService: SizeService,
@@ -25,7 +28,7 @@ export class AdminController {
     private readonly colorService: ColorService,
     private readonly categoryService: CategoryService,
     private readonly bandService: BandService,
-    private readonly userService: UserService
+    private readonly loginService: LoginService
   ) { }
 
   //Size CRUD part
@@ -123,63 +126,89 @@ export class AdminController {
     return this.bandService.updateBand(data);
   }
 
-  //User Registration section
-  @Post('adduser')
+  //Login info section
+  @Post('adduserlogininfo')
   @UsePipes(new ValidationPipe())
-  @UseInterceptors(
-    FileInterceptor('myfile', {
-      fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
-          cb(null, true);
-        } else {
-          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-        }
-      },
-      limits: { fileSize: 8000000 },
-      storage: diskStorage({
-        destination: './temp/users',
-        filename: function (req, file, cb) {
-          let name = req.body.name;
-          console.log(name);
-          cb(null, `${name}.${file.originalname.split('.')[1]}`);
-        },
-      }),
-    })
-  )
-  async addUser(
-    @UploadedFile() myfileobj: Express.Multer.File,
-    @Body() data: UserDTO): Promise<UserDTO> {
-      if (!myfileobj || myfileobj.size == 0) {
-        throw new BadRequestException('Empty file');
-      }
-      const lastID = await this.userService.findLastUserId();
-      const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
+  async addUser(@Body() data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
+    const lastID = await this.loginService.findLastUserLoginId();
+    const password = Date.now() + '$'
+    console.log(password)
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(password, salt);
 
-      const salt = await bcrypt.genSalt();
-      const hassedpassed = await bcrypt.hash(data.password, salt);
-
-      data.id = lastID
-      data.image = newFileName
-      data.password = hassedpassed
-
-      const destinationDir = './uploads/users';
-      const filePath = `${destinationDir}/${newFileName}`;
-
-      if (!fs.existsSync(destinationDir)) {
-        fs.mkdirSync(destinationDir, { recursive: true });
-      }
-      await fs.promises.rename(myfileobj.path, filePath);
-      return this.userService.addUser(data);
+    data.id = lastID
+    data.password = hassedpassed
+    return this.loginService.addUserLoginInfo(data);
   }
+
+  // @Put('updateuser')
+  // @UsePipes(new ValidationPipe())
+  // updateUserLoginInfo(@Body() data:LoginRegistrationDTO):Promise<LoginDTO>{
+
+  // }
+  
+  @Get('getalluserslogininfo')
+  getAllUsersLoginInfo():Promise<LoginDTO[]>{
+    return this.loginService.getUserLoginInfo()
+  }
+
+  //User Registration section
+  // @Post('adduser')
+  // @UsePipes(new ValidationPipe())
+  // @UseInterceptors(
+  //   FileInterceptor('myfile', {
+  //     fileFilter: (req, file, cb) => {
+  //       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+  //         cb(null, true);
+  //       } else {
+  //         cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+  //       }
+  //     },
+  //     limits: { fileSize: 8000000 },
+  //     storage: diskStorage({
+  //       destination: './temp/users',
+  //       filename: function (req, file, cb) {
+  //         let name = req.body.name;
+  //         console.log(name);
+  //         cb(null, `${name}.${file.originalname.split('.')[1]}`);
+  //       },
+  //     }),
+  //   })
+  // )
+  // async addUser(
+  //   @UploadedFile() myfileobj: Express.Multer.File,
+  //   @Body() data: UserProfileDTO): Promise<UserProfileDTO> {
+  //     if (!myfileobj || myfileobj.size == 0) {
+  //       throw new BadRequestException('Empty file');
+  //     }
+  //     const lastID = await this.userService.findLastUserId();
+  //     const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
+
+  //     // const salt = await bcrypt.genSalt();
+  //     // const hassedpassed = await bcrypt.hash(data.password, salt);
+
+  //     data.id = lastID
+  //     data.image = newFileName
+  //     //data.password = hassedpassed
+
+  //     const destinationDir = './uploads/users';
+  //     const filePath = `${destinationDir}/${newFileName}`;
+
+  //     if (!fs.existsSync(destinationDir)) {
+  //       fs.mkdirSync(destinationDir, { recursive: true });
+  //     }
+  //     await fs.promises.rename(myfileobj.path, filePath);
+  //     return this.userService.addUser(data);
+  // }
 
   //update
   //--->param:id, no file empty validation, direct update
 
-  @Get('/getuser')
-  async getAllUsers(): Promise<UserDTO[]> {
-    const users = await this.userService.getUser();
-    return users;
-  }
+  // @Get('/getuser')
+  // async getAllUsers(): Promise<UserProfileDTO[]> {
+  //   const users = await this.userService.getUser();
+  //   return users;
+  // }
 
   //Designation CRUD part
   @Get('getdesignation')

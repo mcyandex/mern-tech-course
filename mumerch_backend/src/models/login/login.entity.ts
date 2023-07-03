@@ -1,5 +1,6 @@
 import { Collection, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { UserProfileEntity } from "../userProfile/userProfile.entity";
+import { SizeEntity } from "../size/size.entity";
 
 @Entity('Login')
 export class LoginEntity {
@@ -22,5 +23,7 @@ export class LoginEntity {
   designation: string
   @OneToOne(() => UserProfileEntity, user => user.login)
   user: UserProfileEntity;
+  @OneToMany(()=>SizeEntity, sizes=>sizes.login)
+  sizes:SizeEntity[]
   
 }

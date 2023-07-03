@@ -1,5 +1,5 @@
 
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -18,6 +18,7 @@ import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
 import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./SessionAdminGaurd.gaurd";
+import { DeleteResult } from "typeorm";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -33,28 +34,33 @@ export class AdminController {
 
   //Size CRUD part
   @Get('getsize')
-  getSize(): SizeDTO {
+  getSize(): Promise<SizeDTO[]> {
     return this.sizeService.getSize();
   }
 
   @Get('getsize/:name')
-  getSizeByName(@Param() name: string): SizeDTO {
+  getSizeByName(@Param() name: string): Promise<SizeDTO[]> {
     return this.sizeService.getSizeByName(name);
   }
 
   @Post('addsize')
-  addSize(@Body() data: SizeDTO): string {
+  async addSize(@Body() data: SizeDTO): Promise<SizeDTO> {
+    //data.login = await this.loginService.getUserLoginInfoById(session.user.id)
     return this.sizeService.addSize(data);
   }
 
-  @Get('deletesize/:id')
-  deleteSize(@Param() id: string): string {
-    return this.sizeService.deleteSize(id);
+  @Delete('deletesize/:id')
+  async deleteSize(@Param('id') id: string): Promise<string>{
+    const res = await this.sizeService.deleteSize(id);
+    if(res['affected']>0){
+      return "ID: "+id+" deleted successfully"
+    }
+    return "ID: "+id+" couldnot delete, something went wrong"
   }
 
-  @Put('updatesize')
-  updateSize(@Body() data: SizeDTO): string {
-    return this.sizeService.updateSize(data);
+  @Put('updatesize/:id')
+  updateSize(@Param('id') id: string, @Body() data: SizeDTO): Promise<SizeDTO> {
+    return this.sizeService.updateSize(id, data);
   }
 
   // Color CRUD part

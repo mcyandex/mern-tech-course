@@ -79,6 +79,14 @@ export class LoginService {
     if (match) {
       return user
     }
+    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            colors: true,
+          },
+        });
+      }
     return null
   }
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {

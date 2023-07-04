@@ -51,6 +51,17 @@ export class ColorService {
       },
     })
   }
+
+  getAllColorByUserId(id:string):Promise<ColorEntity>{
+    return this.colorRepo.findOne({
+      where: {
+        login: { id: id },
+      },
+      relations: {
+        login: true,
+    }
+    });
+  }
   async updateColor(id: string, data: ColorDTO): Promise<ColorDTO> {
     await this.colorRepo.update(id, data)
     return await this.colorRepo.findOneBy({ id: id })

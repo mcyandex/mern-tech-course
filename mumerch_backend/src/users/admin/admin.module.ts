@@ -12,10 +12,11 @@ import { LoginEntity } from 'src/models/login/login.entity';
 import { LoginService } from 'src/models/login/login.service';
 import { UserProfileEntity } from 'src/models/userProfile/userProfile.entity';
 import { SizeEntity } from 'src/models/size/size.entity';
+import { UserProfileService } from 'src/models/userProfile/userProfile.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity ])],
   controllers: [ AdminController ],
-  providers: [ SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService ],
 })
 export class AdminModule {}

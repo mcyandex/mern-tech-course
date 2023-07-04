@@ -1,5 +1,5 @@
 
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -19,6 +19,8 @@ import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./SessionAdminGaurd.gaurd";
 import { DeleteResult } from "typeorm";
+import session from "express-session";
+import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
 
@@ -33,6 +35,7 @@ export class AdminController {
     private readonly categoryService: CategoryService,
     private readonly bandService: BandService,
     private readonly loginService: LoginService,
+    private readonly userProfileService: UserProfileService,
     private readonly productService: ProductService
   ) { }
 
@@ -66,6 +69,49 @@ export class AdminController {
   updateSize(@Param('id') id: string, @Body() data: SizeDTO): Promise<SizeDTO> {
     return this.sizeService.updateSize(id, data);
   }
+
+  @Get('getallsizesbyadmin')
+  getAllSizesByAdminId(@Session() session){
+    return this.sizeService.getAllSizeByUserId(session.user.id)
+  }
+
+  @Get('updatesizebyadmin/:id')
+  updateSizeByAdminId(@Session() session, @Param('id') id:string){
+    return this.sizeService.getSizeByUserId(session.user.id, id)
+  }
+  
+  @Get('getallsizesbyuid')
+  getAllSizesByUid(@Session() session){
+    return this.sizeService.getAllSizeByUserId(session.user.id)
+  }
+
+  @Get('getsizebyuid/:id')
+  getSizeByUid(@Session() session, @Param('id') id:string){
+    return this.sizeService.getSizeByUserId(session.user.id, id)
+  }
+
+  @Delete('deletesizebyuid/:id')
+  async deleteSizeByUid(@Param('id') id: string, @Session() session): Promise<string>{
+    const specSize = await this.sizeService.getSizeByUserId(session.user.id, id)
+    const res = await this.sizeService.deleteSize(specSize.id);
+    if(res['affected']>0){
+      return "ID: "+id+" deleted successfully"
+    }
+    return "ID: "+id+" couldnot delete, something went wrong"
+  }
+
+  @Put('updatesizebyuid/:sid')
+  async updateSizeByUid(@Param('sid') sid: string, @Session() session, @Body() data:SizeDTO): Promise<SizeDTO>{
+    const specSize = await this.sizeService.getSizeByUserId(session.user.id, sid)
+    if(specSize==null){
+      throw new NotFoundException('Size not found')
+    }
+    return await this.sizeService.updateSize(specSize.id, data);
+  }
+  // @Delete('deletesizebyadminid/:id')
+  // async deleteSizeByAdminId(@Param('id') id:string, @Session() session):Promise<string>{
+    
+  // }
 
   // Color CRUD part
   @Get('getcolor')
@@ -175,7 +221,7 @@ export class AdminController {
   }
 
   //Login info section
-  @Post('adduserlogininfo')
+  @Post('adduserprofile')
   @UsePipes(new ValidationPipe())
   async addUser(@Body() data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
     const lastID = await this.loginService.findLastUserLoginId();
@@ -200,54 +246,46 @@ export class AdminController {
     return this.loginService.getUserLoginInfo()
   }
 
-  //User Registration section
-  // @Post('adduser')
-  // @UsePipes(new ValidationPipe())
-  // @UseInterceptors(
-  //   FileInterceptor('myfile', {
-  //     fileFilter: (req, file, cb) => {
-  //       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
-  //         cb(null, true);
-  //       } else {
-  //         cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-  //       }
-  //     },
-  //     limits: { fileSize: 8000000 },
-  //     storage: diskStorage({
-  //       destination: './temp/users',
-  //       filename: function (req, file, cb) {
-  //         let name = req.body.name;
-  //         console.log(name);
-  //         cb(null, `${name}.${file.originalname.split('.')[1]}`);
-  //       },
-  //     }),
-  //   })
-  // )
-  // async addUser(
-  //   @UploadedFile() myfileobj: Express.Multer.File,
-  //   @Body() data: UserProfileDTO): Promise<UserProfileDTO> {
-  //     if (!myfileobj || myfileobj.size == 0) {
-  //       throw new BadRequestException('Empty file');
-  //     }
-  //     const lastID = await this.userService.findLastUserId();
-  //     const newFileName = `${lastID}.${myfileobj.originalname.split('.')[1]}`;
+  //UserProfile Registration section
+  @Post('adduserprofile')
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(
+    FileInterceptor('myfile', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 8000000 },
+      storage: diskStorage({
+        destination: './temp/users',
+        filename: function (req, file, cb) {
+          let name = req.body.name;
+          console.log(name);
+          cb(null, `${name}.${file.originalname.split('.')[1]}`);
+        },
+      }),
+    })
+  )
+  async addUserProfile(
+    @UploadedFile() myfileobj: Express.Multer.File,
+    @Body() data: UserProfileDTO, @Session() session): Promise<UserProfileDTO> {
+      if (!myfileobj || myfileobj.size == 0) {
+        throw new BadRequestException('Empty file');
+      }
+      const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
 
-  //     // const salt = await bcrypt.genSalt();
-  //     // const hassedpassed = await bcrypt.hash(data.password, salt);
+      const destinationDir = './uploads/users';
+      const filePath = `${destinationDir}/${newFileName}`;
 
-  //     data.id = lastID
-  //     data.image = newFileName
-  //     //data.password = hassedpassed
-
-  //     const destinationDir = './uploads/users';
-  //     const filePath = `${destinationDir}/${newFileName}`;
-
-  //     if (!fs.existsSync(destinationDir)) {
-  //       fs.mkdirSync(destinationDir, { recursive: true });
-  //     }
-  //     await fs.promises.rename(myfileobj.path, filePath);
-  //     return this.userService.addUser(data);
-  // }
+      if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+      }
+      await fs.promises.rename(myfileobj.path, filePath);
+      return this.userProfileService.addUserProfile(data);
+  }
 
   //update
   //--->param:id, no file empty validation, direct update

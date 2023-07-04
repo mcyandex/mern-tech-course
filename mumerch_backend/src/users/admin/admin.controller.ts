@@ -21,10 +21,13 @@ import { SessionAdminGuard } from "./SessionAdminGaurd.gaurd";
 import { DeleteResult } from "typeorm";
 import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
+import { ProductDTO } from "src/models/product/product.dto";
+import { ProductService } from "src/models/product/product.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
 export class AdminController {
+  //productService: any;
   constructor(
     private readonly sizeService: SizeService,
     private readonly designationService: DesignationService,
@@ -32,7 +35,8 @@ export class AdminController {
     private readonly categoryService: CategoryService,
     private readonly bandService: BandService,
     private readonly loginService: LoginService,
-    private readonly userProfileService: UserProfileService
+    private readonly userProfileService: UserProfileService,
+    private readonly productService: ProductService
   ) { }
 
   //Size CRUD part
@@ -111,24 +115,57 @@ export class AdminController {
 
   // Color CRUD part
   @Get('getcolor')
-  getColor(): ColorDTO {
+  getColor(): Promise<ColorDTO[]> {
     return this.colorService.getColor();
   }
 
   @Post('addcolor')
-  addColor(@Body() data: ColorDTO): string {
-    return this.colorService.addColor(data);
+  async addColor(@Body() data: ColorDTO): Promise<ColorDTO> {
+    return this.colorService.addColor(data)
   }
 
-  @Get('deletecolor/:id')
-  deleteColor(@Param() id: string): string {
-    return this.colorService.deleteColor(id);
+  @Delete('deletecolor/:id')
+  async deleteColor(@Param('id') id: string): Promise<string>{
+    const res = await this.colorService.deleteColor(id);
+    if(res['affected']>0){
+      return "ID: "+id+" deleted successfully"
+    }
+    return "ID: "+id+" couldnot delete, something went wrong"
   }
 
-  @Put('updatecolor')
-  updateColor(@Body() data: ColorDTO): string {
-    return this.colorService.updateColor(data);
+  @Put('updatecolor/:id')
+  updateColor(@Param('id') id: string, @Body() data: ColorDTO): Promise<ColorDTO> {
+    return this.colorService.updateColor(id, data);
   }
+
+  // Product CRUD part
+  @Get('getproduct')
+  getProduct(): Promise<ProductDTO[]> {
+    return this.productService.getProduct();
+  }
+
+  @Post('addproduct')
+  async addProduct(@Body() data: ProductDTO): Promise<ProductDTO> {
+    return this.productService.addProduct(data)
+  }
+
+  @Delete('deleteproduct/:id')
+  async deleteProduct(@Param('id') id: string): Promise<string>{
+    const res = await this.productService.deleteProduct(id);
+    if(res['affected']>0){
+      return "ID: "+id+" deleted successfully"
+    }
+    return "ID: "+id+" couldnot delete, something went wrong"
+  }
+
+  @Put('updateproduct/:id')
+  updateProduct(@Param('id') id: string, @Body() data: ProductDTO): Promise<ProductDTO> {
+    return this.productService.updateProduct(id, data);
+  }
+
+
+
+
 
   // Category CRUD operation
 

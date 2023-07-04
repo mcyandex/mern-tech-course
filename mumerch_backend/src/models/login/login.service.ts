@@ -81,4 +81,12 @@ export class LoginService {
         }
         return null
     }
+    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            colors: true,
+          },
+        });
+      }
 }

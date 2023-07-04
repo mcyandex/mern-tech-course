@@ -72,8 +72,13 @@ export class AdminController {
   getColor(): Promise<ColorDTO[]> {
     return this.colorService.getColor();
   }
+  @Get('getallcolorsbyuid')
+  getAllColorsByUid(@Session() session){
+    return this.loginService.getAllColorAssociatedWithUserById(session.user.id)
+  }
 
   @Post('addcolor')
+  @UsePipes(new ValidationPipe())
   async addColor(@Body() data: ColorDTO): Promise<ColorDTO> {
     return this.colorService.addColor(data)
   }

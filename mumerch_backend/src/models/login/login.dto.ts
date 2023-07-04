@@ -57,7 +57,7 @@ export class LoginRegistrationDTO{
 
 export class Login{
     @IsNotEmpty()
-    @Matches(/^MM-(0[1-9]||1[0-2])\d{2}-([\d]{3}1|[1-9]\d{3})/,{message:"Must follow proper format"})
+    @Matches(/^MM-(0[1-9]||1[0-2])\d{2}-(\d{3}[1-9]|[1-9]\d{3})/,{message:"Must follow proper format"})
     id:string
     @IsNotEmpty({message:"Password must have a value"})
     @Matches(/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/, {message:"Enter a proper Password with length 6 with 1 special character from this set [@,$,&,!,_,-]"})

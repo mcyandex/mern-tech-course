@@ -39,7 +39,7 @@ export class AdminController {
     private readonly loginService: LoginService,
     private readonly userProfileService: UserProfileService,
     private readonly productService: ProductService,
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
     private readonly authService: AuthService
   ) { }
 
@@ -148,10 +148,10 @@ export class AdminController {
     return this.productService.getProduct();
   }
 
-  @Get('getallproductsbyuid')
-  getAllProductsByUid(@Session() session){
-    return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
-  }
+  // @Get('getallproductsbyuid')
+  // getAllProductsByUid(@Session() session){
+  //   return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
+  // }
 
 
 
@@ -180,10 +180,10 @@ export class AdminController {
     return this.orderService.getOrder();
   }
 
-  @Get('getallordersbyuid')
-  getAllOrdersByUid(@Session() session){
-    return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
-  }
+  // @Get('getallordersbyuid')
+  // getAllOrdersByUid(@Session() session){
+  //   return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
+  // }
 
 
 

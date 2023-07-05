@@ -64,13 +64,9 @@ export class LoginService {
   getUserLoginInfoById(id: string): Promise<LoginDTO> {
     return this.loginRepo.findOneBy({ id: id })
   }
-  async updateUserLoginInfo(qry: any, data: LoginEntity): Promise<LoginDTO> {
-    console.log(data)
-    const salt = await bcrypt.genSalt();
-    const hassedpassed = await bcrypt.hash(data.password, salt);
-    data.password = hassedpassed
-    await this.loginRepo.update(qry.id, data)
-    return await this.loginRepo.findOneBy({ id: qry.id })
+  async updateUserLoginInfo(id:string, data: LoginEntity): Promise<LoginDTO> {
+    await this.loginRepo.update(id, data)
+    return await this.loginRepo.findOneBy({ id: id })
   }
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
     return this.loginRepo.delete(id);
@@ -84,34 +80,16 @@ export class LoginService {
     if (match) {
       return user
     }
+    return null
   }
-    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            colors: true,
-          },
-        });
-      }
-
-      async getAllProductAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            products: true,
-          },
-        });
-      }
-
-      async getAllOrderAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            orders: true,
-          },
-        });
-      }
-    
+  async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+    return this.loginRepo.find({
+      where: { id: id },
+      relations: {
+        colors: true,
+      },
+    });
+  }
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where: { id: id },

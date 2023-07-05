@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { AdminModule } from './users/admin/admin.module';
 import { BandManagerModule } from './users/bandmanager/bandmanager.module';
 import { GigManagerModule } from './users/gigmanager/gigmanager.module';
-import { EmployeeModule } from './users/employee/employee.module';
+//import { EmployeeModule } from './users/employee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './users/authentication/auth.module';
 
 @Module({
-  imports: [AdminModule, EmployeeModule, BandManagerModule, GigManagerModule, AuthModule, TypeOrmModule.forRoot(
+  imports: [AdminModule, BandManagerModule, GigManagerModule, AuthModule, TypeOrmModule.forRoot(
     {
       type: 'postgres',
       host: 'localhost',

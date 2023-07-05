@@ -79,6 +79,7 @@ export class LoginService {
     if (match) {
       return user
     }
+  }
     async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
         return this.loginRepo.find({
           where: { id: id },
@@ -87,8 +88,26 @@ export class LoginService {
           },
         });
       }
-    return null
-  }
+
+      async getAllProductAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            products: true,
+          },
+        });
+      }
+
+      async getAllOrderAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            orders: true,
+          },
+        });
+      }
+    
+  
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where: { id: id },

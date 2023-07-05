@@ -55,6 +55,17 @@ export class ProductService {
       },
     })
   }
+
+  getAllProductByUserId(id:string):Promise<ProductEntity>{
+    return this.productRepo.findOne({
+      where: {
+        login: { id: id },
+      },
+      relations: {
+        login: true,
+    }
+    });
+  }
   async updateProduct(id: string, data: ProductDTO): Promise<ProductDTO> {
     await this.productRepo.update(id, data)
     return await this.productRepo.findOneBy({ id: id })

@@ -23,6 +23,8 @@ import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
+import { OrderService } from "src/models/order/order.service";
+import { OrderDTO } from "src/models/order/order.dto";
 import { AuthService } from "../authentication/auth.service";
 
 @Controller('admin')
@@ -38,6 +40,7 @@ export class AdminController {
     private readonly loginService: LoginService,
     private readonly userProfileService: UserProfileService,
     private readonly productService: ProductService,
+    private readonly orderService: OrderService
     private readonly authService: AuthService
   ) { }
 
@@ -146,6 +149,13 @@ export class AdminController {
     return this.productService.getProduct();
   }
 
+  @Get('getallproductsbyuid')
+  getAllProductsByUid(@Session() session){
+    return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
+  }
+
+
+
   @Post('addproduct')
   async addProduct(@Body() data: ProductDTO): Promise<ProductDTO> {
     return this.productService.addProduct(data)
@@ -163,6 +173,38 @@ export class AdminController {
   @Put('updateproduct/:id')
   updateProduct(@Param('id') id: string, @Body() data: ProductDTO): Promise<ProductDTO> {
     return this.productService.updateProduct(id, data);
+  }
+
+  //Order CRUD part
+  @Get('getorder')
+  getOrder(): Promise<OrderDTO[]> {
+    return this.orderService.getOrder();
+  }
+
+  @Get('getallordersbyuid')
+  getAllOrdersByUid(@Session() session){
+    return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
+  }
+
+
+
+  @Post('addorder')
+  async addOrder(@Body() data: OrderDTO): Promise<OrderDTO> {
+    return this.orderService.addOrder(data)
+  }
+
+  @Delete('deleteorder/:id')
+  async deleteOrder(@Param('id') id: string): Promise<string>{
+    const res = await this.orderService.deleteOrder(id);
+    if(res['affected']>0){
+      return "ID: "+id+" deleted successfully"
+    }
+    return "ID: "+id+" couldnot delete, something went wrong"
+  }
+
+  @Put('updateorder/:id')
+  updateOrder(@Param('id') id: string, @Body() data: OrderDTO): Promise<OrderDTO> {
+    return this.orderService.updateOrder(id, data);
   }
 
 

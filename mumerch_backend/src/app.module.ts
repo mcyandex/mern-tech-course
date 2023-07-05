@@ -5,6 +5,7 @@ import { GigManagerModule } from './users/gigmanager/gigmanager.module';
 import { EmployeeModule } from './users/employee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './users/authentication/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [AdminModule, EmployeeModule, BandManagerModule, GigManagerModule, AuthModule, TypeOrmModule.forRoot(
@@ -13,11 +14,23 @@ import { AuthModule } from './users/authentication/auth.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '123',
+      password: '1234',
       database: 'mumerch',
       autoLoadEntities: true,
       synchronize: true,
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 465,
+        ignoreTLS: true,
+        secure: true,
+        auth: {
+          user: '',
+          pass: ''
+        },
+      }
+    })
   ],
   controllers: [],
   providers: [],

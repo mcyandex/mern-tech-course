@@ -15,10 +15,11 @@ import { SizeEntity } from 'src/models/size/size.entity';
 import { UserProfileService } from 'src/models/userProfile/userProfile.service';
 import { ColorEntity } from 'src/models/color/color.entity';
 import { ProductEntity } from 'src/models/product/product.entity';
+import { AuthService } from '../authentication/auth.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService ],
 })
 export class AdminModule {}

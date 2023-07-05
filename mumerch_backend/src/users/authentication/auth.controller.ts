@@ -1,4 +1,5 @@
-import { Post, Body, Controller, Session, ValidationPipe, UsePipes } from "@nestjs/common"
+import { Post, Body, Controller, Session, ValidationPipe, UsePipes, Get } from "@nestjs/common"
+import session from "express-session"
 import { Login } from "src/models/login/login.dto"
 import { LoginService } from "src/models/login/login.service"
 
@@ -16,5 +17,14 @@ export class AuthController {
             return true
         }
         return false
+    }
+    @Get('logout')
+    logout(@Session() session):boolean{
+        console.log(session.user)
+        if(session.user!=null){
+            session.destroy()
+            console.log(session.user)
+            return true
+        }
     }
 }

@@ -17,12 +17,13 @@ import * as bcrypt from 'bcrypt';
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
 import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
-import { SessionAdminGuard } from "./SessionAdminGaurd.gaurd";
+import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
 import { DeleteResult } from "typeorm";
 import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
+import { AuthService } from "../authentication/auth.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -36,7 +37,8 @@ export class AdminController {
     private readonly bandService: BandService,
     private readonly loginService: LoginService,
     private readonly userProfileService: UserProfileService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly authService: AuthService
   ) { }
 
   //Size CRUD part
@@ -57,60 +59,55 @@ export class AdminController {
   }
 
   @Delete('deletesize/:id')
-  async deleteSize(@Param('id') id: string): Promise<string>{
+  async deleteSize(@Param('id') id: string): Promise<string> {
     const res = await this.sizeService.deleteSize(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updatesize/:id')
   updateSize(@Param('id') id: string, @Body() data: SizeDTO): Promise<SizeDTO> {
     return this.sizeService.updateSize(id, data);
   }
-
+  //From admin end
   @Get('getallsizesbyadmin')
-  getAllSizesByAdminId(@Session() session){
-    return this.sizeService.getAllSizeByUserId(session.user.id)
+  getAllSizesByAdminId(@Session() session) {
+    return this.loginService.getAllSizeAssociatedWithUserById(session.user.id)
   }
 
-  @Get('updatesizebyadmin/:id')
-  updateSizeByAdminId(@Session() session, @Param('id') id:string){
-    return this.sizeService.getSizeByUserId(session.user.id, id)
-  }
-  
   @Get('getallsizesbyuid')
-  getAllSizesByUid(@Session() session){
+  getAllSizesByUid(@Session() session) {
     return this.sizeService.getAllSizeByUserId(session.user.id)
   }
 
   @Get('getsizebyuid/:id')
-  getSizeByUid(@Session() session, @Param('id') id:string){
+  getSizeByUid(@Session() session, @Param('id') id: string) {
     return this.sizeService.getSizeByUserId(session.user.id, id)
   }
 
   @Delete('deletesizebyuid/:id')
-  async deleteSizeByUid(@Param('id') id: string, @Session() session): Promise<string>{
+  async deleteSizeByUid(@Param('id') id: string, @Session() session): Promise<string> {
     const specSize = await this.sizeService.getSizeByUserId(session.user.id, id)
     const res = await this.sizeService.deleteSize(specSize.id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updatesizebyuid/:sid')
-  async updateSizeByUid(@Param('sid') sid: string, @Session() session, @Body() data:SizeDTO): Promise<SizeDTO>{
+  async updateSizeByUid(@Param('sid') sid: string, @Session() session, @Body() data: SizeDTO): Promise<SizeDTO> {
     const specSize = await this.sizeService.getSizeByUserId(session.user.id, sid)
-    if(specSize==null){
+    if (specSize == null) {
       throw new NotFoundException('Size not found')
     }
     return await this.sizeService.updateSize(specSize.id, data);
   }
   // @Delete('deletesizebyadminid/:id')
   // async deleteSizeByAdminId(@Param('id') id:string, @Session() session):Promise<string>{
-    
+
   // }
 
   // Color CRUD part
@@ -125,12 +122,12 @@ export class AdminController {
   }
 
   @Delete('deletecolor/:id')
-  async deleteColor(@Param('id') id: string): Promise<string>{
+  async deleteColor(@Param('id') id: string): Promise<string> {
     const res = await this.colorService.deleteColor(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updatecolor/:id')
@@ -150,12 +147,12 @@ export class AdminController {
   }
 
   @Delete('deleteproduct/:id')
-  async deleteProduct(@Param('id') id: string): Promise<string>{
+  async deleteProduct(@Param('id') id: string): Promise<string> {
     const res = await this.productService.deleteProduct(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updateproduct/:id')
@@ -216,18 +213,23 @@ export class AdminController {
   }
 
   //Login info section
-  @Post('adduserprofile')
+  @Post('adduserlogininfo')
   @UsePipes(new ValidationPipe())
-  async addUser(@Body() data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
+  async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    console.log(password)
-    const salt = await bcrypt.genSalt();
-    const hassedpassed = await bcrypt.hash(password, salt);
+    // console.log(password)
+    // const salt = await bcrypt.genSalt();
+    // const hassedpassed = await bcrypt.hash(password, salt);
 
-    data.id = lastID
-    data.password = hassedpassed
-    return this.loginService.addUserLoginInfo(data);
+    // data.id = lastID
+    // data.password = hassedpassed
+    // return this.loginService.addUserLoginInfo(data);
+    const text = `Login info-->
+                    ID:${lastID}
+                    Password:${password}`
+    const subject = "Login credentials"
+    return this.authService.sendMail(text,subject,data.email)
   }
 
   // @Put('updateuser')
@@ -235,9 +237,9 @@ export class AdminController {
   // updateUserLoginInfo(@Body() data:LoginRegistrationDTO):Promise<LoginDTO>{
 
   // }
-  
+
   @Get('getalluserslogininfo')
-  getAllUsersLoginInfo():Promise<LoginDTO[]>{
+  getAllUsersLoginInfo(): Promise<LoginDTO[]> {
     return this.loginService.getUserLoginInfo()
   }
 
@@ -267,19 +269,20 @@ export class AdminController {
   async addUserProfile(
     @UploadedFile() myfileobj: Express.Multer.File,
     @Body() data: UserProfileDTO, @Session() session): Promise<UserProfileDTO> {
-      if (!myfileobj || myfileobj.size == 0) {
-        throw new BadRequestException('Empty file');
-      }
-      const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
+    if (!myfileobj || myfileobj.size == 0) {
+      throw new BadRequestException('Empty file');
+    }
+    const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
+    const destinationDir = './uploads/users';
+    const filePath = `${destinationDir}/${newFileName}`;
 
-      const destinationDir = './uploads/users';
-      const filePath = `${destinationDir}/${newFileName}`;
-
-      if (!fs.existsSync(destinationDir)) {
-        fs.mkdirSync(destinationDir, { recursive: true });
-      }
-      await fs.promises.rename(myfileobj.path, filePath);
-      return this.userProfileService.addUserProfile(data);
+    data.image = newFileName
+    data.login = session.user.id
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
+    }
+    await fs.promises.rename(myfileobj.path, filePath);
+    return this.userProfileService.addUserProfile(data);
   }
 
   //update

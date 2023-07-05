@@ -1,5 +1,6 @@
 import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { ServerResponse } from "http";
+import { LoginDTO } from "../login/login.dto";
 
 export class UserProfileDTO {
     @IsNotEmpty({ message: "Father's Name must have a value" })
@@ -26,4 +27,5 @@ export class UserProfileDTO {
     address: string
 
     id: string
+    login: LoginDTO
 }

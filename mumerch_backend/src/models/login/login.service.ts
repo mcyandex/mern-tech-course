@@ -1,9 +1,10 @@
-import { Injectable, Session } from "@nestjs/common";
+import { Injectable, Session, UnauthorizedException } from "@nestjs/common";
 import { LoginEntity } from "./login.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, ILike, Repository } from "typeorm";
-import { Login, LoginDTO, LoginRegistrationDTO } from "./login.dto";
+import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto";
 import * as bcrypt from 'bcrypt';
+import session from "express-session";
 
 @Injectable()
 export class LoginService {
@@ -63,7 +64,11 @@ export class LoginService {
   getUserLoginInfoById(id: string): Promise<LoginDTO> {
     return this.loginRepo.findOneBy({ id: id })
   }
-  async updateUserLoginInfo(qry: any, data: LoginDTO): Promise<LoginDTO> {
+  async updateUserLoginInfo(qry: any, data: LoginEntity): Promise<LoginDTO> {
+    console.log(data)
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(data.password, salt);
+    data.password = hassedpassed
     await this.loginRepo.update(qry.id, data)
     return await this.loginRepo.findOneBy({ id: qry.id })
   }
@@ -79,15 +84,15 @@ export class LoginService {
     if (match) {
       return user
     }
-    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            colors: true,
-          },
-        });
-      }
-    return null
+    return new UnauthorizedException({message:"User Id or Password didn't match"})
+  }
+  async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+    return this.loginRepo.find({
+      where: { id: id },
+      relations: {
+        colors: true,
+      },
+    });
   }
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({

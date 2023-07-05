@@ -30,7 +30,6 @@ import { AuthService } from "../authentication/auth.service";
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
 export class AdminController {
-  //productService: any;
   constructor(
     private readonly sizeService: SizeService,
     private readonly designationService: DesignationService,
@@ -119,7 +118,7 @@ export class AdminController {
     return this.colorService.getColor();
   }
   @Get('getallcolorsbyuid')
-  getAllColorsByUid(@Session() session){
+  getAllColorsByUid(@Session() session) {
     return this.loginService.getAllColorAssociatedWithUserById(session.user.id)
   }
 
@@ -265,18 +264,24 @@ export class AdminController {
   async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    // console.log(password)
-    // const salt = await bcrypt.genSalt();
-    // const hassedpassed = await bcrypt.hash(password, salt);
+    console.log(password)
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(password, salt);
 
-    // data.id = lastID
-    // data.password = hassedpassed
-    // return this.loginService.addUserLoginInfo(data);
-    const text = `Login info-->
-                    ID:${lastID}
-                    Password:${password}`
-    const subject = "Login credentials"
-    return this.authService.sendMail(text,subject,data.email)
+    data.id = lastID
+    data.password = hassedpassed
+    const res = this.loginService.addUserLoginInfo(data);
+
+    if (res != null) {
+      const text =
+        ` Welcome to MuMerch, a sister concern of MuShophia
+      Login info-->
+          ID:${lastID}
+          Password:${password}`
+      const subject = "Login credentials"
+      return this.authService.sendMail(text, subject, data.email)
+    }
+    return false
   }
 
   // @Put('updateuser')

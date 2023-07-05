@@ -84,16 +84,34 @@ export class LoginService {
     if (match) {
       return user
     }
-    return new UnauthorizedException({message:"User Id or Password didn't match"})
   }
-  async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-    return this.loginRepo.find({
-      where: { id: id },
-      relations: {
-        colors: true,
-      },
-    });
-  }
+    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            colors: true,
+          },
+        });
+      }
+
+      async getAllProductAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            products: true,
+          },
+        });
+      }
+
+      async getAllOrderAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+        return this.loginRepo.find({
+          where: { id: id },
+          relations: {
+            orders: true,
+          },
+        });
+      }
+    
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where: { id: id },

@@ -15,11 +15,16 @@ import { SizeEntity } from 'src/models/size/size.entity';
 import { UserProfileService } from 'src/models/userProfile/userProfile.service';
 import { ColorEntity } from 'src/models/color/color.entity';
 import { ProductEntity } from 'src/models/product/product.entity';
+import { OrderEntity } from 'src/models/order/order.entity';
+import { OrderService } from 'src/models/order/order.service';
 import { AuthService } from '../authentication/auth.service';
+import { ProductColorMapEntity } from 'src/models/productColorMap/productColorMap.entity';
+import { ProductSizeMapEntity } from 'src/models/productSizeMap/productSizeMap.entity';
+import { ProductOrderMapEntity } from 'src/models/productOrderMap/productOrderMap.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity ])],
+  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity, ProductColorMapEntity, ProductSizeMapEntity, ProductOrderMapEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService ],
 })
 export class AdminModule {}

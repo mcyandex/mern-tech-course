@@ -10,7 +10,7 @@ export class AuthService {
     await this.mailerService.sendMail({
       to: email,
       subject: subject,
-      text: text,
+      html: text,
     })
     return true
   }

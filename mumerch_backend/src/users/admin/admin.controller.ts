@@ -23,12 +23,13 @@ import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
+import { OrderService } from "src/models/order/order.service";
+import { OrderDTO } from "src/models/order/order.dto";
 import { AuthService } from "../authentication/auth.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
 export class AdminController {
-  //productService: any;
   constructor(
     private readonly sizeService: SizeService,
     private readonly designationService: DesignationService,
@@ -38,6 +39,7 @@ export class AdminController {
     private readonly loginService: LoginService,
     private readonly userProfileService: UserProfileService,
     private readonly productService: ProductService,
+    private readonly orderService: OrderService,
     private readonly authService: AuthService
   ) { }
 
@@ -116,7 +118,7 @@ export class AdminController {
     return this.colorService.getColor();
   }
   @Get('getallcolorsbyuid')
-  getAllColorsByUid(@Session() session){
+  getAllColorsByUid(@Session() session) {
     return this.loginService.getAllColorAssociatedWithUserById(session.user.id)
   }
 
@@ -146,6 +148,13 @@ export class AdminController {
     return this.productService.getProduct();
   }
 
+  // @Get('getallproductsbyuid')
+  // getAllProductsByUid(@Session() session){
+  //   return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
+  // }
+
+
+
   @Post('addproduct')
   async addProduct(@Body() data: ProductDTO): Promise<ProductDTO> {
     return this.productService.addProduct(data)
@@ -163,6 +172,38 @@ export class AdminController {
   @Put('updateproduct/:id')
   updateProduct(@Param('id') id: string, @Body() data: ProductDTO): Promise<ProductDTO> {
     return this.productService.updateProduct(id, data);
+  }
+
+  //Order CRUD part
+  @Get('getorder')
+  getOrder(): Promise<OrderDTO[]> {
+    return this.orderService.getOrder();
+  }
+
+  // @Get('getallordersbyuid')
+  // getAllOrdersByUid(@Session() session){
+  //   return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
+  // }
+
+
+
+  @Post('addorder')
+  async addOrder(@Body() data: OrderDTO): Promise<OrderDTO> {
+    return this.orderService.addOrder(data)
+  }
+
+  @Delete('deleteorder/:id')
+  async deleteOrder(@Param('id') id: string): Promise<string> {
+    const res = await this.orderService.deleteOrder(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " couldnot delete, something went wrong"
+  }
+
+  @Put('updateorder/:id')
+  updateOrder(@Param('id') id: string, @Body() data: OrderDTO): Promise<OrderDTO> {
+    return this.orderService.updateOrder(id, data);
   }
 
 
@@ -223,18 +264,26 @@ export class AdminController {
   async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    // console.log(password)
-    // const salt = await bcrypt.genSalt();
-    // const hassedpassed = await bcrypt.hash(password, salt);
+    console.log(password)
+    const salt = await bcrypt.genSalt();
+    const hassedpassed = await bcrypt.hash(password, salt);
 
-    // data.id = lastID
-    // data.password = hassedpassed
-    // return this.loginService.addUserLoginInfo(data);
-    const text = `Login info-->
-                    ID:${lastID}
-                    Password:${password}`
-    const subject = "Login credentials"
-    return this.authService.sendMail(text,subject,data.email)
+    data.id = lastID
+    data.password = hassedpassed
+    const res = this.loginService.addUserLoginInfo(data);
+
+    if (res != null) {
+      const url = `localhost:3000/auth/login`
+      const text =
+      `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
+      <h4>Your login info:</h4>
+      <h4>ID:${lastID}</h4>
+      <h4>Password:${password}</h4>
+      <p>To login, <a href=${url}>Click here</a></p>`
+      const subject = "Login credentials for MuMerch"
+      return this.authService.sendMail(text, subject, data.email)
+    }
+    return false
   }
 
   // @Put('updateuser')

@@ -1,19 +1,11 @@
 import { Injectable, Session, UnauthorizedException } from "@nestjs/common";
-
 import { LoginEntity } from "./login.entity";
-
 import { InjectRepository } from "@nestjs/typeorm";
-
 import { DeleteResult, ILike, Repository } from "typeorm";
-
-import { Login, LoginDTO, LoginRegistrationDTO} from "./login.dto";
-
+import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto";
 import * as bcrypt from 'bcrypt';
-
 import session from "express-session";
-
-
-
+import session from "express-session";
 
 @Injectable()
 
@@ -133,21 +125,9 @@ export class LoginService {
     return this.loginRepo.findOneBy({ id: id })
 
   }
-
-  async updateUserLoginInfo(qry: any, data: LoginEntity): Promise<LoginDTO> {
-
-    console.log(data)
-
-    const salt = await bcrypt.genSalt();
-
-    const hassedpassed = await bcrypt.hash(data.password, salt);
-
-    data.password = hassedpassed
-
-    await this.loginRepo.update(qry.id, data)
-
-    return await this.loginRepo.findOneBy({ id: qry.id })
-
+  async updateUserLoginInfo(id:string, data: LoginEntity): Promise<LoginDTO> {
+    await this.loginRepo.update(id, data)
+    return await this.loginRepo.findOneBy({ id: id })
   }
 
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
@@ -173,27 +153,16 @@ export class LoginService {
       return user
 
     }
-
-    return new UnauthorizedException({message:"User Id or Password didn't match"})
-
+    return null
   }
-
   async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-
     return this.loginRepo.find({
-
       where: { id: id },
-
       relations: {
-
         colors: true,
-
       },
-
     });
-
   }
-
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
 
     return this.loginRepo.find({

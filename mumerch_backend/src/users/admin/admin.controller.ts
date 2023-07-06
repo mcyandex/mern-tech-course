@@ -18,8 +18,6 @@ import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
 import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
-import { DeleteResult } from "typeorm";
-import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";

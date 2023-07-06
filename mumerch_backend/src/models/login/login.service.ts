@@ -4,8 +4,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, ILike, Repository } from "typeorm";
 import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto";
 import * as bcrypt from 'bcrypt';
-import session from "express-session";
-import session from "express-session";
 
 @Injectable()
 

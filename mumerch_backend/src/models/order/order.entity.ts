@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
+import { ProductOrderMapEntity } from "../productOrderMap/productOrderMap.entity";
 
 @Entity('Order')
 export class OrderEntity {
@@ -10,4 +11,6 @@ export class OrderEntity {
   name:string
   @ManyToOne(()=>LoginEntity, login=>login.orders, {cascade:true})
   login:LoginEntity
+  @OneToMany(()=>ProductOrderMapEntity, productOrderMaps=>productOrderMaps.order)
+  productOrderMaps:ProductOrderMapEntity[]
 }

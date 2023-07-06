@@ -1,8 +1,8 @@
+import { OrderDTO } from "../order/order.dto";
 import { ProductDTO } from "../product/product.dto";
-import { SizeDTO } from "../size/size.dto";
 
 export class ProductSizeMapDTO{
     id: string
-    size:SizeDTO
+    order:OrderDTO
     product:ProductDTO
 }

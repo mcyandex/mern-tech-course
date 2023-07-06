@@ -193,12 +193,12 @@ export class AdminController {
   }
 
   @Delete('deleteorder/:id')
-  async deleteOrder(@Param('id') id: string): Promise<string>{
+  async deleteOrder(@Param('id') id: string): Promise<string> {
     const res = await this.orderService.deleteOrder(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updateorder/:id')
@@ -273,12 +273,14 @@ export class AdminController {
     const res = this.loginService.addUserLoginInfo(data);
 
     if (res != null) {
+      const url = `localhost:3000/auth/login`
       const text =
-        ` Welcome to MuMerch, a sister concern of MuShophia
-      Login info-->
-          ID:${lastID}
-          Password:${password}`
-      const subject = "Login credentials"
+      `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
+      <h4>Your login info:</h4>
+      <h4>ID:${lastID}</h4>
+      <h4>Password:${password}</h4>
+      <p>To login, <a href=${url}>Click here</a></p>`
+      const subject = "Login credentials for MuMerch"
       return this.authService.sendMail(text, subject, data.email)
     }
     return false

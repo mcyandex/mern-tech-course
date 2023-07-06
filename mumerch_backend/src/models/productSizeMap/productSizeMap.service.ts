@@ -1,27 +1,25 @@
-import { Injectable } from "@nestjs/common";
-import { ProductSizeMapDTO } from "./productSizeMap.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, ILike, Repository } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, ILike, Repository } from 'typeorm';
+import { ProductSizeMapEntity } from './productSizeMap.entity';
+
 
 @Injectable()
 export class ProductSizeMapService {
-  // getProductSizeMap(): ProductSizeMapDTO {
-  //   return {id:"10",productId:"p-100",sizeId:"s-100"};
-  // }
-
-  // getProductSizeMapById(id: string): ProductSizeMapDTO{
-  //   return {id:"10",productId:"p-100",sizeId:"s-100"};
-  // }
-
-  // updateProductSizeMap(data: ProductSizeMapDTO): string{
-  //   return data.productId+" "+data.sizeId;
-  // }
-
-  // deleteProductSizeMap(id: string): string{
-  //   return "-- deleted";
-  // }
-
-  // addProductSizeMap(data: ProductSizeMapDTO): string{
-  //   return data.productId+" "+data.sizeId;
-  // }
+  constructor(
+    @InjectRepository(ProductSizeMapEntity) private proSizeMapRepo: Repository<ProductSizeMapEntity>,
+  ) { }
+  getProductSizeMap(): Promise<ProductSizeMapEntity[]> {
+    return this.proSizeMapRepo.find();
+  }
+  async updateProductSizeMap(id: string, data: ProductSizeMapEntity): Promise<ProductSizeMapEntity> {
+    await this.proSizeMapRepo.update(id, data)
+    return await this.proSizeMapRepo.findOneBy({ id: id })
+  }
+  deleteProductSizeMap(id: string): Promise<DeleteResult> {
+    return this.proSizeMapRepo.delete(id);
+  }
+  addProductSizeMap(data: ProductSizeMapEntity): Promise<ProductSizeMapEntity> {
+    return this.proSizeMapRepo.save(data);
+  }
 }

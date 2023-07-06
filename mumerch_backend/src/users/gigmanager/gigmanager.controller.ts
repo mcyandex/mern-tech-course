@@ -43,7 +43,7 @@ export class GigManagerController {
           cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
       },
-      limits: { fileSize: 8000000000 },
+      limits: { fileSize: 80000000 },
       storage: diskStorage({
         destination: './uploads/gig',
         filename: function (req, file, cb) {

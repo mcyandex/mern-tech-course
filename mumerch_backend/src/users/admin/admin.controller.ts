@@ -262,7 +262,6 @@ export class AdminController {
   async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    console.log(password)
     const salt = await bcrypt.genSalt();
     const hassedpassed = await bcrypt.hash(password, salt);
 
@@ -271,12 +270,21 @@ export class AdminController {
     const res = this.loginService.addUserLoginInfo(data);
 
     if (res != null) {
-      const url = `localhost:3000/auth/login`
+      const url = `http://localhost:3000/auth/login`
       const text =
       `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
-      <h4>Your login info:</h4>
-      <h4>ID:${lastID}</h4>
-      <h4>Password:${password}</h4>
+      <p><b>Your login info:</b></p>
+      <hr>
+      <table>
+        <tr>
+          <th align="left">ID:</th>
+          <td>${lastID}</td>
+        </tr>
+        <tr>
+          <th align="left">Password:</th>
+          <td>${password}</td>
+        </tr>
+      </table>
       <p>To login, <a href=${url}>Click here</a></p>`
       const subject = "Login credentials for MuMerch"
       return this.authService.sendMail(text, subject, data.email)

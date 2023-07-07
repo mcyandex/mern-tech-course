@@ -1,4 +1,4 @@
-import { Injectable, Session, UnauthorizedException } from "@nestjs/common";
+import { Injectable, NotFoundException, Session, UnauthorizedException } from "@nestjs/common";
 import { LoginEntity } from "./login.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { DeleteResult, ILike, Repository } from "typeorm"
@@ -69,13 +69,12 @@ export class LoginService {
   addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
     return this.loginRepo.save(data);
   }
-  async login(data: Login) {
-    const user = await this.loginRepo.findOneBy({ id: data.id })
-    const match: boolean = await bcrypt.compare(data.password, user.password);
+  async login(inputPassword:string, userPassword:string) {
+    const match: boolean = await bcrypt.compare(inputPassword, userPassword);
     if (match) {
-      return user
+      return true
     }
-    return null
+    return false
   }
   async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({

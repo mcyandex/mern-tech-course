@@ -1,4 +1,4 @@
-import { Post, Body, Controller, ValidationPipe, UsePipes, Get, UseGuards, BadRequestException, ForbiddenException, Session } from "@nestjs/common"
+import { Post, Body, Controller, ValidationPipe, UsePipes, Get, UseGuards, BadRequestException, ForbiddenException, Session, UnauthorizedException, NotFoundException } from "@nestjs/common"
 import { Login, ResetPassword } from "src/models/login/login.dto"
 import { LoginService } from "src/models/login/login.service"
 import { SessionLoginGuard } from "./sessionLogin.gaurd"
@@ -12,14 +12,18 @@ export class AuthController {
   ) { }
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() data: Login, @Session() session): Promise<boolean> {
-    const user = await this.loginService.login(data)
-    if (user != null) {
-      session.user = user
-      console.log(session)
-      return true
+  async login(@Body() data: Login, @Session() session): Promise<any> {
+    const user = await this.loginService.getUserLoginInfoById(data.id)
+    if(user!=null){
+      const res = await this.loginService.login(data.password, user.password)
+      if(res){
+        session.user=user
+        console.log(session)
+        return true
+      }
+      return new NotFoundException({message:"User Id or Password didnot match"})
     }
-    return false
+    return new UnauthorizedException({message:"User not found"})
   }
   @Get('logout')
   @UseGuards(SessionLoginGuard)

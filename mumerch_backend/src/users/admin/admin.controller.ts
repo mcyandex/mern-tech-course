@@ -1,4 +1,3 @@
-
 import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
@@ -40,6 +39,42 @@ export class AdminController {
     private readonly orderService: OrderService,
     private readonly authService: AuthService
   ) { }
+
+
+  //UserProfile(loging,UserProfile)
+  //ChangePassword(login)
+  //ForgetPassword(Login+Token)
+
+  //!!---UserManagement CRUD Part---!!
+  //1.Employee(login, employee)
+  //2.Band Manager(login,band, bandManager)
+  //3.Gig Manager(login,gig,gigManager)-------->status:true(admin approval)
+
+
+  //!!---ProductManagement CRUD Part---!!
+  //1.Category
+  //2.Size
+  //3.Color
+  //4.Product(color,size,product,band,category) --> Gig Shifted to Order
+
+
+  //!!---BandManagement  CRUD Part---!!
+  //1.Band
+
+
+  //!!---GigManagement CRUD Part---!!
+  //1.Gig(Gig, Gig manager, Band)----------View in poster mode
+
+
+  //!!---OrderManagement---!!
+  //1.Order(login,productOrderMap)---------view
+
+
+  //!!---Reports---!!
+  //1.Sales Report-------------------generate a PDF of total sales
+  //2.Monthly revenue report---------list of products sold in spcific month
+  //3.Bar Charts---------------------sales by 12 months
+
 
   //Size CRUD part
   @Get('getsize')
@@ -205,9 +240,6 @@ export class AdminController {
   }
 
 
-
-
-
   // Category CRUD operation
 
   @Get('getcategory')
@@ -355,28 +387,29 @@ export class AdminController {
   // }
 
   //Designation CRUD part
-  @Get('getdesignation')
-  getDesignation(): DesignationDTO {
-    return this.designationService.getDesignation();
-  }
+//   @Get('getdesignation')
+//   getDesignation(): DesignationDTO {
+//     return this.designationService.getDesignation();
+//   }
 
-  @Get('getdesignation/:name')
-  getDesignationByName(@Param() name: string): DesignationDTO {
-    return this.designationService.getDesignationByName(name);
-  }
+//   @Get('getdesignation/:name')
+//   getDesignationByName(@Param() name: string): DesignationDTO {
+//     return this.designationService.getDesignationByName(name);
+//   }
 
-  @Post('adddesignation')
-  addDesignation(@Body() data: DesignationDTO): string {
-    return this.designationService.addDesignation(data);
-  }
+//   @Post('adddesignation')
+//   addDesignation(@Body() data: DesignationDTO): string {
+//     return this.designationService.addDesignation(data);
+//   }
 
-  @Get('deletedesignation/:id')
-  deleteDesignation(@Param() id: string): string {
-    return this.designationService.deleteDesignation(id);
-  }
+//   @Get('deletedesignation/:id')
+//   deleteDesignation(@Param() id: string): string {
+//     return this.designationService.deleteDesignation(id);
+//   }
 
-  @Put('updatedesignation')
-  updateDesignation(@Body() data: DesignationDTO): string {
-    return this.designationService.updateDesignation(data);
-  }
+//   @Put('updatedesignation')
+//   updateDesignation(@Body() data: DesignationDTO): string {
+//     return this.designationService.updateDesignation(data);
+//   }
+// // 
 }

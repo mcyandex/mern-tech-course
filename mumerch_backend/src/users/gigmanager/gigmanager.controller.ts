@@ -9,6 +9,27 @@ export class GigManagerController {
   constructor(private readonly gigService: GigService 
     ) { }
 
+
+    //Login
+    //UserProfile(Login, UserProfile)
+    //ChangePassword(Login)
+    //ForgetPassword(Login+Token)
+
+    //!!---Gig Management---!!
+    //Gig(Gig,GigManager,Band)---------------->CRUD gigs added by him
+
+    //!!---Order Managment---!!
+    //Order------------------------------------>View for his gigId
+
+    //!!---Customer Management---!!
+    //Customer---------------------------------> view for his gigId
+
+    //!!---Reports---!!
+    //1.Sales Report ---------------------------------------- generate a PDF of total sales for gigId. 
+    //2.Monthly Revenue Report ------------------------- list of products sold in specific month fot gigID 
+    //3.Bar Charts ------------------------------------------- sales by 12 months for gigId 
+
+
 //gig CRUD part
   @Get('getgig')
   getGig(): string {

@@ -8,6 +8,8 @@ export class ColorEntity {
   id: string;
   @Column()
   name:string
+  @Column()
+  colorCode: string
   @ManyToOne(()=>LoginEntity, login=>login.colors, {cascade:true})
   login:LoginEntity
   @OneToMany(()=>ProductColorMapEntity, productColorMaps=>productColorMaps.color)

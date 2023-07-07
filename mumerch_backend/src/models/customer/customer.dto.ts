@@ -1,7 +1,9 @@
-import { IsEmail, IsNotEmpty, Matches } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { LoginDTO } from "../login/login.dto";
 
 export class CustomerDTO{
     @IsNotEmpty({message:"This filed is required"})
+    @IsString({message:"Name must have a string"})
     @Matches(/^[a-zA-Z]+$/, {message:"enter a proper name"})
     name: string;
 
@@ -19,13 +21,14 @@ export class CustomerDTO{
     id: string;
 
     address: string;
-
-
+    login:LoginDTO
 
 }
 
 export class CustomerResgistrationDTO{
-    @IsNotEmpty({message:"Name must have a value"})
+    @IsNotEmpty({message:"This filed is required"})
+    @IsString({message:"Name must have a string"})
+    @Matches(/^[a-zA-Z]+$/, {message:"enter a proper name"})
     name:string
     @IsNotEmpty({message:"Email must have a value"})
     @IsEmail()

@@ -18,9 +18,11 @@ import { ProductEntity } from 'src/models/product/product.entity';
 import { OrderEntity } from 'src/models/order/order.entity';
 import { OrderService } from 'src/models/order/order.service';
 import { AuthService } from '../authentication/auth.service';
+import { DesignationEntity } from 'src/models/designation/designation.entity';
+import { CustomerEntity } from 'src/models/customer/customer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity ])],
+  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity, DesignationEntity,CustomerEntity ])],
   controllers: [ AdminController ],
   providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService ],
 })

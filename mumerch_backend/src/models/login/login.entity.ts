@@ -5,6 +5,7 @@ import { ColorEntity } from "../color/color.entity";
 import { ProductEntity } from "../product/product.entity";
 import { OrderEntity } from "../order/order.entity";
 import { CustomerEntity } from "../customer/customer.entity";
+import { DesignationEntity } from "../designation/designation.entity";
 
 @Entity('Login')
 export class LoginEntity {
@@ -37,4 +38,6 @@ export class LoginEntity {
   orders:OrderEntity[]
   @OneToMany(()=>CustomerEntity, customers=>customers.login)
   customers:CustomerEntity[]
+  @OneToMany(()=>DesignationEntity, designations=>designations.login)
+  designations:DesignationEntity[]
 }

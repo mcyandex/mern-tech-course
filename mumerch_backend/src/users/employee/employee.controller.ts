@@ -8,6 +8,28 @@
 //   constructor(private readonly orderService: OrderService
 //     ) { }
 
+
+  //UserProfile(loging,UserProfile)
+  //ChangePassword(login)
+  //ForgetPassword(Login+Token)
+
+  //!!---Product Management---!!
+  //Product(color,size,product,band,category)-------->view
+
+  //!!---Gig Management---!!
+  //Gig--------------------> view in poster format
+
+  //!!---Order Management---!!
+  //1.Order(Customer,login, ProductOrderMap)
+  //2.Generate Invoice
+
+  //!!---Reports(Performance)---!!
+  //1.Sales Report ---------------------------------------- generate a PDF of total sales for loginId type = emp.. 
+  //2.Monthly Revenue Report ------------------------- list of products sold in specific month for loginId type = emp.. 
+  //3.Bar Charts ------------------------------------------- sales by 12 months for loginId type = emp.. 
+
+
+
 //   //Order CRUD part
 //   @Get('getorder')
 //   getSize(): OrderDTO {

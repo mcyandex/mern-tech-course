@@ -14,7 +14,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '123sa',
+      password: '1234',
       database: 'mumerch',
       autoLoadEntities: true,
       synchronize: true,
@@ -26,8 +26,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
         ignoreTLS: true,
         secure: true,
         auth: {
-          user: 'your email',
-          pass: 'generated-password'
+          user: 'team.robust.dev@gmail.com',
+          pass: 'pgavnyqjtpsnsadj'
         },
       }
     })

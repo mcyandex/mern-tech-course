@@ -17,8 +17,6 @@ import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
 import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
-import { DeleteResult } from "typeorm";
-import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
@@ -228,12 +226,12 @@ export class AdminController {
   }
 
   @Delete('deleteorder/:id')
-  async deleteOrder(@Param('id') id: string): Promise<string>{
+  async deleteOrder(@Param('id') id: string): Promise<string> {
     const res = await this.orderService.deleteOrder(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updateorder/:id')
@@ -296,7 +294,6 @@ export class AdminController {
   async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    console.log(password)
     const salt = await bcrypt.genSalt();
     const hassedpassed = await bcrypt.hash(password, salt);
 
@@ -305,12 +302,23 @@ export class AdminController {
     const res = this.loginService.addUserLoginInfo(data);
 
     if (res != null) {
+      const url = `http://localhost:3000/auth/login`
       const text =
-        ` Welcome to MuMerch, a sister concern of MuShophia
-      Login info-->
-          ID:${lastID}
-          Password:${password}`
-      const subject = "Login credentials"
+      `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
+      <p><b>Your login info:</b></p>
+      <hr>
+      <table>
+        <tr>
+          <th align="left">ID:</th>
+          <td>${lastID}</td>
+        </tr>
+        <tr>
+          <th align="left">Password:</th>
+          <td>${password}</td>
+        </tr>
+      </table>
+      <p>To login, <a href=${url}>Click here</a></p>`
+      const subject = "Login credentials for MuMerch"
       return this.authService.sendMail(text, subject, data.email)
     }
     return false

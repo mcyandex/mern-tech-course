@@ -1,4 +1,3 @@
-
 import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
@@ -18,8 +17,6 @@ import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
 import { LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
-import { DeleteResult } from "typeorm";
-import session from "express-session";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
@@ -42,6 +39,42 @@ export class AdminController {
     private readonly orderService: OrderService,
     private readonly authService: AuthService
   ) { }
+
+
+  //UserProfile(loging,UserProfile)
+  //ChangePassword(login)
+  //ForgetPassword(Login+Token)
+
+  //!!---UserManagement CRUD Part---!!
+  //1.Employee(login, employee)
+  //2.Band Manager(login,band, bandManager)
+  //3.Gig Manager(login,gig,gigManager)-------->status:true(admin approval)
+
+
+  //!!---ProductManagement CRUD Part---!!
+  //1.Category
+  //2.Size
+  //3.Color
+  //4.Product(color,size,product,band,category) --> Gig Shifted to Order
+
+
+  //!!---BandManagement  CRUD Part---!!
+  //1.Band
+
+
+  //!!---GigManagement CRUD Part---!!
+  //1.Gig(Gig, Gig manager, Band)----------View in poster mode
+
+
+  //!!---OrderManagement---!!
+  //1.Order(login,productOrderMap)---------view
+
+
+  //!!---Reports---!!
+  //1.Sales Report-------------------generate a PDF of total sales
+  //2.Monthly revenue report---------list of products sold in spcific month
+  //3.Bar Charts---------------------sales by 12 months
+
 
   //Size CRUD part
   @Get('getsize')
@@ -148,10 +181,10 @@ export class AdminController {
     return this.productService.getProduct();
   }
 
-  @Get('getallproductsbyuid')
-  getAllProductsByUid(@Session() session){
-    return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
-  }
+  // @Get('getallproductsbyuid')
+  // getAllProductsByUid(@Session() session){
+  //   return this.loginService.getAllProductAssociatedWithUserById(session.user.id)
+  // }
 
 
 
@@ -180,10 +213,10 @@ export class AdminController {
     return this.orderService.getOrder();
   }
 
-  @Get('getallordersbyuid')
-  getAllOrdersByUid(@Session() session){
-    return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
-  }
+  // @Get('getallordersbyuid')
+  // getAllOrdersByUid(@Session() session){
+  //   return this.loginService.getAllOrderAssociatedWithUserById(session.user.id)
+  // }
 
 
 
@@ -193,21 +226,18 @@ export class AdminController {
   }
 
   @Delete('deleteorder/:id')
-  async deleteOrder(@Param('id') id: string): Promise<string>{
+  async deleteOrder(@Param('id') id: string): Promise<string> {
     const res = await this.orderService.deleteOrder(id);
-    if(res['affected']>0){
-      return "ID: "+id+" deleted successfully"
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
     }
-    return "ID: "+id+" couldnot delete, something went wrong"
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 
   @Put('updateorder/:id')
   updateOrder(@Param('id') id: string, @Body() data: OrderDTO): Promise<OrderDTO> {
     return this.orderService.updateOrder(id, data);
   }
-
-
-
 
 
   // Category CRUD operation
@@ -220,7 +250,6 @@ export class AdminController {
   async addUserLoginInfo(@Body() data: LoginRegistrationDTO): Promise<boolean> {
     const lastID = await this.loginService.findLastUserLoginId();
     const password = Date.now() + '$'
-    console.log(password)
     const salt = await bcrypt.genSalt();
     const hassedpassed = await bcrypt.hash(password, salt);
 
@@ -229,12 +258,23 @@ export class AdminController {
     const res = this.loginService.addUserLoginInfo(data);
 
     if (res != null) {
+      const url = `http://localhost:3000/auth/login`
       const text =
-        ` Welcome to MuMerch, a sister concern of MuShophia
-      Login info-->
-          ID:${lastID}
-          Password:${password}`
-      const subject = "Login credentials"
+      `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
+      <p><b>Your login info:</b></p>
+      <hr>
+      <table>
+        <tr>
+          <th align="left">ID:</th>
+          <td>${lastID}</td>
+        </tr>
+        <tr>
+          <th align="left">Password:</th>
+          <td>${password}</td>
+        </tr>
+      </table>
+      <p>To login, <a href=${url}>Click here</a></p>`
+      const subject = "Login credentials for MuMerch"
       return this.authService.sendMail(text, subject, data.email)
     }
     return false
@@ -303,28 +343,29 @@ export class AdminController {
   // }
 
   //Designation CRUD part
-  @Get('getdesignation')
-  getDesignation(): DesignationDTO {
-    return this.designationService.getDesignation();
-  }
+//   @Get('getdesignation')
+//   getDesignation(): DesignationDTO {
+//     return this.designationService.getDesignation();
+//   }
 
-  @Get('getdesignation/:name')
-  getDesignationByName(@Param() name: string): DesignationDTO {
-    return this.designationService.getDesignationByName(name);
-  }
+//   @Get('getdesignation/:name')
+//   getDesignationByName(@Param() name: string): DesignationDTO {
+//     return this.designationService.getDesignationByName(name);
+//   }
 
-  @Post('adddesignation')
-  addDesignation(@Body() data: DesignationDTO): string {
-    return this.designationService.addDesignation(data);
-  }
+//   @Post('adddesignation')
+//   addDesignation(@Body() data: DesignationDTO): string {
+//     return this.designationService.addDesignation(data);
+//   }
 
-  @Get('deletedesignation/:id')
-  deleteDesignation(@Param() id: string): string {
-    return this.designationService.deleteDesignation(id);
-  }
+//   @Get('deletedesignation/:id')
+//   deleteDesignation(@Param() id: string): string {
+//     return this.designationService.deleteDesignation(id);
+//   }
 
-  @Put('updatedesignation')
-  updateDesignation(@Body() data: DesignationDTO): string {
-    return this.designationService.updateDesignation(data);
-  }
+//   @Put('updatedesignation')
+//   updateDesignation(@Body() data: DesignationDTO): string {
+//     return this.designationService.updateDesignation(data);
+//   }
+// // 
 }

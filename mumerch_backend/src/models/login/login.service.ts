@@ -1,11 +1,8 @@
-import { Injectable, Session, UnauthorizedException } from "@nestjs/common";
-import { LoginEntity } from "./login.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, ILike, Repository } from "typeorm";
-import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto";
-import * as bcrypt from 'bcrypt';
-import session from "express-session";
-
+import { Injectable, NotFoundException, Session, UnauthorizedException } from "@nestjs/common";
+import { LoginEntity } from "./login.entity"
+import { InjectRepository } from "@nestjs/typeorm"
+import { DeleteResult, ILike, Repository } from "typeorm"
+import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto"; import * as bcrypt from 'bcrypt';
 @Injectable()
 export class LoginService {
   constructor(
@@ -21,7 +18,6 @@ export class LoginService {
         },
         take: 1,
       });
-
       let newIdCount: string;
 
       if (entity && entity.length > 0) {
@@ -41,7 +37,6 @@ export class LoginService {
       const year = currentDate.getFullYear().toString().substr(-2);
       const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
       const newId = `MM-${month}${year}-${newIdCount}`;
-      console.log(newId);
       return newId;
     }
     catch (error) {
@@ -64,13 +59,9 @@ export class LoginService {
   getUserLoginInfoById(id: string): Promise<LoginDTO> {
     return this.loginRepo.findOneBy({ id: id })
   }
-  async updateUserLoginInfo(qry: any, data: LoginEntity): Promise<LoginDTO> {
-    console.log(data)
-    const salt = await bcrypt.genSalt();
-    const hassedpassed = await bcrypt.hash(data.password, salt);
-    data.password = hassedpassed
-    await this.loginRepo.update(qry.id, data)
-    return await this.loginRepo.findOneBy({ id: qry.id })
+  async updateUserLoginInfo(id: string, data: LoginEntity): Promise<LoginDTO> {
+    await this.loginRepo.update(id, data)
+    return await this.loginRepo.findOneBy({ id: id })
   }
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
     return this.loginRepo.delete(id);
@@ -78,40 +69,21 @@ export class LoginService {
   addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
     return this.loginRepo.save(data);
   }
-  async login(data: Login) {
-    const user = await this.loginRepo.findOneBy({ id: data.id })
-    const match: boolean = await bcrypt.compare(data.password, user.password);
+  async login(inputPassword:string, userPassword:string) {
+    const match: boolean = await bcrypt.compare(inputPassword, userPassword);
     if (match) {
-      return user
+      return true
     }
+    return false
   }
-    async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            colors: true,
-          },
-        });
-      }
-
-      async getAllProductAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            products: true,
-          },
-        });
-      }
-
-      async getAllOrderAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-        return this.loginRepo.find({
-          where: { id: id },
-          relations: {
-            orders: true,
-          },
-        });
-      }
-    
+  async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+    return this.loginRepo.find({
+      where: { id: id },
+      relations: {
+        colors: true,
+      },
+    });
+  }
   async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where: { id: id },

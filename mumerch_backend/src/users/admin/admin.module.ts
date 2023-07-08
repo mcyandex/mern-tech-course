@@ -22,9 +22,15 @@ import { BandEntity } from 'src/models/band/band.entity';
 import { BandManagerEntity } from 'src/models/bandManager/bandManager.entity';
 import { BandManagerService } from 'src/models/bandManager/bandManager.service';
 import { CategoryEntity } from 'src/models/category/category.entity';
+import { AuthService } from '../authentication/auth.service'
+import { DesignationEntity } from 'src/models/designation/designation.entity';
+import { CustomerEntity } from 'src/models/customer/customer.entity';
+import { ProductColorMapEntity } from 'src/models/productColorMap/productColorMap.entity';
+import { ProductSizeMapEntity } from 'src/models/productSizeMap/productSizeMap.entity';
+import { ProductOrderMapEntity } from 'src/models/productOrderMap/productOrderMap.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity, BandEntity, BandManagerEntity, CategoryEntity ])],
+  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity, DesignationEntity,CustomerEntity, ProductColorMapEntity, ProductSizeMapEntity, ProductOrderMapEntity, BandEntity, BandManagerEntity, CategoryEntity ])],
   controllers: [ AdminController ],
   providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService ],
 })

@@ -188,24 +188,24 @@ export class AdminController {
 
 
 
-  @Post('addproduct')
-  async addProduct(@Body() data: ProductDTO): Promise<ProductDTO> {
-    return this.productService.addProduct(data)
-  }
+  // @Post('addproduct')
+  // async addProduct(@Body() data: ProductDTO): Promise<ProductDTO> {
+  //   return this.productService.addProduct(data)
+  // }
 
-  @Delete('deleteproduct/:id')
-  async deleteProduct(@Param('id') id: string): Promise<string> {
-    const res = await this.productService.deleteProduct(id);
-    if (res['affected'] > 0) {
-      return "ID: " + id + " deleted successfully"
-    }
-    return "ID: " + id + " couldnot delete, something went wrong"
-  }
+  // @Delete('deleteproduct/:id')
+  // async deleteProduct(@Param('id') id: string): Promise<string> {
+  //   const res = await this.productService.deleteProduct(id);
+  //   if (res['affected'] > 0) {
+  //     return "ID: " + id + " deleted successfully"
+  //   }
+  //   return "ID: " + id + " couldnot delete, something went wrong"
+  // }
 
-  @Put('updateproduct/:id')
-  updateProduct(@Param('id') id: string, @Body() data: ProductDTO): Promise<ProductDTO> {
-    return this.productService.updateProduct(id, data);
-  }
+  // @Put('updateproduct/:id')
+  // updateProduct(@Param('id') id: string, @Body() data: ProductDTO): Promise<ProductDTO> {
+  //   return this.productService.updateProduct(id, data);
+  // }
 
   //Order CRUD part
   @Get('getorder')

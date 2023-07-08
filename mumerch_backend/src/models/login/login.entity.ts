@@ -9,6 +9,7 @@ import { BandManagerEntity } from "../bandManager/bandManager.entity";
 import { CategoryEntity } from "../category/category.entity";
 import { CustomerEntity } from "../customer/customer.entity";
 import { DesignationEntity } from "../designation/designation.entity";
+import { GigManagerEntity } from "../gigManager/gigManager.entity";
 
 @Entity('Login')
 export class LoginEntity {
@@ -42,7 +43,9 @@ export class LoginEntity {
   @OneToMany(()=>BandEntity, bands=>bands.login)
   bands:BandEntity[]
   @OneToMany(()=>BandManagerEntity, bandManagers=>bandManagers.login)
-  bandManagers:BandManagerEntity
+  bandManagers:BandManagerEntity[]
+  @OneToMany(()=>GigManagerEntity, gigManagers=>gigManagers.login)
+  gigManagers:GigManagerEntity[]
   @OneToMany(()=>CategoryEntity, catagories=>catagories.login)
   catagories:CategoryEntity[]
   @OneToMany(()=>CustomerEntity, customers=>customers.login)

@@ -18,10 +18,14 @@ import { ProductEntity } from 'src/models/product/product.entity';
 import { OrderEntity } from 'src/models/order/order.entity';
 import { OrderService } from 'src/models/order/order.service';
 import { AuthService } from '../authentication/auth.service';
+import { BandEntity } from 'src/models/band/band.entity';
+import { BandManagerEntity } from 'src/models/bandManager/bandManager.entity';
+import { BandManagerService } from 'src/models/bandManager/bandManager.service';
+import { CategoryEntity } from 'src/models/category/category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity ])],
+  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, OrderEntity, BandEntity, BandManagerEntity, CategoryEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService ],
 })
 export class AdminModule {}

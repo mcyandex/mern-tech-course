@@ -17,6 +17,4 @@ export class BandEntity{
   bandManager:BandManagerEntity
   @OneToMany(()=>ProductEntity, products=>products.band)
   products:ProductEntity[]
-  
-
 }

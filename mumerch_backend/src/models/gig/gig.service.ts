@@ -1,35 +1,61 @@
 import { Injectable } from "@nestjs/common";
-import { GigDTO, GigResgistrationDTO } from "./gig.dto";
-
+import { GigDTO } from "./gig.dto";
+import { GigEntity } from "./gig.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, ILike, Repository } from "typeorm";
 
 @Injectable()
 export class GigService {
-  //getGig(): GigDTO {
-  getGig(): string {
-    return "--------------- List of Gig ---------------";
+  constructor(
+    @InjectRepository(GigEntity) private gigRepo: Repository<GigEntity>,
+  ){}
+
+  getGigWithUserInfo(): Promise<GigEntity[]>{
+    return this.gigRepo.find({relations: ['user']})
   }
 
-  //getGigById(Id: string): GigDTO{
-  getGigById(id: string): string{
-    return "Specific Gig fot ID: "+id;
+  async getGig(): Promise<GigEntity[]> {
+    return await this.gigRepo.find();
+  }
+  getAllGigByUserId(id:string): Promise<GigEntity>{
+    return this.gigRepo.findOne({
+        where:{
+          login: {id: id},
+        },
+        relations: {
+          login: true,
+        }
+      });
+  }
+  getGigByUserId(id: string): Promise<GigEntity>{
+    return this.gigRepo.findOne({
+      where:{
+        id: id
+      },
+      relations:{
+        login: true,
+      }
+    });
+  }
+  async getGigByName(name: string): Promise<GigEntity[]> {
+    let finalName = name + '%'
+    console.log(finalName)
+    return await this.gigRepo.find({
+      where: {
+        name: ILike(`${finalName}`)
+      },
+    })
+  }
+  async updateGig(id: string, data: GigEntity): Promise<GigEntity>{
+    await this.gigRepo.update(id,data)
+    return await this.gigRepo.findOneBy({id: id})
   }
 
-  updateGig(data: GigDTO): GigDTO{
-    return data;
+  deleteGig(id: string): Promise<DeleteResult>{
+    return this.gigRepo.delete(id);
   }
 
-  addGig(data: GigResgistrationDTO): GigResgistrationDTO{
-    return data;
+  addGig(data: GigDTO): Promise<GigDTO>{
+    return this.gigRepo.save(data);
   }
-  // updateGig(data: GigDTO): string{
-  //   return "Gig updated";
-  // }
-
-  deleteGig(id: string): string{
-    return "-- deleted --gig";
-  }
-
-  // addGig(data: GigDTO): string{
-  //   return "Gig added";
-  // }
 }

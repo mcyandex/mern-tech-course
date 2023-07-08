@@ -1,5 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
+import { BandDTO } from "../band/band.dto";
+import { CategoryDTO } from "../category/category.dto";
 import { LoginEntity } from "../login/login.entity";
 import { ProductSizeMapEntity } from "../productSizeMap/productSizeMap.entity";
 import { ProductColorMapEntity } from "../productColorMap/productColorMap.entity";
@@ -16,4 +18,6 @@ export class ProductDTO {
   productSizeMaps: ProductSizeMapEntity[]
   productColorMaps: ProductColorMapEntity[]
   productOrderMaps: ProductOrderMapEntity[]
+  band:BandDTO
+  category:CategoryDTO
 }

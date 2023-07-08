@@ -242,51 +242,7 @@ export class AdminController {
 
   // Category CRUD operation
 
-  @Get('getcategory')
-  getCategory(@Body() data: CategoryDTO): string {
-    return this.categoryService.getCategory(data);
-  }
 
-  @Post('addcategory')
-  addCategory(@Body() data: CategoryDTO): string {
-    return this.categoryService.addCategory(data);
-  }
-
-  @Get('deletecategory/:id')
-  deleteCategory(@Param() id: string): string {
-    return this.categoryService.deleteCategory(id);
-  }
-
-  @Put('updatecategory')
-  updateCategory(@Body() data: CategoryDTO): string {
-    return this.categoryService.updateCategory(data);
-  }
-
-  // Band's CRUD OPERATION
-  @Get('getband')
-  getBand(@Body() data: BandDTO): string {
-    return this.bandService.getBand();
-  }
-
-  @Get('getband/:id')
-  getBandById(@Param() id: string): string {
-    return this.bandService.getBandById(id);
-  }
-
-  @Post('addband')
-  addBand(@Body() data: BandDTO): string {
-    return this.bandService.addBand(data);
-  }
-
-  @Get('deleteband/:id')
-  deleteBand(@Param() id: string): string {
-    return this.bandService.deleteBand(id);
-  }
-
-  @Put('updateband')
-  updateBand(@Body() data: BandDTO): string {
-    return this.bandService.updateBand(data);
-  }
 
   //Login info section
   @Post('adduserlogininfo')

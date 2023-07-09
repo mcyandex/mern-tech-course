@@ -31,10 +31,11 @@ import { GigManagerEntity } from 'src/models/gigManager/gigManager.entity';
 import { OrderProductsMapEntity } from 'src/models/orderProductsMap/orderProductsMap.entity';
 import { ProductColorMapService } from 'src/models/productColorMap/productColorMap.service';
 import { ProductSizeMapService } from 'src/models/productSizeMap/productSizeMap.service';
+import { GigService } from 'src/models/gig/gig.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, DesignationEntity,CustomerEntity, ProductColorMapEntity, ProductSizeMapEntity, OrderProductsMapEntity, BandEntity, BandManagerEntity, CategoryEntity, OrderEntity, GigEntity, GigManagerEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, ProductColorMapService, ProductSizeMapService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, ProductColorMapService, ProductSizeMapService, GigService ],
 })
 export class AdminModule {}

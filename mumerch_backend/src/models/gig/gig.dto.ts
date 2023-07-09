@@ -1,4 +1,9 @@
 import { IsDate, IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { LoginDTO } from "../login/login.dto";
+import { OrderDTO } from "../order/order.dto";
+import { GigManagerEntity } from "../gigManager/gigManager.entity";
+import { LoginEntity } from "../login/login.entity";
+import { OrderEntity } from "../order/order.entity";
 
 export class GigDTO{
     id:string
@@ -7,33 +12,19 @@ export class GigDTO{
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
     name:string
 
-    @IsDate()
+    @IsDateString()
     @IsNotEmpty({message:"Start date is required"})
-    startDate: Date
+    startDate: string
 
     @IsNotEmpty({message:"End date is required"})
-    @IsDate()
-    endDate: Date
+    @IsDateString()
+    endDate: string
 
-    @IsNotEmpty({message:"Updater Name must have a value"})
-    updatedBy:string
-    image:string
-    locationId:string
+    login:LoginEntity
+    gigManager:GigManagerEntity
+    orders:OrderEntity[]
 }
 
 export class GigResgistrationDTO{
-    @IsNotEmpty({message:"Name must have a value"})
-    @IsString({message:"Name must have a string"})
-    @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
-    name:string
-
-    @IsNotEmpty({message:"Start date is required"})
-    startDate: Date
-
-    @IsNotEmpty({message:"End date is required"})
-    endDate: Date
-
-    @IsNotEmpty({message:"Updater Name must have a value"})
-    updatedBy:string
-    locationId:string
+    
 }

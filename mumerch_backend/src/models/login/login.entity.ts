@@ -18,7 +18,7 @@ export class LoginEntity {
   id: string;
   @Column()
   name:string
-  @Column()
+  @Column({select:false})
   password: string
   @Column()
   userType: string

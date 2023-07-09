@@ -8,6 +8,10 @@ export class GigEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
+  startDate:string
+  @Column()
+  endDate:string
+  @Column()
   name: string;
   @ManyToOne(()=>LoginEntity, login=>login.bands, {cascade:true})
   login:LoginEntity

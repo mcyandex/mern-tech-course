@@ -2,8 +2,9 @@ import { Injectable, NotFoundException, Session, UnauthorizedException } from "@
 import { LoginEntity } from "./login.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { DeleteResult, ILike, Repository } from "typeorm"
-import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto"; 
+import { LoginDTO, LoginRegistrationDTO } from "./login.dto"; 
 import * as bcrypt from 'bcrypt';
+import { userInfo } from "os";
 @Injectable()
 export class LoginService {
   constructor(
@@ -45,22 +46,30 @@ export class LoginService {
       throw new Error('Failed to retrieve the last Id');
     }
   }
-  getUserLoginInfo(): Promise<LoginDTO[]> {
-    return this.loginRepo.find();
+  getUserLoginInfo(userType:string): Promise<LoginDTO[]> {
+    return this.loginRepo.find({
+      where:{
+        userType:userType
+      },
+      // relations:{
+      //   user:true
+      // }
+    });
   }
-  getUserLoginInfoByName(name: string): Promise<LoginDTO[]> {
+  getUserLoginInfoByName(name: string, userType:string): Promise<LoginDTO[]> {
     let finalName = name + '%'
     console.log(finalName)
     return this.loginRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${finalName}`),
+        userType:userType
       },
     })
   }
   getUserLoginInfoById(id: string): Promise<LoginDTO> {
     return this.loginRepo.findOneBy({ id: id })
   }
-  async updateUserLoginInfo(id: string, data: LoginEntity): Promise<LoginDTO> {
+  async updateUserLoginInfo(id: string, data: LoginDTO): Promise<LoginDTO> {
     await this.loginRepo.update(id, data)
     return await this.loginRepo.findOneBy({ id: id })
   }
@@ -77,22 +86,22 @@ export class LoginService {
     }
     return false
   }
-  async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-    return this.loginRepo.find({
-      where: { id: id },
-      relations: {
-        colors: true,
-      },
-    });
-  }
-  async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
-    return this.loginRepo.find({
-      where: { id: id },
-      relations: {
-        sizes: true,
-      },
-    });
-  }
+  // async getAllColorAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+  //   return this.loginRepo.find({
+  //     where: { id: id },
+  //     relations: {
+  //       colors: true,
+  //     },
+  //   });
+  // }
+  // async getAllSizeAssociatedWithUserById(id: string): Promise<LoginEntity[]> {
+  //   return this.loginRepo.find({
+  //     where: { id: id },
+  //     relations: {
+  //       sizes: true,
+  //     },
+  //   });
+  // }
   async getHassedPassword(password:any):Promise<string>{
     const salt = await bcrypt.genSalt();
     const hassedpassword = await bcrypt.hash(password, salt);

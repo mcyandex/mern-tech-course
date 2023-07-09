@@ -4,7 +4,7 @@ import { CategoryEntity } from "../category/category.entity";
 import { BandEntity } from "../band/band.entity";
 import { ProductSizeMapEntity } from "../productSizeMap/productSizeMap.entity";
 import { ProductColorMapEntity } from "../productColorMap/productColorMap.entity";
-import { ProductOrderMapEntity } from "../productOrderMap/productOrderMap.entity";
+import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
 
 @Entity('Product')
 export class ProductEntity {
@@ -31,6 +31,6 @@ export class ProductEntity {
   productSizeMaps:ProductSizeMapEntity[]
   @OneToMany(()=>ProductColorMapEntity, productColorMaps=>productColorMaps.color)
   productColorMaps:ProductColorMapEntity[]
-  @OneToMany(()=>ProductOrderMapEntity, productOrderMaps=>productOrderMaps.order)
-  productOrderMaps:ProductOrderMapEntity[]
+  @OneToMany(()=>OrderProductsMapEntity, orderProductsMap=>orderProductsMap.order)
+  orderProductsMap:OrderProductsMapEntity[]
 }

@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, ILike, Repository } from 'typeorm';
-import { ProductOrderMapEntity } from './productOrderMap.entity';
+import { OrderProductsMapEntity } from './orderProductsMap.entity';
 
 
 @Injectable()
-export class ProductOrderMapService {
+export class OrderProductsMapService {
   constructor(
-    @InjectRepository(ProductOrderMapEntity) private proOrderMapRepo: Repository<ProductOrderMapEntity>,
+    @InjectRepository(OrderProductsMapEntity) private proOrderMapRepo: Repository<OrderProductsMapEntity>,
   ) { }
-  getProductOrderMap(): Promise<ProductOrderMapEntity[]> {
+  getProductOrderMap(): Promise<OrderProductsMapEntity[]> {
     return this.proOrderMapRepo.find();
   }
-  async updateProductOrderMap(id: string, data: ProductOrderMapEntity): Promise<ProductOrderMapEntity> {
+  async updateProductOrderMap(id: string, data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
     await this.proOrderMapRepo.update(id, data)
     return await this.proOrderMapRepo.findOneBy({ id: id })
   }
   deleteProductOrderMap(id: string): Promise<DeleteResult> {
     return this.proOrderMapRepo.delete(id);
   }
-  addProductOrderMap(data: ProductOrderMapEntity): Promise<ProductOrderMapEntity> {
+  addProductOrderMap(data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
     return this.proOrderMapRepo.save(data);
   }
 }

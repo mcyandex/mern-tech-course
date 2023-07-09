@@ -26,12 +26,12 @@ import { DesignationEntity } from 'src/models/designation/designation.entity';
 import { CustomerEntity } from 'src/models/customer/customer.entity';
 import { ProductColorMapEntity } from 'src/models/productColorMap/productColorMap.entity';
 import { ProductSizeMapEntity } from 'src/models/productSizeMap/productSizeMap.entity';
-import { ProductOrderMapEntity } from 'src/models/productOrderMap/productOrderMap.entity';
 import { GigEntity } from 'src/models/gig/gig.entity';
 import { GigManagerEntity } from 'src/models/gigManager/gigManager.entity';
+import { OrderProductsMapEntity } from 'src/models/orderProductsMap/orderProductsMap.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, DesignationEntity,CustomerEntity, ProductColorMapEntity, ProductSizeMapEntity, ProductOrderMapEntity, BandEntity, BandManagerEntity, CategoryEntity, OrderEntity, GigEntity, GigManagerEntity ])],
+  imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, DesignationEntity,CustomerEntity, ProductColorMapEntity, ProductSizeMapEntity, OrderProductsMapEntity, BandEntity, BandManagerEntity, CategoryEntity, OrderEntity, GigEntity, GigManagerEntity ])],
   controllers: [ AdminController ],
   providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService ],
 })

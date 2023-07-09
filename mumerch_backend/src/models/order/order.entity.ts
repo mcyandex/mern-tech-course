@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
-import { ProductOrderMapEntity } from "../productOrderMap/productOrderMap.entity";
 import { GigEntity } from "../gig/gig.entity";
+import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
 
 @Entity('Order')
 export class OrderEntity {
@@ -11,15 +11,11 @@ export class OrderEntity {
   @Column()
   name: string
   @Column()
-  orderPrice: number;
-  @Column()
-  orderQuantity: number;
-  @Column()
   date: string;
   @ManyToOne(() => LoginEntity, login => login.orders, { cascade: true })
   login: LoginEntity
-  @OneToMany(() => ProductOrderMapEntity, productOrderMaps => productOrderMaps.order)
-  productOrderMaps: ProductOrderMapEntity[]
+  @OneToMany(() => OrderProductsMapEntity, orderProducts => orderProducts.order)
+  orderProducts: OrderProductsMapEntity[]
   @ManyToOne(() => GigEntity, gig => gig.orders, { cascade: true })
   gig: GigEntity
 }

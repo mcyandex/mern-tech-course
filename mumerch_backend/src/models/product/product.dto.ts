@@ -5,7 +5,7 @@ import { CategoryDTO } from "../category/category.dto";
 import { LoginEntity } from "../login/login.entity";
 import { ProductSizeMapEntity } from "../productSizeMap/productSizeMap.entity";
 import { ProductColorMapEntity } from "../productColorMap/productColorMap.entity";
-import { ProductOrderMapEntity } from "../productOrderMap/productOrderMap.entity";
+import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
 
 export class ProductDTO {
   id: string;
@@ -17,7 +17,7 @@ export class ProductDTO {
   login: LoginEntity
   productSizeMaps: ProductSizeMapEntity[]
   productColorMaps: ProductColorMapEntity[]
-  productOrderMaps: ProductOrderMapEntity[]
+  orderProductsMap: OrderProductsMapEntity[]
   band:BandDTO
   category:CategoryDTO
 }

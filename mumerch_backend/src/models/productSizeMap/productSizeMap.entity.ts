@@ -9,6 +9,6 @@ export class ProductSizeMapEntity {
   id: string;
   @ManyToOne(()=>SizeEntity, size=>size.productSizeMaps, {cascade:true})
   size:SizeEntity
-  @ManyToOne(()=>ProductEntity, product=>product.productSizeMaps, {cascade:true})
+  @ManyToOne(()=>ProductEntity, product=>product.productSizesMap, {cascade:true})
   product:ProductEntity
 }

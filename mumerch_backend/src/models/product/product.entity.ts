@@ -8,7 +8,6 @@ import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.ent
 
 @Entity('Product')
 export class ProductEntity {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
@@ -27,10 +26,10 @@ export class ProductEntity {
   category:CategoryEntity
   @ManyToOne(()=>BandEntity, band=>band.products, {cascade:true})
   band:BandEntity
-  @OneToMany(()=>ProductSizeMapEntity, productSizeMaps=>productSizeMaps.size)
-  productSizeMaps:ProductSizeMapEntity[]
-  @OneToMany(()=>ProductColorMapEntity, productColorMaps=>productColorMaps.color)
-  productColorMaps:ProductColorMapEntity[]
+  @OneToMany(()=>ProductSizeMapEntity, productSizesMap=>productSizesMap.size)
+  productSizesMap:ProductSizeMapEntity[]
+  @OneToMany(()=>ProductColorMapEntity, productColorsMap=>productColorsMap.color)
+  productColorsMap:ProductColorMapEntity[]
   @OneToMany(()=>OrderProductsMapEntity, orderProductsMap=>orderProductsMap.order)
   orderProductsMap:OrderProductsMapEntity[]
 }

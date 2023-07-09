@@ -8,6 +8,6 @@ export class ProductColorMapEntity {
   id: string;
   @ManyToOne(()=>ColorEntity, color=>color.productColorMaps, {cascade:true})
   color:ColorEntity
-  @ManyToOne(()=>ProductEntity, product=>product.productColorMaps, {cascade:true})
+  @ManyToOne(()=>ProductEntity, product=>product.productColorsMap, {cascade:true})
   product:ProductEntity
 }

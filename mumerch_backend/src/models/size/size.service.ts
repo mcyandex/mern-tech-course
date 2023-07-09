@@ -29,6 +29,10 @@ export class SizeService {
     });
   }
 
+  getSizeById(id:string):Promise<SizeEntity>{
+    return this.sizeRepo.findOneBy({id:id});
+  }
+
   getSizeByUserId(uid:string, sid:string):Promise<SizeEntity>{
     return this.sizeRepo.findOne({
       where: {

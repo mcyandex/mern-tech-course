@@ -36,5 +36,5 @@ export class BandResgistrationDTO{
     
     image:string
     login:LoginDTO
-    bandManager:BandManagerDTO
+    //bandManager:BandManagerDTO
 }

@@ -15,9 +15,9 @@ export class UserProfileService {
   getUserProfileById(id: string): Promise<UserProfileDTO> {
     return this.userProfileRepo.findOneBy({ id: id })
   }
-  async updateUserProfile(qry: any, data: UserProfileDTO): Promise<UserProfileDTO> {
-    await this.userProfileRepo.update(qry.id, data)
-    return await this.userProfileRepo.findOneBy({ id: qry.id })
+  async updateUserProfile(id:string, data: UserProfileDTO): Promise<UserProfileDTO> {
+    await this.userProfileRepo.update(id, data)
+    return await this.userProfileRepo.findOneBy({ id: id })
   }
   deleteUserProfile(id: string): Promise<DeleteResult> {
     return this.userProfileRepo.delete(id);

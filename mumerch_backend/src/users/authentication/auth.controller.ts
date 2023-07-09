@@ -18,7 +18,6 @@ export class AuthController {
       const res = await this.loginService.login(data.password, user.password)
       if(res){
         session.user=user
-        console.log(session)
         return true
       }
       return new NotFoundException({message:"User Id or Password didnot match"})

@@ -38,7 +38,6 @@ export class LoginRegistrationDTO{
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
     name:string
 
-    @IsNotEmpty({message:"Usertype name must have a value"})
     userType:string
 
     @IsNotEmpty({message:"Email must have a value"})
@@ -74,7 +73,4 @@ export class ResetPassword{
     @IsNotEmpty({message:"New Password must have a value"})
     @Matches(/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/, {message:"Enter a proper Password with length 6 with 1 special character from this set [@,$,&,!,_,-]"})
     reTypePassword:string
-}
-export class Password{
-    password:string
 }

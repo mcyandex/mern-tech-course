@@ -2,7 +2,8 @@ import { Injectable, NotFoundException, Session, UnauthorizedException } from "@
 import { LoginEntity } from "./login.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { DeleteResult, ILike, Repository } from "typeorm"
-import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto"; import * as bcrypt from 'bcrypt';
+import { Login, LoginDTO, LoginRegistrationDTO, ResetPassword } from "./login.dto"; 
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class LoginService {
   constructor(
@@ -91,5 +92,10 @@ export class LoginService {
         sizes: true,
       },
     });
+  }
+  async getHassedPassword(password:any):Promise<string>{
+    const salt = await bcrypt.genSalt();
+    const hassedpassword = await bcrypt.hash(password, salt);
+    return hassedpassword
   }
 }

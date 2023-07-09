@@ -25,15 +25,8 @@ export class ColorService {
     }
     });
   }
-  getColorByUserId(id:string):Promise<ColorEntity>{
-    return this.colorRepo.findOne({
-      where: {
-        id:id
-      },
-      relations: {
-        login: true,
-    }
-    });
+  getColorById(id:string):Promise<ColorEntity>{
+    return this.colorRepo.findOneBy({id:id});
   }
   async getColorByName(name: string): Promise<ColorDTO[]> {
     let finalName = name + '%'

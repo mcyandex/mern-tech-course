@@ -6,18 +6,20 @@ import { LoginEntity } from "../login/login.entity";
 import { ProductSizeMapEntity } from "../productSizeMap/productSizeMap.entity";
 import { ProductColorMapEntity } from "../productColorMap/productColorMap.entity";
 import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
+import { CategoryEntity } from "../category/category.entity";
+import { BandEntity } from "../band/band.entity";
 
 export class ProductDTO {
   id: string;
-  name: string
-  price: number
-  image: string
-  revenuePercentage: number
-  quantity: number
-  login: LoginEntity
-  productSizeMaps: ProductSizeMapEntity[]
-  productColorMaps: ProductColorMapEntity[]
-  orderProductsMap: OrderProductsMapEntity[]
-  band:BandDTO
-  category:CategoryDTO
+  name:string
+  price:number
+  image:string
+  revenuePercentage:number
+  quantity:number
+  login:LoginEntity
+  category:CategoryEntity
+  band:BandEntity
+  productSizesMap:ProductSizeMapEntity[]
+  productColorsMap:ProductColorMapEntity[]
+  orderProductsMap:OrderProductsMapEntity[]
 }

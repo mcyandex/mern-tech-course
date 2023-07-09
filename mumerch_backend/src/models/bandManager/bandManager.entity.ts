@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
 import { BandEntity } from "../band/band.entity";
 
@@ -8,6 +8,7 @@ export class BandManagerEntity{
   id: string;
   @ManyToOne(()=>LoginEntity, login=>login.bandManagers, {cascade:true})
   login:LoginEntity
-  @OneToMany(()=>BandEntity, bands=>bands.bandManager)
-  bands:BandEntity
+  @OneToOne(()=>BandEntity, bands=>bands.bandManager, {cascade:true})
+  @JoinColumn()
+  band:BandEntity
 }

@@ -3,7 +3,7 @@ import { OrderEntity } from "../order/order.entity";
 import { ProductEntity } from "../product/product.entity";
 
 
-@Entity('ProductOrderMap')
+@Entity('OrderProductsMap')
 export class OrderProductsMapEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

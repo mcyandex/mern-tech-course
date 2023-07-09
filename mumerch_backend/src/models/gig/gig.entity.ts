@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
 import { GigManagerEntity } from "../gigManager/gigManager.entity";
 import { OrderEntity } from "../order/order.entity";
@@ -11,7 +11,7 @@ export class GigEntity{
   name: string;
   @ManyToOne(()=>LoginEntity, login=>login.bands, {cascade:true})
   login:LoginEntity
-  @ManyToOne(()=>GigManagerEntity, gigManager=>gigManager.gigs, {cascade:true})
+  @OneToOne(()=>GigManagerEntity, gigManager=>gigManager.gig)
   gigManager:GigManagerEntity
   @OneToMany(()=>OrderEntity, orders=>orders.gig)
   orders:OrderEntity[]

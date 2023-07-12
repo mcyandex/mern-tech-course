@@ -13,7 +13,7 @@ export class UserProfileDTO {
     @Matches(/^[A-Z][a-zA-Z ]+$/, { message: "Enter a proper mothername" })
     motherName: string
 
-    @IsDateString()
+    @IsNotEmpty({message:"Date of Birth must have a value"})
     dateOfBirth: Date
 
     @IsNotEmpty({ message: "Blood Group must have a value" })

@@ -24,7 +24,3 @@ export class GigDTO{
     gigManager:GigManagerEntity
     orders:OrderEntity[]
 }
-
-export class GigResgistrationDTO{
-    
-}

@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
-import { ProductDTO } from "../product/product.dto";
+import { ProductEntity } from "../product/product.entity";
 
 export class CategoryDTO {
   id: string
@@ -18,7 +18,7 @@ export class CategoryDTO {
 
 
   login: LoginDTO
-  products: ProductDTO[]
+  products: ProductEntity[]
 
 }
 

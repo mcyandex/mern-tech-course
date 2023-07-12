@@ -15,7 +15,7 @@ export class SizeService {
   getSizeWithUserInfo(): Promise<SizeEntity[]> {
     return this.sizeRepo.find({ relations: ['user'] });
   }
-  getSize(): Promise<SizeDTO[]> {
+  getSize(): Promise<SizeEntity[]> {
     return this.sizeRepo.find();
   }
   getAllSizeByUserId(id:string):Promise<SizeEntity>{
@@ -46,7 +46,7 @@ export class SizeService {
     });
   }
   
-  async getSizeByName(name: string): Promise<SizeDTO[]> {
+  async getSizeByName(name: string): Promise<SizeEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.sizeRepo.find({
@@ -56,7 +56,7 @@ export class SizeService {
     })
   }
 
-  async updateSize(id: string, data: SizeDTO): Promise<SizeDTO> {
+  async updateSize(id: string, data: SizeDTO): Promise<SizeEntity> {
     await this.sizeRepo.update(id, data)
     return await this.sizeRepo.findOneBy({ id: id })
   }
@@ -65,7 +65,7 @@ export class SizeService {
     return this.sizeRepo.delete(id);
   }
 
-  addSize(data: SizeDTO): Promise<SizeDTO> {
+  addSize(data: SizeDTO): Promise<SizeEntity> {
     return this.sizeRepo.save(data);
   }
 }

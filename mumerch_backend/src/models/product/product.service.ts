@@ -45,10 +45,23 @@ export class ProductService {
       throw new Error('Failed to retrieve the last Id');
     }
   }
-  getProduct(): Promise<ProductDTO[]> {
+  getProduct(): Promise<ProductEntity[]> {
     return this.productRepo.find();
   }
-  async getProductByName(name: string): Promise<ProductDTO[]> {
+  getProductWithDetails(): Promise<ProductEntity[]> {
+    return this.productRepo.find({
+      relations:{
+        productDetails:{
+          size:true,
+          color:true
+        }
+      }
+    });
+  }
+  getProductById(id:string): Promise<ProductEntity> {
+    return this.productRepo.findOneBy({id:id});
+  }
+  async getProductByName(name: string): Promise<ProductEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.productRepo.find({
@@ -57,14 +70,14 @@ export class ProductService {
       },
     })
   }
-  async updateProduct(id: string, data: ProductDTO): Promise<ProductDTO> {
+  async updateProduct(id: string, data: ProductEntity): Promise<ProductDTO> {
     await this.productRepo.update(id, data)
     return await this.productRepo.findOneBy({ id: id })
   }
   deleteProduct(id: string): Promise<DeleteResult> {
     return this.productRepo.delete(id);
   }
-  addProduct(data: ProductDTO): Promise<ProductDTO> {
+  addProduct(data: ProductDTO): Promise<ProductEntity> {
     return this.productRepo.save(data);
   }
 }

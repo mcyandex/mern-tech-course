@@ -7,19 +7,35 @@ import { OrderProductsMapEntity } from './orderProductsMap.entity';
 @Injectable()
 export class OrderProductsMapService {
   constructor(
-    @InjectRepository(OrderProductsMapEntity) private proOrderMapRepo: Repository<OrderProductsMapEntity>,
+    @InjectRepository(OrderProductsMapEntity) private orderProductsRepo: Repository<OrderProductsMapEntity>,
   ) { }
-  getProductOrderMap(): Promise<OrderProductsMapEntity[]> {
-    return this.proOrderMapRepo.find();
+  getOrderProductsMap(): Promise<OrderProductsMapEntity[]> {
+    return this.orderProductsRepo.find();
   }
-  async updateProductOrderMap(id: string, data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
-    await this.proOrderMapRepo.update(id, data)
-    return await this.proOrderMapRepo.findOneBy({ id: id })
+  async updateOrderProductsMap(id: string, data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
+    await this.orderProductsRepo.update(id, data)
+    return await this.orderProductsRepo.findOneBy({ id: id })
   }
-  deleteProductOrderMap(id: string): Promise<DeleteResult> {
-    return this.proOrderMapRepo.delete(id);
+  deleteOrderProductsMap(id: string): Promise<DeleteResult> {
+    return this.orderProductsRepo.delete(id);
   }
-  addProductOrderMap(data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
-    return this.proOrderMapRepo.save(data);
+  addOrderProductsMap(data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
+    return this.orderProductsRepo.save(data);
+  }
+  getOrderProductsMapWithReport():any{
+    return this.orderProductsRepo.find({
+      relations:{
+        order:{
+          gig:true
+        },
+        productDetails:{
+          size:true,
+          color:true,
+          product:{
+            band:true
+          }
+        }
+      }
+    });
   }
 }

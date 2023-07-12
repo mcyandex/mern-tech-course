@@ -10,13 +10,20 @@ export class OrderService {
     @InjectRepository(OrderEntity) private orderRepo: Repository<OrderEntity>,
   ) { }
 
-  async getOrderWithUserInfo(): Promise<OrderEntity[]> {
-    return await this.orderRepo.find({ relations: ['user'] });
+  getOrderWithUserInfo(): Promise<OrderEntity[]> {
+    return this.orderRepo.find({ relations: ['user'] });
   }
-  async getOrder(): Promise<OrderDTO[]> {
-    return await this.orderRepo.find();
+  getOrder(): Promise<OrderEntity[]> {
+    return this.orderRepo.find();
   }
-  async getOrderByName(name: string): Promise<OrderDTO[]> {
+  getOrderWithOrderProductsMap(): Promise<OrderEntity[]> {
+    return this.orderRepo.find({
+      relations:{
+        orderProducts:true
+      }
+    });
+  }
+  async getOrderByName(name: string): Promise<OrderEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.orderRepo.find({
@@ -25,14 +32,14 @@ export class OrderService {
       },
     })
   }
-  async updateOrder(id: string, data: OrderDTO): Promise<OrderDTO> {
+  async updateOrder(id: string, data: OrderDTO): Promise<OrderEntity> {
     await this.orderRepo.update(id, data)
     return await this.orderRepo.findOneBy({ id: id })
   }
   deleteOrder(id: string): Promise<DeleteResult> {
     return this.orderRepo.delete(id);
   }
-  addOrder(data: OrderDTO): Promise<OrderDTO> {
+  addOrder(data: OrderDTO): Promise<OrderEntity> {
     return this.orderRepo.save(data);
   }
 }

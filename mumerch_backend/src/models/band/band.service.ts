@@ -14,7 +14,7 @@ export class BandService {
     return this.bandRepo.find({relations: ['user']})
   }
 
-  async getBand(): Promise<BandDTO[]> {
+  async getBand(): Promise<BandEntity[]> {
     return await this.bandRepo.find();
   }
   getAllBandByUserId(id:string): Promise<BandEntity>{
@@ -37,7 +37,7 @@ export class BandService {
       }
     });
   }
-  async getBandByName(name: string): Promise<BandDTO[]> {
+  async getBandByName(name: string): Promise<BandEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.bandRepo.find({
@@ -46,7 +46,7 @@ export class BandService {
       },
     })
   }
-  async updateBand(id: string, data: BandDTO): Promise<BandDTO>{
+  async updateBand(id: string, data: BandDTO): Promise<BandEntity>{
     await this.bandRepo.update(id,data)
     return await this.bandRepo.findOneBy({id: id})
   }
@@ -55,7 +55,7 @@ export class BandService {
     return this.bandRepo.delete(id);
   }
 
-  addBand(data: BandDTO): Promise<BandDTO>{
+  addBand(data: BandDTO): Promise<BandEntity>{
     return this.bandRepo.save(data);
   }
 }

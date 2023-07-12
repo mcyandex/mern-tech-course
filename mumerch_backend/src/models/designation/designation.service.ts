@@ -14,7 +14,7 @@ export class DesignationService {
     return this.designationRepo.find({relations: ['user']})
   }
 
-  getDesignation(): Promise <DesignationDTO[]>{
+  getDesignation(): Promise <DesignationEntity[]>{
     return this.designationRepo.find();
   }
   getAllDesignationByUserId(id:string): Promise<DesignationEntity>{
@@ -37,7 +37,7 @@ export class DesignationService {
       }
     });
   }
-  async getDesignationByName(name: string): Promise<DesignationDTO[]> {
+  async getDesignationByName(name: string): Promise<DesignationEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.designationRepo.find({
@@ -46,7 +46,7 @@ export class DesignationService {
       },
     })
   }
-  async updateDesignation(id: string, data: DesignationDTO): Promise<DesignationDTO>{
+  async updateDesignation(id: string, data: DesignationDTO): Promise<DesignationEntity>{
     await this.designationRepo.update(id,data)
     return await this.designationRepo.findOneBy({id: id})
   }
@@ -55,7 +55,7 @@ export class DesignationService {
     return this.designationRepo.delete(id);
   }
 
-  addDesignation(data: DesignationDTO): Promise<DesignationDTO>{
+  addDesignation(data: DesignationDTO): Promise<DesignationEntity>{
     return this.designationRepo.save(data);
   }
 }

@@ -4,7 +4,7 @@ import { BandManagerModule } from './users/bandmanager/bandmanager.module';
 import { GigManagerModule } from './users/gigmanager/gigmanager.module';
 //import { EmployeeModule } from './users/employee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './users/authentication/auth.module';
+import { AuthModule } from './users/common/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
@@ -27,7 +27,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         secure: true,
         auth: {
           user: 'team.robust.dev@gmail.com',
-          pass: 'Contact Admin for this'
+          pass: 'vydfgsfgcbfjwetd'
         },
       }
     })

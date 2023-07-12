@@ -9,20 +9,20 @@ export class UserProfileService {
   constructor(
     @InjectRepository(UserProfileEntity) private userProfileRepo: Repository<UserProfileEntity>
   ) { }
-  getUserProfile(): Promise<UserProfileDTO[]> {
+  getUserProfile(): Promise<UserProfileEntity[]> {
     return this.userProfileRepo.find();
   }
-  getUserProfileById(id: string): Promise<UserProfileDTO> {
+  getUserProfileById(id: string): Promise<UserProfileEntity> {
     return this.userProfileRepo.findOneBy({ id: id })
   }
-  async updateUserProfile(id:string, data: UserProfileDTO): Promise<UserProfileDTO> {
+  async updateUserProfile(id:string, data: UserProfileDTO): Promise<UserProfileEntity> {
     await this.userProfileRepo.update(id, data)
     return await this.userProfileRepo.findOneBy({ id: id })
   }
   deleteUserProfile(id: string): Promise<DeleteResult> {
     return this.userProfileRepo.delete(id);
   }
-  addUserProfile(data: UserProfileDTO): Promise<UserProfileDTO> {
+  addUserProfile(data: UserProfileDTO): Promise<UserProfileEntity> {
     return this.userProfileRepo.save(data);
   }
 }

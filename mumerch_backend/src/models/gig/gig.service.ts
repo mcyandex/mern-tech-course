@@ -55,7 +55,7 @@ export class GigService {
     return this.gigRepo.delete(id);
   }
 
-  addGig(data: GigDTO): Promise<GigDTO>{
+  addGig(data: GigDTO): Promise<GigEntity>{
     return this.gigRepo.save(data);
   }
 }

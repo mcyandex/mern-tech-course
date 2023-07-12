@@ -1,38 +1,8 @@
-// import { Injectable } from "@nestjs/common";
-// import { CategoryDTO } from "./category.dto";
-// import { Console } from 'console';
-
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CategoryEntity } from "./category.entity";
 import { DeleteResult, ILike, Repository } from "typeorm";
 import { CategoryDTO } from "./category.dto";
-
-// @Injectable()
-// export class CategoryService{
-
-//     getCategory(data: CategoryDTO): string {
-//         return data.name;
-//       }
-
-//     updateCategory(data: CategoryDTO): string {
-//         return data.name;
-//       }
-
-//     addCategory(data: CategoryDTO): string {
-//         return data.name;
-//       }
-
-//     deleteCategory(id: string): string{
-//         console.log(id)
-//         return "A category section has been deleted";
-//       }
-
-
-
-// }
-
-
 
 @Injectable()
 export class CategoryService {
@@ -44,7 +14,7 @@ export class CategoryService {
     return this.categoryRepo.find({relations: ['user']})
   }
 
-  async getCategory(): Promise<CategoryDTO[]> {
+  async getCategory(): Promise<CategoryEntity[]> {
     return await this.categoryRepo.find();
   }
   getAllCategoryByUserId(id:string): Promise<CategoryEntity>{
@@ -67,7 +37,7 @@ export class CategoryService {
       }
     });
   }
-  async getCategoryByName(name: string): Promise<CategoryDTO[]> {
+  async getCategoryByName(name: string): Promise<CategoryEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return await this.categoryRepo.find({
@@ -76,7 +46,7 @@ export class CategoryService {
       },
     })
   }
-  async updateCategory(id: string, data: CategoryDTO): Promise<CategoryDTO>{
+  async updateCategory(id: string, data: CategoryDTO): Promise<CategoryEntity>{
     await this.categoryRepo.update(id,data)
     return await this.categoryRepo.findOneBy({id: id})
   }
@@ -85,7 +55,7 @@ export class CategoryService {
     return this.categoryRepo.delete(id);
   }
 
-  addCategory(data: CategoryDTO): Promise<CategoryDTO>{
+  addCategory(data: CategoryDTO): Promise<CategoryEntity>{
     return this.categoryRepo.save(data);
   }
 }

@@ -1,25 +1,53 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, Repository } from "typeorm";
+import { GigManagerEntity } from "./gigManager.entity";
 import { GigManagerDTO } from "./gigManager.dto";
 
 @Injectable()
 export class GigManagerService {
-  getGigManager(): GigManagerDTO {
-    return {id:"10",gigId:"g-100",userId:"u-100"};
+  constructor(
+    @InjectRepository(GigManagerEntity) private gigManagerRepo: Repository<GigManagerEntity>,
+  ){}
+
+  getGigManagerWithUserInfo(): Promise<GigManagerEntity[]>{
+    return this.gigManagerRepo.find({relations: ['user']})
   }
 
-  getGigManagerById(id: string): GigManagerDTO{
-    return {id:"10",gigId:"g-100",userId:"u-100"};
+  async getGigManager(): Promise<GigManagerEntity[]> {
+    return await this.gigManagerRepo.find();
+  }
+  getAllGigManagerByUserId(id:string): Promise<GigManagerEntity>{
+    return this.gigManagerRepo.findOne({
+        where:{
+          login: {id: id},
+        },
+        relations: {
+          login: true,
+        }
+      });
+  }
+  getGigManagerByUserId(id: string): Promise<GigManagerEntity>{
+    return this.gigManagerRepo.findOne({
+      where:{
+        id: id
+      },
+      relations:{
+        login: true,
+      }
+    });
   }
 
-  updateGigManager(data: GigManagerDTO): string{
-    return data.gigId+" "+data.userId;
+  async updateGigManager(id: string, data: GigManagerDTO): Promise<GigManagerEntity>{
+    await this.gigManagerRepo.update(id,data)
+    return await this.gigManagerRepo.findOneBy({id: id})
   }
 
-  deleteGigManager(id: string): string{
-    return "-- deleted -- gigm";
+  deleteGigManager(id: string): Promise<DeleteResult>{
+    return this.gigManagerRepo.delete(id);
   }
 
-  addGigManager(data: GigManagerDTO): string{
-    return data.gigId+" "+data.userId;
+  addGigManager(data: GigManagerDTO): Promise<GigManagerEntity>{
+    return this.gigManagerRepo.save(data);
   }
 }

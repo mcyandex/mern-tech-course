@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
+import { OrderEntity } from "../order/order.entity";
 
 @Entity('Customer')
 export class CustomerEntity{
@@ -11,10 +12,8 @@ export class CustomerEntity{
     email: string
     @Column()
     phoneNo: string
-    @Column()
-    address: string
-    @Column()
-    updatedAt: Date
     @ManyToOne(()=>LoginEntity, login=>login.customers, {cascade:true})
     login:LoginEntity
+    @OneToMany(() => OrderEntity, orders => orders.customer)
+    orders: OrderEntity[]
 }

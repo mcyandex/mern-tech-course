@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException, Session, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LoginEntity } from "./login.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { DeleteResult, ILike, Repository } from "typeorm"
 import { LoginDTO, LoginRegistrationDTO } from "./login.dto"; 
 import * as bcrypt from 'bcrypt';
-import { userInfo } from "os";
+
 @Injectable()
 export class LoginService {
   constructor(
@@ -46,7 +46,7 @@ export class LoginService {
       throw new Error('Failed to retrieve the last Id');
     }
   }
-  getUserLoginInfo(userType:string): Promise<LoginDTO[]> {
+  getUserLoginInfoByUserType(userType:string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where:{
         userType:userType
@@ -56,7 +56,7 @@ export class LoginService {
       // }
     });
   }
-  getUserLoginInfoByName(name: string, userType:string): Promise<LoginDTO[]> {
+  getUserLoginInfoByName(name: string, userType:string): Promise<LoginEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
     return this.loginRepo.find({
@@ -66,20 +66,20 @@ export class LoginService {
       },
     })
   }
-  getUserLoginInfoById(id: string): Promise<LoginDTO> {
+  getUserLoginInfoById(id: string): Promise<LoginEntity> {
     return this.loginRepo.findOneBy({ id: id })
   }
-  async updateUserLoginInfo(id: string, data: LoginDTO): Promise<LoginDTO> {
+  async updateUserLoginInfo(id: string, data: LoginDTO): Promise<LoginEntity> {
     await this.loginRepo.update(id, data)
     return await this.loginRepo.findOneBy({ id: id })
   }
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
     return this.loginRepo.delete(id);
   }
-  addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginRegistrationDTO> {
+  addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginEntity> {
     return this.loginRepo.save(data);
   }
-  async login(inputPassword:string, userPassword:string) {
+  async login(inputPassword:string, userPassword:string): Promise<boolean> {
     const match: boolean = await bcrypt.compare(inputPassword, userPassword);
     if (match) {
       return true

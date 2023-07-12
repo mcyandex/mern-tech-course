@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
+import { LoginEntity } from "../login/login.entity";
 
 
 export class ColorDTO{
@@ -11,7 +12,7 @@ export class ColorDTO{
 
     id: string;
     colorCode: string;
-    login:LoginDTO
+    login:LoginEntity
 }
 
 export class ColorRegistrationDTO{
@@ -20,5 +21,5 @@ export class ColorRegistrationDTO{
     @Matches(/^[a-zA-Z]+$/, {message:"Enter a proper color name"})
     name: string;
     
-    login:LoginDTO
+    login:LoginEntity
 }

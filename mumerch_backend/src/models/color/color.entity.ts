@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
-import { ProductColorMapEntity } from "../productColorMap/productColorMap.entity";
+import { ProductDetailsEntity } from "../productDetails/productDetails.entity";
 
 @Entity('Color')
 export class ColorEntity {
@@ -12,6 +12,6 @@ export class ColorEntity {
   colorCode: string
   @ManyToOne(()=>LoginEntity, login=>login.colors, {cascade:true})
   login:LoginEntity
-  @OneToMany(()=>ProductColorMapEntity, productColorMaps=>productColorMaps.color)
-  productColorMaps:ProductColorMapEntity[]
+  @OneToMany(()=>ProductDetailsEntity, productDetails=>productDetails.color)
+  productDetails:ProductDetailsEntity[]
 }

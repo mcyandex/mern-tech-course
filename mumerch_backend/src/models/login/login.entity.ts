@@ -10,6 +10,7 @@ import { CategoryEntity } from "../category/category.entity";
 import { CustomerEntity } from "../customer/customer.entity";
 import { DesignationEntity } from "../designation/designation.entity";
 import { GigManagerEntity } from "../gigManager/gigManager.entity";
+import { TokenEntity } from "../token/token.entity";
 
 @Entity('Login')
 export class LoginEntity {
@@ -18,7 +19,7 @@ export class LoginEntity {
   id: string;
   @Column()
   name:string
-  @Column({select:false})
+  @Column()
   password: string
   @Column()
   userType: string
@@ -32,6 +33,8 @@ export class LoginEntity {
   designation: string
   @OneToOne(() => UserProfileEntity, user => user.login)
   user: UserProfileEntity;
+  @OneToOne(() => TokenEntity, token => token.login)
+  token: TokenEntity;
   @OneToMany(()=>SizeEntity, sizes=>sizes.login)
   sizes:SizeEntity[]
   @OneToMany(()=>ColorEntity, colors=>colors.login)

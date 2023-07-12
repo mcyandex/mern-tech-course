@@ -74,3 +74,10 @@ export class ChangePassword{
     @Matches(/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/, {message:"Enter a proper Password with length 6 with 1 special character from this set [@,$,&,!,_,-]"})
     reTypePassword:string
 }
+
+export class ForgetPassword{
+    @IsNotEmpty({message:"New Password must have a value"})
+    @Matches(/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/, {message:"Enter a proper Password with length 6 with 1 special character from this set [@,$,&,!,_,-]"})
+    password:string
+    token:string
+}

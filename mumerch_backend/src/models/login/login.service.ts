@@ -107,4 +107,11 @@ export class LoginService {
     const hassedpassword = await bcrypt.hash(password, salt);
     return hassedpassword
   }
+  getUserTypeCount(userType:string):Promise<number>{
+    return this.loginRepo.count({
+      where:{
+        userType:userType
+      }
+    })
+  }
 }

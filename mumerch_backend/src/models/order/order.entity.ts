@@ -9,8 +9,6 @@ export class OrderEntity {
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
-  name: string
   @Column({nullable:true})
   date: Date
   @ManyToOne(() => LoginEntity, login => login.orders, { cascade: true, nullable:true })

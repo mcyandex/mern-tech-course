@@ -1,6 +1,7 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxDate, Validate } from "class-validator";
 import { ServerResponse } from "http";
 import { LoginDTO } from "../login/login.dto";
+import { AgeValidation } from "src/custom_auth/ageValidation";
 
 export class UserProfileDTO {
     @IsNotEmpty({ message: "Father's Name must have a value" })
@@ -12,8 +13,9 @@ export class UserProfileDTO {
     @IsString({ message: "motherName must have a string" })
     @Matches(/^[A-Z][a-zA-Z ]+$/, { message: "Enter a proper mothername" })
     motherName: string
-
-    @IsNotEmpty({message:"Date of Birth must have a value"})
+    
+    @IsDateString({},{message:"Date must in ISO Format: YYYY-MM-DD"})
+    @Validate(AgeValidation)
     dateOfBirth: Date
 
     @IsNotEmpty({ message: "Blood Group must have a value" })

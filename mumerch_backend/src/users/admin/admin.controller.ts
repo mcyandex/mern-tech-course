@@ -7,7 +7,7 @@ import { ColorDTO } from "src/models/color/color.dto";
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
-import { ChangePassword, Login, LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
+import { ChangePassword, LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
@@ -15,7 +15,6 @@ import { ProductDTO, ProductRegistrationDTO } from "src/models/product/product.d
 import { ProductService } from "src/models/product/product.service";
 import { OrderService } from "src/models/order/order.service";
 import { OrderDTO } from "src/models/order/order.dto";
-import { AuthService } from "../common/auth.service";
 import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { ColorService } from "src/models/color/color.service";
@@ -37,7 +36,8 @@ import { ColorEntity } from "src/models/color/color.entity";
 import { BandEntity } from "src/models/band/band.entity";
 import { GigEntity } from "src/models/gig/gig.entity";
 import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto";
-import session from "express-session";
+import { AuthService } from "src/auth/auth.service";
+import { CommonService } from "src/common/common.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -55,7 +55,8 @@ export class AdminController {
     private readonly orderService: OrderService,
     private readonly orderProductsMapService: OrderProductsMapService,
     private readonly productDetailsService: ProductDetailsService,
-    private readonly customerService: CustomerService
+    private readonly customerService: CustomerService,
+    private readonly commonService: CommonService
   ) { }
 
   //Change Password
@@ -678,13 +679,15 @@ export class AdminController {
         newData.orderPrice = item.productDetails.product.price
         newData.orderQuantity = item.orderQuantity
         newData.productDetails = item.productDetails
-        await this.orderProductsMapService.addOrderProductsMap(newData)
+        const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
         if (newData != null) {
           const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
           const newQuantity = exProduct.quantity - item.orderQuantity
           exProduct.quantity = newQuantity
           const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
           if (newProduct != null) {
+            const html = await this.commonService.invoiceStructure(order.id)
+            await this.commonService.generatePdf(html,'invoice',order.id)
             return order
           }
           else {

@@ -1,7 +1,6 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxDate, Validate } from "class-validator";
-import { ServerResponse } from "http";
+import { IsDateString, IsNotEmpty, IsString, Matches, Validate } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
-import { AgeValidation } from "src/custom_auth/ageValidation";
+import { AgeValidation } from "src/custom_validation/ageValidation";
 
 export class UserProfileDTO {
     @IsNotEmpty({ message: "Father's Name must have a value" })

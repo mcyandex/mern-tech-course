@@ -15,7 +15,7 @@ export class AuthService {
       to: email,
       subject: subject,
       html:
-      `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
+        `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
       <p><b>Your login info:</b></p>
       <hr>
       <table>
@@ -33,7 +33,7 @@ export class AuthService {
     return true
   }
 
-  async sendForgetPasswordMail(data:TokenEntity): Promise<boolean> {
+  async sendForgetPasswordMail(data: TokenEntity): Promise<boolean> {
     const subject = "Password recovery code for MuMerch"
     const url = `http://localhost:3000/auth/checkforgetpasswordcode/${data.login.id}`
     await this.mailerService.sendMail({
@@ -51,20 +51,4 @@ export class AuthService {
     })
     return true
   }
-  // generatePDF(html: string): void {
-  //   const doc = new PDFDocument();
-  //   const stream = fs.createWriteStream('./generated.pdf');
-
-  //   doc.pipe(stream);
-  //   doc.font('Courier', 12);
-  //   const separator = '™'; // Custom separator
-  //   const separatorWidth = doc.widthOfString(separator)
-  //   // Add your PDF content here
-  //   doc.text(html);
-
-  //   // You can also add HTML content using `doc.html()`
-  //   //doc.html(html);
-
-  //   doc.end();
-  // }
 }

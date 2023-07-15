@@ -2,13 +2,12 @@ import { Module } from '@nestjs/common';
 import { AdminModule } from './users/admin/admin.module';
 import { BandManagerModule } from './users/bandmanager/bandmanager.module';
 import { GigManagerModule } from './users/gigmanager/gigmanager.module';
-//import { EmployeeModule } from './users/employee/employee.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './users/common/auth.module';
-import { MailerModule } from '@nestjs-modules/mailer';
+import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
-  imports: [AdminModule, BandManagerModule, GigManagerModule, AuthModule, TypeOrmModule.forRoot(
+  imports: [AdminModule, BandManagerModule, GigManagerModule, AuthModule, CommonModule, TypeOrmModule.forRoot(
     {
       type: 'postgres',
       host: 'localhost',
@@ -18,18 +17,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
       database: 'mumerch',
       autoLoadEntities: true,
       synchronize: true,
-    }),
-    MailerModule.forRoot({
-      transport: {
-        host: 'smtp.gmail.com',
-        port: 465,
-        ignoreTLS: true,
-        secure: true,
-        auth: {
-          user: 'team.robust.dev@gmail.com',
-          pass: 'vydfgsfgcbfjwetd'
-        },
-      }
     })
   ],
   controllers: [],

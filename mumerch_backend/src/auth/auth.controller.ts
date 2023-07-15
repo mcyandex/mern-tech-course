@@ -1,11 +1,11 @@
 import { Post, Body, Controller, ValidationPipe, UsePipes, Get, UseGuards, Session, UnauthorizedException, NotFoundException, Param, RequestTimeoutException, Patch } from "@nestjs/common"
 import { ForgetPassword, Login } from "src/models/login/login.dto"
 import { LoginService } from "src/models/login/login.service"
-import { SessionLoginGuard } from "./sessionLogin.gaurd"
-import { AuthService } from "./auth.service";
 import { TokenService } from "src/models/token/token.service";
 import { TokenEntity } from "src/models/token/token.entity";
 import { LoginEntity } from "src/models/login/login.entity";
+import { AuthService } from "./auth.service";
+import { SessionLoginGuard } from "./loginSession.gaurd";
 
 @Controller('auth')
 export class AuthController {
@@ -94,9 +94,4 @@ export class AuthController {
       return true
     }
   }
-  // @Get('generatepdf')
-  // generatePDF():any{
-  //   const text="Product\t\tSales\t\tUnits Sold\t\t% of Total Sales\t\tChange from Previous Month"
-  //   this.authService.generatePDF(text)
-  // }
 }

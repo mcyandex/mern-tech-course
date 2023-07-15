@@ -17,7 +17,6 @@ import { ColorEntity } from 'src/models/color/color.entity';
 import { ProductEntity } from 'src/models/product/product.entity';
 import { OrderEntity } from 'src/models/order/order.entity';
 import { OrderService } from 'src/models/order/order.service';
-import { AuthService } from '../common/auth.service';
 import { BandEntity } from 'src/models/band/band.entity';
 import { BandManagerEntity } from 'src/models/bandManager/bandManager.entity';
 import { BandManagerService } from 'src/models/bandManager/bandManager.service';
@@ -32,10 +31,12 @@ import { OrderProductsMapService } from 'src/models/orderProductsMap/orderProduc
 import { ProductDetailsEntity } from 'src/models/productDetails/productDetails.entity';
 import { ProductDetailsService } from 'src/models/productDetails/productDetails.service';
 import { TokenEntity } from 'src/models/token/token.entity';
+import { AuthService } from 'src/auth/auth.service';
+import { CommonService } from 'src/common/common.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, DesignationEntity,CustomerEntity, OrderProductsMapEntity, BandEntity, BandManagerEntity, CategoryEntity, OrderEntity, GigEntity, GigManagerEntity, ProductDetailsEntity, TokenEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, GigService, OrderProductsMapService, ProductDetailsService, CustomerService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, GigService, OrderProductsMapService, ProductDetailsService, CustomerService, CommonService ],
 })
 export class AdminModule {}

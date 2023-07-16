@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
 import { GigEntity } from "../gig/gig.entity";
 
@@ -9,5 +9,9 @@ export class GigManagerEntity{
   @ManyToOne(()=>LoginEntity, login=>login.gigManagers, {cascade:true})
   login:LoginEntity
   @OneToOne(()=>GigEntity, gig=>gig.gigManager, {cascade:true})
-  gig:GigEntity[]
+  @JoinColumn()
+  gig:GigEntity
+  @OneToOne(()=>LoginEntity, gigManager=>gigManager.gManager, {cascade:true})
+  @JoinColumn()
+  gigManager:GigEntity
 }

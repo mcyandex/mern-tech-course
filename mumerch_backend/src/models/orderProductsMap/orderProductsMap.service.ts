@@ -39,6 +39,29 @@ export class OrderProductsMapService {
       }
     });
   }
+  getOrderProductsMapWithReportByGigId(GigId:string):any{
+    return this.orderProductsRepo.find({
+      where:{
+        order:{
+          gig:{
+                id:GigId
+              }
+      }},
+      relations:{
+        order:{
+          gig:true
+        },
+        productDetails:{
+          size:true,
+          color:true,
+          product:{
+            band:true
+          }
+        }
+      }
+    });
+  }
+
 
   getOrderProductsMapWithReportEmp(id:string):any{
     return this.orderProductsRepo.find({
@@ -52,7 +75,25 @@ export class OrderProductsMapService {
       },
       relations:{
         order: true,
+      }
+    })
+  }
         
+  getOrderProductsMapWithReportByBandId(bandId: string):any{
+    return this.orderProductsRepo.find({
+      where:{
+          productDetails:{
+            product:{
+              band:{
+                id:bandId
+              }
+            }
+          }
+      },
+      relations:{
+        order:{
+          gig:true
+        },
         productDetails:{
           size:true,
           color:true,

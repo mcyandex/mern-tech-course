@@ -12,7 +12,7 @@ export class CustomerEntity{
     email: string
     @Column()
     phoneNo: string
-    @ManyToOne(()=>LoginEntity, login=>login.customers, {cascade:true})
+    @ManyToOne(()=>LoginEntity, login=>login.customers, {cascade:true, nullable:true})
     login:LoginEntity
     @OneToMany(() => OrderEntity, orders => orders.customer)
     orders: OrderEntity[]

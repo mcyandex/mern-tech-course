@@ -29,7 +29,7 @@ export class AuthController {
     return new UnauthorizedException({ message: "User not found" })
   }
 
-  @Patch('forgetpassword/:id')
+  @Get('forgetpassword/:id')
   async forgetPassword(@Param('id') id: string): Promise<string> {
     const data = await this.loginService.getUserLoginInfoById(id)
     if (data != null) {
@@ -52,7 +52,7 @@ export class AuthController {
       throw new NotFoundException({ message: "User not found" })
     }
   }
-  @Post('checkforgetpasswordcode/:id')
+  @Patch('checkforgetpasswordcode/:id')
   @UsePipes(new ValidationPipe())
   async checkForgetPasswordCode(@Body() data: ForgetPassword, @Param('id') id: string): Promise<any> {
     const res = await this.tokenService.getTokenByLoginId(id)

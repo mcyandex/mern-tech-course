@@ -13,11 +13,11 @@ export class ProductEntity {
   name:string
   @Column()
   price:number
-  @Column()
+  @Column({nullable:true})
   image:string
   @Column()
   revenuePercentage:number
-  @ManyToOne(()=>LoginEntity, login=>login.products, {cascade:true})
+  @ManyToOne(()=>LoginEntity, login=>login.products, {cascade:true, nullable:true})
   login:LoginEntity
   @ManyToOne(()=>CategoryEntity, category=>category.products, {cascade:true})
   category:CategoryEntity

@@ -36,6 +36,45 @@ export class CustomerService{
       }
     });
   }
+  getCustomerByGigId(GigId: string): Promise<CustomerEntity>{
+    return this.customerRepo.findOne({
+      where:{
+        orders:{
+          gig:{
+                id:GigId
+              }
+      }},
+      relations:{
+        orders:{
+          gig: true
+      }}
+    });
+  }
+  getCustomerByBandId(bandId: string): Promise<CustomerEntity>{
+    return this.customerRepo.findOne({
+      where:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:{
+                id:bandId
+              }
+            }
+          }
+      }}},
+      relations:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:true
+
+              
+            }
+          }
+      }}
+      }
+    });
+  }
 
   async updateCustomer(id: string, data: CustomerDTO): Promise<CustomerEntity>{
     await this.customerRepo.update(id,data)

@@ -16,6 +16,19 @@ export class OrderService {
   getOrder(): Promise<OrderEntity[]> {
     return this.orderRepo.find();
   }
+  getOrderById(id:string):Promise<OrderEntity>{
+    return this.orderRepo.findOne({
+      where:{
+        id:id
+      },
+      relations:{
+        orderProducts:{
+          productDetails:true
+        },
+        customer:true
+      }
+    })
+  }
   getOrderWithOrderProductsMap(): Promise<OrderEntity[]> {
     return this.orderRepo.find({
       relations:{
@@ -23,6 +36,7 @@ export class OrderService {
       }
     });
   }
+
   async getOrderByName(name: string): Promise<OrderEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
@@ -55,6 +69,7 @@ export class OrderService {
       }
     }});
   }
+
   async updateOrder(id: string, data: OrderDTO): Promise<OrderEntity> {
     await this.orderRepo.update(id, data)
     return await this.orderRepo.findOneBy({ id: id })

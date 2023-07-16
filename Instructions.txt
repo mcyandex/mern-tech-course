@@ -11,6 +11,7 @@
 # npm i express-session
 # npm i -D @types/express-session
 # npm install --save @nestjs-modules/mailer nodemailer ---> for enabling Mail service in backend
+# npm i better-html-pdf  ---> to generate html to pdf
 
 
 

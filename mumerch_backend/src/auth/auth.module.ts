@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoginEntity } from "src/models/login/login.entity";
-import { LoginService } from "src/models/login/login.service";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
 import { TokenEntity } from "src/models/token/token.entity";
+import { AuthController } from "./auth.controller";
+import { LoginService } from "src/models/login/login.service";
+import { AuthService } from "./auth.service";
 import { TokenService } from "src/models/token/token.service";
 
 @Module({

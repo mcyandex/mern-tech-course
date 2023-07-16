@@ -74,4 +74,8 @@ export class CustomerService{
   addCustomer(data: CustomerDTO): Promise<CustomerEntity>{
     return this.customerRepo.save(data);
   }
+
+  getCount():any{
+    return this.customerRepo.count()
+  }
 }

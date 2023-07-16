@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException, Res, Query } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -7,7 +7,7 @@ import { ColorDTO } from "src/models/color/color.dto";
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
-import { ChangePassword, Login, LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
+import { ChangePassword, LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
@@ -15,7 +15,6 @@ import { ProductDTO, ProductRegistrationDTO } from "src/models/product/product.d
 import { ProductService } from "src/models/product/product.service";
 import { OrderService } from "src/models/order/order.service";
 import { OrderDTO } from "src/models/order/order.dto";
-import { AuthService } from "../common/auth.service";
 import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { ColorService } from "src/models/color/color.service";
@@ -36,6 +35,9 @@ import { SizeEntity } from "src/models/size/size.entity";
 import { ColorEntity } from "src/models/color/color.entity";
 import { BandEntity } from "src/models/band/band.entity";
 import { GigEntity } from "src/models/gig/gig.entity";
+import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto";
+import { AuthService } from "src/auth/auth.service";
+import { CommonService } from "src/common/common.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -53,7 +55,8 @@ export class AdminController {
     private readonly orderService: OrderService,
     private readonly orderProductsMapService: OrderProductsMapService,
     private readonly productDetailsService: ProductDetailsService,
-    private readonly customerService: CustomerService
+    private readonly customerService: CustomerService,
+    private readonly commonService: CommonService
   ) { }
 
   //Change Password
@@ -105,7 +108,7 @@ export class AdminController {
       throw new BadRequestException('Empty file');
     }
     const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
-    const destinationDir = './uploads/userprofile';
+    const destinationDir = './uploads/userProfile';
     const filePath = `${destinationDir}/${newFileName}`;
 
     data.image = newFileName
@@ -142,7 +145,7 @@ export class AdminController {
   async updateUserProfile(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: UserProfileDTO, @Session() session) {
     if (myfileobj != null || myfileobj.size > 0) {
       const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
-      const destinationDir = './uploads/userprofile';
+      const destinationDir = './uploads/userProfile';
       const filePath = `${destinationDir}/${newFileName}`;
       data.image = newFileName
       if (!fs.existsSync(destinationDir)) {
@@ -151,6 +154,30 @@ export class AdminController {
       await fs.promises.rename(myfileobj.path, filePath);
     }
     return this.userProfileService.updateUserProfile(session.user.id, data);
+  }
+
+  @Get('getuserprofile')
+  async GetUserProfile(@Session() session) {
+    const data = await this.userProfileService.getUserProfileByLoginInfo(session.user.id)
+    if (data == null) {
+      throw new NotFoundException({ message: "No user profile created yet" })
+    }
+    else {
+      const url = 'localhost:3000/admin/getimage/?type=userProfile&image='
+      data.image = url + data.image
+      return data
+    }
+  }
+
+  @Get('getimage')
+  getProfilePic(@Query() qry: any, @Res() res) {
+    const image = qry.image
+    const path = `./uploads/${qry.type}/`
+    const fullpath = path + image
+    if (!fs.existsSync(fullpath)) {
+      throw new NotFoundException('Image not found');
+    }
+    res.sendFile(image, { root: path })
   }
 
   //!!---UserManagement CRUD Part---!!
@@ -533,37 +560,15 @@ export class AdminController {
       throw new BadRequestException({ message: "Please fill all the fields correctly" })
     }
   }
-  // @Put('updateProduct/:id')
-  // @UsePipes(new ValidationPipe())
-  // async updateProduct(@Param('id') id: string, @Body() data: ProductDTO, @Session() session): Promise<ProductDTO> {
-  //   data.login = session.user.id
-  //   const product = await this.productService.updateProduct(id,data)
-  //   if(product!=null){
-  //     for(const item of data.productColorsMap){
-  //       const res = await this.colorService.getColorById(item.id)
-  //       if(res!=null){
-  //         const newData = new ProductColorMapEntity()
-  //         newData.color = res
-  //         newData.product = product
-  //         await this.productColorMapService.addProductColorMap(newData)
-  //       }
-  //     }
-  //     for(const item of data.productSizesMap){
-  //       const res = await this.sizeService.getSizeById(item.id)
-  //       if(res!=null){
-  //         const newData = new ProductSizeMapEntity()
-  //         newData.size = res
-  //         newData.product = product
-  //         await this.productSizeMapService.addProductSizeMap(newData)
-  //       }
-  //     }
-  //     return product
-  //   }
-  //   throw new NotFoundException({message:"Proper data for product not found"})
-  // }
+  @Put('updateProduct/:id')
+  @UsePipes(new ValidationPipe())
+  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session): Promise<ProductDetailsDTO> {
+    data.product.login = session.user.id
+    return this.productDetailsService.updateProductDetails(id, data)
+  }
   @Delete('deleteProduct/:id')
   async deleteProduct(@Param('id') id: string): Promise<string> {
-    const res = await this.productService.deleteProduct(id);
+    const res = await this.productDetailsService.deleteProductDetails(id);
     if (res['affected'] > 0) {
       return "ID: " + id + " deleted successfully"
     }
@@ -674,13 +679,15 @@ export class AdminController {
         newData.orderPrice = item.productDetails.product.price
         newData.orderQuantity = item.orderQuantity
         newData.productDetails = item.productDetails
-        await this.orderProductsMapService.addOrderProductsMap(newData)
+        const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
         if (newData != null) {
           const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
           const newQuantity = exProduct.quantity - item.orderQuantity
           exProduct.quantity = newQuantity
           const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
           if (newProduct != null) {
+            const html = await this.commonService.invoiceStructure(order.id)
+            await this.commonService.generatePdf(html,'invoice',order.id)
             return order
           }
           else {
@@ -793,5 +800,25 @@ export class AdminController {
       const reportArray = Object.values(report);
       return reportArray;
     }
+  }
+  @Get('getadmincount')
+  getAdminCount() {
+    return this.loginService.getUserTypeCount("admin")
+  }
+  @Get('getemployeecount')
+  getEmpCount() {
+    return this.loginService.getUserTypeCount("employee")
+  } 
+  @Get('getbandmanagercount')
+  getBManagerCount() {
+    return this.loginService.getUserTypeCount("bandmanager")
+  } 
+  @Get('getgigmanagercount')
+  getGManagerCount() {
+    return this.loginService.getUserTypeCount("gigmanager")
+  }
+  @Get('getcustomercount')
+  getCustomerCount() {
+    return this.customerService.getCount()
   }
 }

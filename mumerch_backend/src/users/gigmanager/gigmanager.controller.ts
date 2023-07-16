@@ -163,7 +163,7 @@ export class GigManagerController
     const lastID = await this.gigManagerService.findLastUserGigManagerId();
     const password = Date.now() + '$' 
 
-    data.gigId = lastID
+    data.id = lastID
     return false
   }
 //3. Adding band

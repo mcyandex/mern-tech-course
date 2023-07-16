@@ -39,20 +39,7 @@ export class LoginDTO{
     password:string
 
     @IsNotEmpty()
-    designation:string
-
-    user: UserProfileEntity
-    token: TokenEntity
-    sizes:SizeEntity[]
-    colors:ColorEntity[]
-    products:ProductEntity[]
-    orders:OrderEntity[]
-    bands:BandEntity[]
-    bandManagers:BandManagerEntity[]
-    gigManagers:GigManagerEntity[]
-    catagories:CategoryEntity[]
-    customers:CustomerEntity[]
-    designations:DesignationEntity[]
+    designation:DesignationEntity
 }
 
 export class LoginRegistrationDTO{
@@ -70,13 +57,14 @@ export class LoginRegistrationDTO{
     email:string
 
     @IsNotEmpty({message:"Phone name must have a value"})
+    @IsString({message:"Phone name must have a string"})
     @Matches(/^01[6-9|3|4]\d{8}$/, {message:"Phone name can contain only letters and numbers"})
     phoneNumber:string
 
     password:string
 
     @IsNotEmpty()
-    designation:string
+    designation:DesignationEntity
 }
 
 export class Login{

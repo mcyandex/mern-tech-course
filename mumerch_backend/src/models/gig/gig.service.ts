@@ -17,6 +17,9 @@ export class GigService {
   async getGig(): Promise<GigEntity[]> {
     return await this.gigRepo.find();
   }
+  async getGigById(id:string): Promise<GigEntity> {
+    return await this.gigRepo.findOneBy({id:id});
+  }
   getAllGigByUserId(id:string): Promise<GigEntity>{
     return this.gigRepo.findOne({
         where:{

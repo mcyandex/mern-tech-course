@@ -7,7 +7,7 @@ export class DesignationDTO{
     name: string;
 
     id: string;
-    login:LoginDTO
+    login:LoginDTO[]
 }
 
 export class DesignationRegistrationDTO{

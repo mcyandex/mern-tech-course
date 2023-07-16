@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
 
 @Entity('Designation')
@@ -7,6 +7,6 @@ export class DesignationEntity{
   id: string;
   @Column()
   name: string;
-  @ManyToOne(()=>LoginEntity, login=>login.customers, {cascade:true})
-  login:LoginEntity
+  @OneToMany(()=>LoginEntity, login=>login.designation)
+  login:LoginEntity[]
 }

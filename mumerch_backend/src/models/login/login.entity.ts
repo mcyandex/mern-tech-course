@@ -29,8 +29,8 @@ export class LoginEntity {
   @Column()
   //@Column({unique:true})
   phoneNumber: string
-  @Column()
-  designation: string
+  @ManyToOne(()=>DesignationEntity, designation=>designation.login, {cascade:true})
+  designation:DesignationEntity
   @OneToOne(() => UserProfileEntity, user => user.login)
   user: UserProfileEntity;
   @OneToOne(() => BandManagerEntity, bManager => bManager.bandManager)
@@ -57,6 +57,4 @@ export class LoginEntity {
   catagories:CategoryEntity[]
   @OneToMany(()=>CustomerEntity, customers=>customers.login)
   customers:CustomerEntity[]
-  @OneToMany(()=>DesignationEntity, designations=>designations.login)
-  designations:DesignationEntity[]
 }

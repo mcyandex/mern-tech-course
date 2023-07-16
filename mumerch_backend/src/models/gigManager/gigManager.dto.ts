@@ -10,11 +10,3 @@ export class GigManagerDTO{
   @IsNotEmpty({ message: "Gig Manager Id required" })
   gigManager:LoginEntity
 }
-
-export class GigManagerRegistrationDTO{
-  id: string;
-  login:LoginEntity
-  @IsNotEmpty({ message: "Gig Manager Id required" })
-  gig:GigEntity
-  gigManager:LoginEntity
-}

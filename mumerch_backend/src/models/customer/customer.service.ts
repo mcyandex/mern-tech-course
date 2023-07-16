@@ -36,6 +36,20 @@ export class CustomerService{
       }
     });
   }
+  getCustomerByGigId(GigId: string): Promise<CustomerEntity>{
+    return this.customerRepo.findOne({
+      where:{
+        orders:{
+          gig:{
+                id:GigId
+              }
+      }},
+      relations:{
+        orders:{
+          gig: true
+      }}
+    });
+  }
   getCustomerByBandId(bandId: string): Promise<CustomerEntity>{
     return this.customerRepo.findOne({
       where:{

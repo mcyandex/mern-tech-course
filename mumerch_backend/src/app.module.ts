@@ -14,7 +14,7 @@ import {EmployeeModule} from './users/employee/employee.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '123',
+      password: '28042000',
       database: 'mumerch',
       autoLoadEntities: true,
       synchronize: true,

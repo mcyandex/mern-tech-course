@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsString, Matches, Validate } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsString, Matches, Validate } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
 import { AgeValidation } from "src/custom_validation/ageValidation";
 
@@ -22,9 +22,10 @@ export class UserProfileDTO {
     bloodGroup: string
 
     image: string
-
+    @IsNumber({},{message: "NID must be a number"})
     nidNo: string
-
+    @IsString({message: "Address must be a string"})
+    @IsNotEmpty({ message: "Address must have a value" })
     address: string
 
     id: string

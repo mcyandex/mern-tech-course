@@ -13,7 +13,7 @@ export class ProductEntity {
   name:string
   @Column()
   price:number
-  @Column()
+  @Column({nullable:true})
   image:string
   @Column()
   revenuePercentage:number

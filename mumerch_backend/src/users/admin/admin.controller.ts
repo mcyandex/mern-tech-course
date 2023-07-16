@@ -61,7 +61,6 @@ export class AdminController {
 
   //Change Password
   @Patch('changepassword')
-  @UseGuards()
   async resetPassword(@Body() data: ChangePassword, @Session() session) {
     if (data.password != data.oldPassword) {
       if (data.password == data.reTypePassword) {
@@ -523,18 +522,50 @@ export class AdminController {
     }
     return data;
   }
+  
   @Post('addProduct')
   @UsePipes(new ValidationPipe())
-  async addProduct(@Body() data: ProductRegistrationDTO, @Session() session): Promise<ProductDTO> {
+  @UseInterceptors(
+    FileInterceptor('myfile', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 8000000 },
+      storage: diskStorage({
+        destination: './temp/product',
+        filename: function (req, file, cb) {
+          let name = req.body.name;
+          console.log(name);
+          cb(null, `${name}.${file.originalname.split('.')[1]}`);
+        },
+      }),
+    })
+  )
+  async addProduct(@Body() data: ProductRegistrationDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<ProductDTO> {
     const proData = new ProductDTO()
     proData.login = session.user.id
     proData.name = data.name
     proData.price = data.price
-    proData.image = data.image
     proData.revenuePercentage = data.revenuePercentage
     proData.band = data.band
     proData.category = data.category
     proData.name = data.name
+    if (!myfileobj || myfileobj.size == 0) {
+      throw new BadRequestException('Empty file');
+    }
+    const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
+    const destinationDir = './uploads/product';
+    const filePath = `${destinationDir}/${newFileName}`;
+    proData.image = newFileName
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
+    }
+    await fs.promises.rename(myfileobj.path, filePath);
+
     const product = await this.productService.addProduct(proData)
     if (product != null) {
       for (const item of data.productDetails) {
@@ -551,6 +582,7 @@ export class AdminController {
           await this.productDetailsService.addProductDetails(newData)
         }
         else {
+          await this.productService.deleteProduct(product.id)
           throw new NotFoundException({ message: "Specific color or size not found" })
         }
       }
@@ -562,7 +594,37 @@ export class AdminController {
   }
   @Put('updateProduct/:id')
   @UsePipes(new ValidationPipe())
-  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session): Promise<ProductDetailsDTO> {
+  @UseInterceptors(
+    FileInterceptor('myfile', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 8000000 },
+      storage: diskStorage({
+        destination: './temp/band',
+        filename: function (req, file, cb) {
+          let name = req.body.name;
+          console.log(name);
+          cb(null, `${name}.${file.originalname.split('.')[1]}`);
+        },
+      }),
+    })
+  )
+  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<ProductDetailsDTO> {
+    if (myfileobj != null || myfileobj.size > 0) {
+      const newFileName = `${data.product.name}.${myfileobj.originalname.split('.')[1]}`;
+      const destinationDir = './uploads/userProfile';
+      const filePath = `${destinationDir}/${newFileName}`;
+      data.product.image = newFileName
+      if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+      }
+      await fs.promises.rename(myfileobj.path, filePath);
+    }
     data.product.login = session.user.id
     return this.productDetailsService.updateProductDetails(id, data)
   }
@@ -595,13 +657,74 @@ export class AdminController {
   }
   @Post('addBand')
   @UsePipes(new ValidationPipe())
-  async addBand(@Body() data: BandDTO, @Session() session): Promise<BandDTO> {
+  @UseInterceptors(
+    FileInterceptor('myfile', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 8000000 },
+      storage: diskStorage({
+        destination: './temp/band',
+        filename: function (req, file, cb) {
+          let name = req.body.name;
+          console.log(name);
+          cb(null, `${name}.${file.originalname.split('.')[1]}`);
+        },
+      }),
+    })
+  )
+  async addBand(@UploadedFile() myfileobj:Express.Multer.File,@Body() data: BandDTO, @Session() session): Promise<BandDTO> {
+    if (!myfileobj || myfileobj.size == 0) {
+      throw new BadRequestException('Empty file');
+    }
+    const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
+    const destinationDir = './uploads/band';
+    const filePath = `${destinationDir}/${newFileName}`;
+    data.image = newFileName
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
+    }
+    await fs.promises.rename(myfileobj.path, filePath);
     data.login = session.user.id
     return this.bandService.addBand(data);
   }
   @Put('updateBand/:id')
   @UsePipes(new ValidationPipe())
-  updateBand(@Param('id') id: string, @Body() data: BandDTO, @Session() session): Promise<BandDTO> {
+  @UseInterceptors(
+    FileInterceptor('myfile', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 8000000 },
+      storage: diskStorage({
+        destination: './temp/band',
+        filename: function (req, file, cb) {
+          let name = req.body.name;
+          console.log(name);
+          cb(null, `${name}.${file.originalname.split('.')[1]}`);
+        },
+      }),
+    })
+  )
+  async updateBand(@Param('id') id: string, @Body() data: BandDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<BandDTO> {
+    if (myfileobj != null || myfileobj.size > 0) {
+      const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
+      const destinationDir = './uploads/band';
+      const filePath = `${destinationDir}/${newFileName}`;
+      data.image = newFileName
+      if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+      }
+      await fs.promises.rename(myfileobj.path, filePath);
+    }
     data.login = session.user.id
     return this.bandService.updateBand(id, data);
   }
@@ -801,24 +924,14 @@ export class AdminController {
       return reportArray;
     }
   }
-  @Get('getadmincount')
-  getAdminCount() {
-    return this.loginService.getUserTypeCount("admin")
-  }
-  @Get('getemployeecount')
-  getEmpCount() {
-    return this.loginService.getUserTypeCount("employee")
-  } 
-  @Get('getbandmanagercount')
-  getBManagerCount() {
-    return this.loginService.getUserTypeCount("bandmanager")
-  } 
-  @Get('getgigmanagercount')
-  getGManagerCount() {
-    return this.loginService.getUserTypeCount("gigmanager")
-  }
-  @Get('getcustomercount')
-  getCustomerCount() {
-    return this.customerService.getCount()
+
+  @Get('getcount')
+  async getAllsCount(): Promise<object>{
+    const admin = await this.loginService.getUserTypeCount("admin")
+    const employee = await this.loginService.getUserTypeCount("employee")
+    const bandManager = await this.loginService.getUserTypeCount("bandmanager")
+    const gigManager = await this.loginService.getUserTypeCount("gigmanager")
+    const customer = await this.customerService.getCount()
+    return {admin, employee, bandManager, gigManager, customer}
   }
 }

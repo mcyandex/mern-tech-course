@@ -11,7 +11,7 @@ import { LoginService } from "src/models/login/login.service";
 import { GigDTO } from "src/models/gig/gig.dto";
 import { GigService } from "src/models/gig/gig.service";
 import { GigManagerService } from "src/models/gigManager/gigManager.service";
-import { GigManagerDTO, GigManagerRegistrationDTO } from "src/models/gigManager/gigManager.dto";
+import { GigManagerDTO } from "src/models/gigManager/gigManager.dto";
 import { BandService } from "src/models/band/band.service";
 import { BandDTO } from "src/models/band/band.dto";
 import { OrderEntity } from "src/models/order/order.entity";
@@ -19,9 +19,11 @@ import { OrderService } from "src/models/order/order.service";
 import { CustomerEntity } from "src/models/customer/customer.entity";
 import { CustomerService } from "src/models/customer/customer.service";
 import { OrderProductsMapService } from "src/models/orderProductsMap/orderProductsMap.service";
+import { SessionGigManagerGuard } from "./SessionGigGaurd.gaurd";
 
 
 @Controller('gigmanager')
+@UseGuards(SessionGigManagerGuard)
 export class GigManagerController 
 {
     constructor
@@ -159,7 +161,7 @@ export class GigManagerController
 //   } 
 @Post('addGigManager')
   @UsePipes(new ValidationPipe())
-  async addGigManager(@Body() data: GigManagerRegistrationDTO): Promise<boolean> {
+  async addGigManager(@Body() data: GigManagerDTO): Promise<boolean> {
     const lastID = await this.gigManagerService.findLastUserGigManagerId();
     const password = Date.now() + '$' 
 

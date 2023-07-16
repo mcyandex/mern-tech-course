@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, ILike, Repository } from 'typeorm';
 import { OrderProductsMapEntity } from './orderProductsMap.entity';
+import { orderProductsMapDTO } from './orderProductsMap.dto';
 
 
 @Injectable()
@@ -12,7 +13,7 @@ export class OrderProductsMapService {
   getOrderProductsMap(): Promise<OrderProductsMapEntity[]> {
     return this.orderProductsRepo.find();
   }
-  async updateOrderProductsMap(id: string, data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
+  async updateOrderProductsMap(id: string, data: orderProductsMapDTO): Promise<OrderProductsMapEntity> {
     await this.orderProductsRepo.update(id, data)
     return await this.orderProductsRepo.findOneBy({ id: id })
   }
@@ -38,6 +39,21 @@ export class OrderProductsMapService {
       }
     });
   }
+
+
+  getOrderProductsMapWithReportEmp(id:string):any{
+    return this.orderProductsRepo.find({
+      where : {
+        order:{
+          login :{
+            id:id,
+            userType: 'employee'
+          }
+        },
+      },
+      relations:{
+        order: true,
+        
   getOrderProductsMapWithReportByBandId(bandId: string):any{
     return this.orderProductsRepo.find({
       where:{

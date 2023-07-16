@@ -12,15 +12,4 @@ export class BandDTO {
   name: string;
   image: string;
   login: LoginEntity
-  @IsNotEmpty()
-  bandManager: BandManagerEntity
-}
-
-export class BandResgistrationDTO {
-  @IsNotEmpty({ message: "Name must have a value" })
-  @IsString({ message: "Name must have a string" })
-  @Matches(/^[A-Z][a-zA-Z ]+$/, { message: "Enter a proper name" })
-  name: string
-  image: string
-  login: LoginDTO
 }

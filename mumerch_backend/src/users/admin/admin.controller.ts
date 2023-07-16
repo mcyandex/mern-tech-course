@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException, Res, Query } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException, Res, Query, ConflictException, ParseIntPipe } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -43,6 +43,7 @@ import session from "express-session";
 import { BandManagerService } from "src/models/bandManager/bandManager.service";
 import { GigManagerEntity } from "src/models/gigManager/gigManager.entity";
 import { GigManagerService } from "src/models/gigManager/gigManager.service";
+import { BandManagerDTO } from "src/models/bandManager/bandManager.dto";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -148,7 +149,7 @@ export class AdminController {
       }),
     })
   )
-  async updateUserProfile(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: UserProfileDTO, @Session() session) {
+  async updateUserProfile(@UploadedFile() myfileobj: Express.Multer.File, @Body('nidNo', ParseIntPipe) data: UserProfileDTO, @Session() session) {
     if (myfileobj != null || myfileobj.size > 0) {
       const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
       const destinationDir = './uploads/userProfile';
@@ -342,13 +343,14 @@ export class AdminController {
   }
   @Put('updatebandmanager/:id')
   @UsePipes(new ValidationPipe())
-  updateBandManager(@Param('id') id: string, @Body() data: LoginRegistrationDTO): Promise<LoginDTO> {
-    data.userType = 'bandmanager'
-    return this.loginService.updateUserLoginInfo(id, data);
+  updateBandManager(@Param('id') id: string, @Body() data: BandManagerDTO, @Session() session): Promise<BandManagerEntity> {
+    data.login = session.user
+    data.bandManager.userType = 'bandmanager'
+    return this.bandMService.updateBandManager(id, data);
   }
   @Delete('deletebandmanager/:id')
   async deleteBandManager(@Param('id') id: string): Promise<string> {
-    const res = await this.loginService.deleteUserLoginInfo(id);
+    const res = await this.bandMService.deleteBandManager(id);
     if (res['affected'] > 0) {
       return "ID: " + id + " deleted successfully"
     }
@@ -705,19 +707,27 @@ export class AdminController {
     })
   )
   async addBand(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: BandDTO, @Session() session): Promise<BandDTO> {
-    if (!myfileobj || myfileobj.size == 0) {
-      throw new BadRequestException('Empty file');
+    try{
+      if (!myfileobj || myfileobj.size == 0) {
+        throw new BadRequestException('Empty file');
+      }
+      const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
+      const destinationDir = './uploads/band';
+      const filePath = `${destinationDir}/${newFileName}`;
+      data.image = newFileName
+      if (!fs.existsSync(destinationDir)) {
+        fs.mkdirSync(destinationDir, { recursive: true });
+      }
+      await fs.promises.rename(myfileobj.path, filePath);
+      data.login = session.user.id
+      return this.bandService.addBand(data);
     }
-    const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
-    const destinationDir = './uploads/band';
-    const filePath = `${destinationDir}/${newFileName}`;
-    data.image = newFileName
-    if (!fs.existsSync(destinationDir)) {
-      fs.mkdirSync(destinationDir, { recursive: true });
+    catch(err){
+      console.log(err);
+      if (err.constraint === 'UQ_5a0a8d304311b9f623885ea0601') { // '23505' is the Postgres error code for unique constraint violation
+        throw new ConflictException("Duplicate value violates unique constraint");
+      }
     }
-    await fs.promises.rename(myfileobj.path, filePath);
-    data.login = session.user.id
-    return this.bandService.addBand(data);
   }
   @Put('updateBand/:id')
   @UsePipes(new ValidationPipe())

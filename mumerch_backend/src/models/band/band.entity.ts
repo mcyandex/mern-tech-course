@@ -7,7 +7,7 @@ import { ProductEntity } from "../product/product.entity";
 export class BandEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({unique:true})
   name: string;
   @Column()
   image: string;

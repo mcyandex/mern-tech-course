@@ -36,6 +36,31 @@ export class CustomerService{
       }
     });
   }
+  getCustomerByBandId(bandId: string): Promise<CustomerEntity>{
+    return this.customerRepo.findOne({
+      where:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:{
+                id:bandId
+              }
+            }
+          }
+      }}},
+      relations:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:true
+
+              
+            }
+          }
+      }}
+      }
+    });
+  }
 
   async updateCustomer(id: string, data: CustomerDTO): Promise<CustomerEntity>{
     await this.customerRepo.update(id,data)

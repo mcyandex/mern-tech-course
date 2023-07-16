@@ -13,7 +13,7 @@ import { CommonModule } from './common/common.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1234',
+      password: '123',
       database: 'mumerch',
       autoLoadEntities: true,
       synchronize: true,

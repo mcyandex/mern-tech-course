@@ -8,7 +8,7 @@ export class ColorEntity {
   id: string;
   @Column()
   name:string
-  @Column()
+  @Column({nullable:true})
   colorCode: string
   @ManyToOne(()=>LoginEntity, login=>login.colors, {cascade:true})
   login:LoginEntity

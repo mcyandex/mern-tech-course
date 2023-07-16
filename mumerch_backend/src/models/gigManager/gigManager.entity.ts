@@ -13,5 +13,5 @@ export class GigManagerEntity{
   gig:GigEntity
   @OneToOne(()=>LoginEntity, gigManager=>gigManager.gManager, {cascade:true})
   @JoinColumn()
-  gigManager:GigEntity
+  gigManager:LoginEntity
 }

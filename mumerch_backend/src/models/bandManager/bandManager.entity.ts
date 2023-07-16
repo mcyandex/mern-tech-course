@@ -13,5 +13,5 @@ export class BandManagerEntity{
   band:BandEntity
   @OneToOne(()=>LoginEntity, bandManager=>bandManager.bManager, {cascade:true})
   @JoinColumn()
-  bandManager:BandEntity
+  bandManager:LoginEntity
 }

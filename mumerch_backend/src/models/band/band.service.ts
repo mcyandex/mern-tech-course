@@ -17,6 +17,11 @@ export class BandService {
   async getBand(): Promise<BandEntity[]> {
     return await this.bandRepo.find();
   }
+
+  async getBandById(id:string): Promise<BandEntity> {
+    return await this.bandRepo.findOneBy({id:id});
+  }
+
   getAllBandByUserId(id:string): Promise<BandEntity>{
     return this.bandRepo.findOne({
         where:{

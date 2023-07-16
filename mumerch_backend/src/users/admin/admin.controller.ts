@@ -38,6 +38,11 @@ import { GigEntity } from "src/models/gig/gig.entity";
 import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto";
 import { AuthService } from "src/auth/auth.service";
 import { CommonService } from "src/common/common.service";
+import { BandManagerEntity } from "src/models/bandManager/bandManager.entity";
+import session from "express-session";
+import { BandManagerService } from "src/models/bandManager/bandManager.service";
+import { GigManagerEntity } from "src/models/gigManager/gigManager.entity";
+import { GigManagerService } from "src/models/gigManager/gigManager.service";
 
 @Controller('admin')
 //@UseGuards(SessionAdminGuard)
@@ -56,7 +61,9 @@ export class AdminController {
     private readonly orderProductsMapService: OrderProductsMapService,
     private readonly productDetailsService: ProductDetailsService,
     private readonly customerService: CustomerService,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly bandMService:BandManagerService,
+    private readonly gigMService:GigManagerService
   ) { }
 
   //Change Password
@@ -289,25 +296,35 @@ export class AdminController {
   //3.Band Manager(login,band, bandManager)
   @Post('addbandmanager')
   @UsePipes(new ValidationPipe())
-  async addBandManager(@Body() data: LoginRegistrationDTO): Promise<boolean> {
-    const lastID = await this.loginService.findLastUserLoginId();
-    const password = Date.now() + '$' + data.phoneNumber
-
-    data.id = lastID
-    data.password = await this.loginService.getHassedPassword(password)
-    data.userType = 'bandmanager'
-    const res = this.loginService.addUserLoginInfo(data);
-
-    if (res != null) {
-      return this.authService.sendLoginInfoMail(lastID, password, data.email)
+  async addBandManager(@Body() data: LoginRegistrationDTO, bandId: string, @Session() session): Promise<boolean> {
+    const band = await this.bandService.getBandById(bandId)
+    if (band == null) {
+      throw new NotFoundException({ message: `No band found with ID: ${bandId}` })
     }
-    return false
+    else {
+      const lastID = await this.loginService.findLastUserLoginId();
+      const password = Date.now() + '$' + data.phoneNumber
+
+      data.id = lastID
+      data.password = await this.loginService.getHassedPassword(password)
+      data.userType = 'bandmanager'
+      const res = await this.loginService.addUserLoginInfo(data);
+
+      if (res != null) {
+        const bandM = new BandManagerEntity
+        bandM.band = band
+        bandM.bandManager = res
+        bandM.login = session.user.id
+        await this.bandMService.addBandManager(bandM)
+        return this.authService.sendLoginInfoMail(lastID, password, data.email)
+      }
+    }
   }
 
   @Get('getbandmanager/:name')
-  async getBandManagerByName(@Param('name') name: string): Promise<LoginEntity[]> {
+  async getBandManagerByName(@Param('name') name: string): Promise<BandManagerEntity[]> {
     const userType = 'bandmanager'
-    const data = await this.loginService.getUserLoginInfoByName(name, userType)
+    const data = await this.bandMService.getBandManagerByUserName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
     }
@@ -315,9 +332,9 @@ export class AdminController {
   }
 
   @Get('getbandmanager')
-  async getBandManager(): Promise<LoginEntity[]> {
+  async getBandManager(): Promise<BandManagerEntity[]> {
     const userType = 'bandmanager'
-    const data = await this.loginService.getUserLoginInfoByUserType(userType);
+    const data = await this.bandMService.getBandManagerWithUserInfo();
     if (data.length === 0) {
       throw new NotFoundException({ message: "No bandmanager created yet" })
     }
@@ -341,19 +358,29 @@ export class AdminController {
   //4.Gig Manager(login,gig,gigManager)-------->status:true(admin approval)
   @Post('addgigmanager')
   @UsePipes(new ValidationPipe())
-  async addGigManager(@Body() data: LoginRegistrationDTO): Promise<boolean> {
-    const lastID = await this.loginService.findLastUserLoginId();
-    const password = Date.now() + '$' + data.phoneNumber
-
-    data.id = lastID
-    data.password = await this.loginService.getHassedPassword(password)
-    data.userType = 'gigmanager'
-    const res = this.loginService.addUserLoginInfo(data);
-
-    if (res != null) {
-      return this.authService.sendLoginInfoMail(lastID, password, data.email)
+  async addGigManager(@Body() data: LoginRegistrationDTO, gigId:string, @Session() session): Promise<boolean> {
+    const gig = await this.gigService.getGigById(gigId)
+    if (gig == null) {
+      throw new NotFoundException({ message: `No gig found with ID: ${gigId}` })
     }
-    return false
+    else {
+      const lastID = await this.loginService.findLastUserLoginId();
+      const password = Date.now() + '$' + data.phoneNumber
+
+      data.id = lastID
+      data.password = await this.loginService.getHassedPassword(password)
+      data.userType = 'gigmanager'
+      const res = await this.loginService.addUserLoginInfo(data);
+
+      if (res != null) {
+        const gigM = new GigManagerEntity
+        gigM.gig = gig
+        gigM.gigManager = res
+        gigM.login = session.user.id
+        await this.gigMService.addGigManager(gigM)
+        return this.authService.sendLoginInfoMail(lastID, password, data.email)
+      }
+    }
   }
 
   @Get('getgigmanager/:name')
@@ -522,7 +549,7 @@ export class AdminController {
     }
     return data;
   }
-  
+
   @Post('addProduct')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
@@ -545,7 +572,7 @@ export class AdminController {
       }),
     })
   )
-  async addProduct(@Body() data: ProductRegistrationDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<ProductDTO> {
+  async addProduct(@Body() data: ProductRegistrationDTO, @Session() session, @UploadedFile() myfileobj: Express.Multer.File): Promise<ProductDTO> {
     const proData = new ProductDTO()
     proData.login = session.user.id
     proData.name = data.name
@@ -614,7 +641,7 @@ export class AdminController {
       }),
     })
   )
-  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<ProductDetailsDTO> {
+  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session, @UploadedFile() myfileobj: Express.Multer.File): Promise<ProductDetailsDTO> {
     if (myfileobj != null || myfileobj.size > 0) {
       const newFileName = `${data.product.name}.${myfileobj.originalname.split('.')[1]}`;
       const destinationDir = './uploads/userProfile';
@@ -677,7 +704,7 @@ export class AdminController {
       }),
     })
   )
-  async addBand(@UploadedFile() myfileobj:Express.Multer.File,@Body() data: BandDTO, @Session() session): Promise<BandDTO> {
+  async addBand(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: BandDTO, @Session() session): Promise<BandDTO> {
     if (!myfileobj || myfileobj.size == 0) {
       throw new BadRequestException('Empty file');
     }
@@ -714,7 +741,7 @@ export class AdminController {
       }),
     })
   )
-  async updateBand(@Param('id') id: string, @Body() data: BandDTO, @Session() session, @UploadedFile() myfileobj:Express.Multer.File): Promise<BandDTO> {
+  async updateBand(@Param('id') id: string, @Body() data: BandDTO, @Session() session, @UploadedFile() myfileobj: Express.Multer.File): Promise<BandDTO> {
     if (myfileobj != null || myfileobj.size > 0) {
       const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
       const destinationDir = './uploads/band';
@@ -810,7 +837,7 @@ export class AdminController {
           const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
           if (newProduct != null) {
             const html = await this.commonService.invoiceStructure(order.id)
-            await this.commonService.generatePdf(html,'invoice',order.id)
+            await this.commonService.generatePdf(html, 'invoice', order.id)
             return order
           }
           else {
@@ -926,12 +953,12 @@ export class AdminController {
   }
 
   @Get('getcount')
-  async getAllsCount(): Promise<object>{
+  async getAllsCount(): Promise<object> {
     const admin = await this.loginService.getUserTypeCount("admin")
     const employee = await this.loginService.getUserTypeCount("employee")
     const bandManager = await this.loginService.getUserTypeCount("bandmanager")
     const gigManager = await this.loginService.getUserTypeCount("gigmanager")
     const customer = await this.customerService.getCount()
-    return {admin, employee, bandManager, gigManager, customer}
+    return { admin, employee, bandManager, gigManager, customer }
   }
 }

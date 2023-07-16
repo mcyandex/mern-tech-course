@@ -8,7 +8,7 @@ export class GigManagerDTO{
   @IsNotEmpty({ message: "Gig Id required" })
   gig:GigEntity
   @IsNotEmpty({ message: "Gig Manager Id required" })
-  gigManager:GigEntity
+  gigManager:LoginEntity
 }
 
 export class GigManagerRegistrationDTO{
@@ -16,6 +16,5 @@ export class GigManagerRegistrationDTO{
   login:LoginEntity
   @IsNotEmpty({ message: "Gig Manager Id required" })
   gig:GigEntity
-  @IsNotEmpty({ message: "Gig Manager Id required" })
-  gigManager:GigEntity
+  gigManager:LoginEntity
 }

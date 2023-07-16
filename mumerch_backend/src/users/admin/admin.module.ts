@@ -33,10 +33,11 @@ import { ProductDetailsService } from 'src/models/productDetails/productDetails.
 import { TokenEntity } from 'src/models/token/token.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { CommonService } from 'src/common/common.service';
+import { GigManagerService } from 'src/models/gigManager/gigManager.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ LoginEntity, UserProfileEntity, SizeEntity, ColorEntity, ProductEntity, DesignationEntity,CustomerEntity, OrderProductsMapEntity, BandEntity, BandManagerEntity, CategoryEntity, OrderEntity, GigEntity, GigManagerEntity, ProductDetailsEntity, TokenEntity ])],
   controllers: [ AdminController ],
-  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, GigService, OrderProductsMapService, ProductDetailsService, CustomerService, CommonService ],
+  providers: [ UserProfileService, SizeService, LoginService, ProductService, DesignationService, BandService, CategoryService, ColorService, CustomerService, AuthService, OrderService, BandManagerService, GigService, OrderProductsMapService, ProductDetailsService, CustomerService, CommonService, GigManagerService ],
 })
 export class AdminModule {}

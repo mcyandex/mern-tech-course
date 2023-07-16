@@ -52,7 +52,7 @@ export class EmployeeController {
     private readonly orderProductsMapService: OrderProductsMapService,
     private readonly productDetailsService: ProductDetailsService,
     private readonly commonService: CommonService
-    ) { }
+  ) { }
 
   //UpdateProfile(loging,UserProfile)
   @Post('adduserprofile')
@@ -151,7 +151,7 @@ export class EmployeeController {
     }
     return new BadRequestException({ message: "Re-typed password didnot match" })
   }
-    //ForgetPassword(Login+Token)
+  //ForgetPassword(Login+Token)
 
   //!!---Product Management CRUD Part---!!
   //Product(Color,Size,Category,Product,,Band)-------->view
@@ -174,7 +174,7 @@ export class EmployeeController {
     return data;
   }
 
-   //2.-----------------------------Size-----------------------------
+  //2.-----------------------------Size-----------------------------
   @Get('getsize')
   async getSize(): Promise<any> {
     const data = await this.sizeService.getSize();
@@ -194,10 +194,10 @@ export class EmployeeController {
 
   //3.-----------------------------Category-----------------------
   @Get('getcategory')
-  async getCategory(): Promise<any>{
+  async getCategory(): Promise<any> {
     const data = await this.categoryService.getCategory();
-    if (data != undefined){
-      throw new NotFoundException({message: "No Category created yet"})
+    if (data != undefined) {
+      throw new NotFoundException({ message: "No Category created yet" })
     }
     return data
   }
@@ -280,24 +280,34 @@ export class EmployeeController {
     if (order != null) {
       for (const item of data.orderProducts) {
         const newData = new OrderProductsMapEntity()
-        newData.order = order
-        newData.orderPrice = item.productDetails.product.price
-        newData.orderQuantity = item.orderQuantity
-        newData.productDetails = item.productDetails
-        const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
-        if (newData != null) {
-          const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
-          const newQuantity = exProduct.quantity - item.orderQuantity
-          exProduct.quantity = newQuantity
-          const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
-          if (newProduct != null) {
-            const html = await this.commonService.invoiceStructure(order.id)
-            await this.commonService.generatePdf(html,'invoice',order.id)
-            return order
+
+        const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id);
+        if (exProduct.quantity > item.orderQuantity) {
+          newData.order = order
+          newData.orderPrice = item.productDetails.product.price
+          newData.orderQuantity = item.orderQuantity
+          newData.productDetails = item.productDetails
+
+          const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
+          if (newData != null) {
+            const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
+            const newQuantity = exProduct.quantity - item.orderQuantity
+            exProduct.quantity = newQuantity
+            const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
+            if (newProduct != null) {
+              const html = await this.commonService.invoiceStructure(order.id)
+              await this.commonService.generatePdf(html, 'invoice', order.id)
+              return order
+            }
+            else {
+              throw new NotFoundException({ message: "Something went wrong" })
+            }
           }
-          else {
-            throw new NotFoundException({ message: "Something went wrong" })
-          }
+
+        }
+        else {
+          await this.orderService.deleteOrder(order.id)
+          throw new BadRequestException({ message: "Order quantity exceeds product quantity." });
         }
       }
     }
@@ -335,7 +345,7 @@ export class EmployeeController {
     }
     return "ID: " + id + " couldnot delete, something went wrong"
   }
-  
+
   //!!---Reports(Performance)---!!
   //1.Sales Report ---------------------------------------- generate a PDF of total sales for loginId type = emp..
   @Get('salesreport')
@@ -367,7 +377,7 @@ export class EmployeeController {
       const reportArray = Object.values(report);
       return reportArray;
     }
-  } 
+  }
   //2.Monthly Revenue Report ------------------------- list of products sold in specific month for loginId type = emp.. 
   @Get('revenuereport')
   async getRevenueReport(@Session() session): Promise<any> {

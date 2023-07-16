@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsDate, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
 import { GigEntity } from "../gig/gig.entity";
 import { LoginEntity } from "../login/login.entity";
@@ -6,6 +6,8 @@ import { CustomerEntity } from "../customer/customer.entity";
 
 export class OrderDTO {
   id: string
+  @IsDate()
+  @IsNotEmpty({message:"Start date is required"})
   date: Date
   login: LoginEntity
   @IsNotEmpty({message:"Must need list of products details"})

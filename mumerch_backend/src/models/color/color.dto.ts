@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 import { LoginDTO } from "../login/login.dto";
 import { LoginEntity } from "../login/login.entity";
+import { ProductDetailsEntity } from "../productDetails/productDetails.entity";
 
 
 export class ColorDTO{
@@ -11,8 +12,12 @@ export class ColorDTO{
     name: string;
 
     id: string;
+
+    @IsNotEmpty({ message: "Color code must have a value" })
+    @Matches(/^#([A-Fa-f0-9]{6})$/, { message: "Enter a valid color code in hexadecimal format" })
     colorCode: string;
     login:LoginEntity
+    productDetails:ProductDetailsEntity[]
 }
 
 export class ColorRegistrationDTO{

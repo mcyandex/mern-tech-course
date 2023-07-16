@@ -70,6 +70,16 @@ export class ProductService {
       },
     })
   }
+  getProductByBandId(bandId:string): Promise<ProductEntity> {
+    return this.productRepo.findOne({
+      where:{
+        band:{id: bandId
+      }},
+      relations:{
+        band: true,
+      }
+    });
+  }
   async updateProduct(id: string, data: ProductEntity): Promise<ProductDTO> {
     await this.productRepo.update(id, data)
     return await this.productRepo.findOneBy({ id: id })

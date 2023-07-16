@@ -13,7 +13,7 @@ export class GigEntity{
   endDate:string
   @Column()
   name: string;
-  @ManyToOne(()=>LoginEntity, login=>login.bands, {cascade:true})
+  @ManyToOne(()=>LoginEntity, login=>login.bands, {cascade:true, nullable:true})
   login:LoginEntity
   @OneToOne(()=>GigManagerEntity, gigManager=>gigManager.gig)
   gigManager:GigManagerEntity

@@ -36,6 +36,40 @@ export class OrderService {
       }
     });
   }
+
+  async getOrderByName(name: string): Promise<OrderEntity[]> {
+    let finalName = name + '%'
+    console.log(finalName)
+    return await this.orderRepo.find({
+      where: {
+        name: ILike(`${finalName}`)
+      },
+    })
+  }
+  getOrderByBandId(bandId:string): Promise<OrderEntity> {
+    return this.orderRepo.findOne({
+      where:{
+        orderProducts:{
+          productDetails:{
+            product:{
+              band:{
+                id:bandId
+              }
+            }
+          }
+      }}, 
+      relations:{
+        orderProducts:{
+          productDetails:{
+            product:{
+              band:true
+              
+            }
+          }
+      }
+    }});
+  }
+
   async updateOrder(id: string, data: OrderDTO): Promise<OrderEntity> {
     await this.orderRepo.update(id, data)
     return await this.orderRepo.findOneBy({ id: id })

@@ -37,6 +37,31 @@ export class GigService {
       }
     });
   }
+  getGigByBandId(bandId: string): Promise<GigEntity>{
+    return this.gigRepo.findOne({
+      where:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:{
+                id:bandId
+              }
+            }
+          }
+      }}},
+      relations:{
+        orders:{orderProducts:{
+          productDetails:{
+            product:{
+              band:true
+
+              
+            }
+          }
+      }}
+      }
+    });
+  }
   async getGigByName(name: string): Promise<GigEntity[]> {
     let finalName = name + '%'
     console.log(finalName)

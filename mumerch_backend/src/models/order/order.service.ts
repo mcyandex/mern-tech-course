@@ -36,15 +36,15 @@ export class OrderService {
       }
     });
   }
-
-  async getOrderByName(name: string): Promise<OrderEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
-    return await this.orderRepo.find({
-      where: {
-        name: ILike(`${finalName}`)
-      },
-    })
+  getOrderByGigId(GigId:string): Promise<OrderEntity> {
+    return this.orderRepo.findOne({
+      where:{
+        gig:{id: GigId
+      }},
+      relations:{
+        gig: true,
+      }
+    });
   }
   getOrderByBandId(bandId:string): Promise<OrderEntity> {
     return this.orderRepo.findOne({

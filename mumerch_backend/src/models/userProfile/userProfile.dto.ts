@@ -22,7 +22,8 @@ export class UserProfileDTO {
     bloodGroup: string
 
     image: string
-    @IsNumber({},{message: "NID must be a number"})
+    @IsNotEmpty({message: "NID must have a value"})
+    @Matches(/^[0-9]{10}$/, { message: "NID must carry 10 digits" })
     nidNo: string
     @IsString({message: "Address must be a string"})
     @IsNotEmpty({ message: "Address must have a value" })

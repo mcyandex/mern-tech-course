@@ -7,6 +7,6 @@ export class DesignationEntity{
   id: string;
   @Column()
   name: string;
-  @OneToMany(()=>LoginEntity, login=>login.designation)
+  @OneToMany(()=>LoginEntity, login=>login.designation, {nullable:true})
   login:LoginEntity[]
 }

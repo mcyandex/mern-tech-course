@@ -36,7 +36,7 @@ import session from "express-session";
 
 
 @Controller('employee')
-@UseGuards(SessionEmployeeGuard)
+//@UseGuards(SessionEmployeeGuard)
 export class EmployeeController {
   constructor(
     private readonly loginService: LoginService,

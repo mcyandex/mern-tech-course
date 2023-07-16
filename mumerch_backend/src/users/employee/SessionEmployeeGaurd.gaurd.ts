@@ -7,6 +7,6 @@ export class SessionEmployeeGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
-        return request.session.user !== undefined && request.session.user.userType == 'Employee';
+        return request.session.user !== undefined && request.session.user.userType == 'employee';
     }
 }

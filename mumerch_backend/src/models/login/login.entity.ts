@@ -33,6 +33,10 @@ export class LoginEntity {
   designation: string
   @OneToOne(() => UserProfileEntity, user => user.login)
   user: UserProfileEntity;
+  @OneToOne(() => BandManagerEntity, bManager => bManager.bandManager)
+  bManager: TokenEntity;
+  @OneToOne(() => GigManagerEntity, gManager => gManager.gigManager)
+  gManager: TokenEntity;
   @OneToOne(() => TokenEntity, token => token.login)
   token: TokenEntity;
   @OneToMany(()=>SizeEntity, sizes=>sizes.login)

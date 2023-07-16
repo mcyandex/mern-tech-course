@@ -8,7 +8,10 @@ export class BandManagerEntity{
   id: string;
   @ManyToOne(()=>LoginEntity, login=>login.bandManagers, {cascade:true})
   login:LoginEntity
-  @OneToOne(()=>BandEntity, bands=>bands.bandManager, {cascade:true})
+  @OneToOne(()=>BandEntity, band=>band.bandManager, {cascade:true})
   @JoinColumn()
   band:BandEntity
+  @OneToOne(()=>LoginEntity, bandManager=>bandManager.bManager, {cascade:true})
+  @JoinColumn()
+  bandManager:BandEntity
 }

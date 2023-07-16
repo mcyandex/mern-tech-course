@@ -1,15 +1,21 @@
 import {IsNotEmpty} from "class-validator";
+import { LoginEntity } from "../login/login.entity";
+import { GigEntity } from "../gig/gig.entity";
 
 export class GigManagerDTO{
-    id: string
-    gigId:string
-    userId:string
+  id: string;
+  login:LoginEntity
+  @IsNotEmpty({ message: "Gig Id required" })
+  gig:GigEntity
+  @IsNotEmpty({ message: "Gig Manager Id required" })
+  gigManager:GigEntity
 }
 
 export class GigManagerRegistrationDTO{
-    @IsNotEmpty()
-    gigId:string
-    
-    @IsNotEmpty()
-    userId:string
+  id: string;
+  login:LoginEntity
+  @IsNotEmpty({ message: "Gig Manager Id required" })
+  gig:GigEntity
+  @IsNotEmpty({ message: "Gig Manager Id required" })
+  gigManager:GigEntity
 }

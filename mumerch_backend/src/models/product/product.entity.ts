@@ -17,7 +17,7 @@ export class ProductEntity {
   image:string
   @Column()
   revenuePercentage:number
-  @ManyToOne(()=>LoginEntity, login=>login.products, {cascade:true})
+  @ManyToOne(()=>LoginEntity, login=>login.products, {cascade:true, nullable:true})
   login:LoginEntity
   @ManyToOne(()=>CategoryEntity, category=>category.products, {cascade:true})
   category:CategoryEntity

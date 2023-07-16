@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, ILike, Repository } from "typeorm";
 import { GigManagerEntity } from "./gigManager.entity";
 import { GigManagerDTO } from "./gigManager.dto";
 
@@ -11,9 +11,26 @@ export class GigManagerService {
   ){}
 
   getGigManagerWithUserInfo(): Promise<GigManagerEntity[]>{
-    return this.gigManagerRepo.find({relations: ['user']})
+    return this.gigManagerRepo.find({relations: {
+      login:true,
+      gig:true
+    }})
   }
 
+  getGigManagerByUserName(name: string): Promise<GigManagerEntity[]> {
+    const finalName = name + '%'
+    return this.gigManagerRepo.find({
+      where: {
+        login: {
+          name: ILike(`${finalName}`)
+        },
+      },
+      relations: {
+        login: true,
+        gig: true
+      }
+    });
+  }
   async getGigManager(): Promise<GigManagerEntity[]> {
     return await this.gigManagerRepo.find();
   }

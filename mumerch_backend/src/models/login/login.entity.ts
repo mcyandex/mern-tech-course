@@ -23,11 +23,9 @@ export class LoginEntity {
   password: string
   @Column()
   userType: string
-  @Column()
-  //@Column({unique:true})
+  @Column({unique:true})
   email: string
-  @Column()
-  //@Column({unique:true})
+  @Column({unique:true})
   phoneNumber: string
   @ManyToOne(()=>DesignationEntity, designation=>designation.login, {cascade:true})
   designation:DesignationEntity

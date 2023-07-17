@@ -15,7 +15,7 @@ export class UserProfileEntity {
   bloodGroup: string
   @Column()
   image: string
-  @Column()
+  @Column({unique:true})
   nidNo: string
   @Column()
   address: string

@@ -7,7 +7,7 @@ export class SizeEntity {
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({unique:true})
   name:string
   @ManyToOne(()=>LoginEntity, login=>login.sizes, {cascade:true})
   login:LoginEntity

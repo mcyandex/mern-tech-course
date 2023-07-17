@@ -1,5 +1,4 @@
 import { LoginEntity } from "../login/login.entity";
-import { OrderProductsMapEntity } from "../orderProductsMap/orderProductsMap.entity";
 import { CategoryEntity } from "../category/category.entity";
 import { BandEntity } from "../band/band.entity";
 import { ProductDetailsEntity } from "../productDetails/productDetails.entity";
@@ -9,7 +8,6 @@ export class ProductDTO {
   id: string;
   name:string
   price:number
-  image:string
   revenuePercentage:number
   login:LoginEntity
   category:CategoryEntity
@@ -20,7 +18,6 @@ export class ProductRegistrationDTO {
   id: string;
   name:string
   price:number
-  image:string
   revenuePercentage:number
   login:LoginEntity
   category:CategoryEntity

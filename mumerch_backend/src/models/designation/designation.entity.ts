@@ -5,7 +5,7 @@ import { LoginEntity } from "../login/login.entity";
 export class DesignationEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({unique:true})
   name: string;
   @OneToMany(()=>LoginEntity, login=>login.designation, {nullable:true})
   login:LoginEntity[]

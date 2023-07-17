@@ -87,15 +87,18 @@ export class CommonService {
     let salesRows = '';
 
     for (const item of data.orderProducts) {
+      let sum:number=0
       const quantity: number = item.orderQuantity
       const price: number = item.orderPrice
-      total += quantity * price
+      sum += quantity * price
+      total+=sum
       console.log(item.orderPrice, total)
       salesRows +=
         ` <tr>
           <td>${item.productDetails.name}</td>
           <td>${quantity}</td>
           <td>${price}</td>
+          <td>${sum}</td>
         </tr>
       `
     }
@@ -175,6 +178,7 @@ export class CommonService {
           <td>${data.customer.email}</td>
         </tr>
       </table>
+      <h4>Order Id: ${orderId}</h4>
       <br>
       <br>
       <div class="table-container">
@@ -183,11 +187,12 @@ export class CommonService {
           <tr>
             <th>Description</th>
             <th>Quantity</th>
+            <th>Price</th>
             <th>Amount</th>
           </tr>
           ${salesRows}
           <tr class="total-row">
-          <td colspan="2" style = "text-align: right;" > Total: </td>
+          <td colspan="4" style = "text-align: right;" > Total: </td>
             <td> ${total} </td>
           </tr>
         </table>

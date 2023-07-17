@@ -34,6 +34,22 @@ export class ProductDetailsService {
       }
     })
   }
+
+  async getProductDetailsByNameWithAllOption(name: string): Promise<ProductDetailsEntity[]> {
+    let finalName = name + '%'
+    console.log(finalName)
+    return await this.productDetailsRepo.find({
+      where: {
+        name: ILike(`${finalName}`)
+      },
+      relations:{
+        product:true,
+        size:true,
+        color:true
+      }
+    })
+  }
+
   getProductDetailsById(id:string): Promise<ProductDetailsEntity> {
     return this.productDetailsRepo.findOneBy({id:id});
   }

@@ -7,7 +7,7 @@ import { ProductEntity } from "../product/product.entity";
 export class CategoryEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({unique:true})
   name: string;
   @ManyToOne(()=>LoginEntity, login=>login.catagories, {cascade:true})
   login:LoginEntity

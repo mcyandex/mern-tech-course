@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Put, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Put, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
@@ -81,7 +81,11 @@ export class GigManagerController
       fs.mkdirSync(destinationDir, { recursive: true });
     }
     await fs.promises.rename(myfileobj.path, filePath);
-    return this.userProfileService.addUserProfile(data);
+    return this.userProfileService.addUserProfile(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
 
   @Put('updateuserprofile')
@@ -150,14 +154,22 @@ export class GigManagerController
   @UsePipes(new ValidationPipe())
   async addGig(@Body() data: GigDTO, @Session() session): Promise<GigDTO> {
     data.login = session.user.id
-    return this.gigService.addGig(data);
+    return this.gigService.addGig(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   } 
 //2. Adding GigManager
 // @Post('addGigManager')
 //   @UsePipes(new ValidationPipe())
 //   async addGigManager(@Body() data: GigManagerDTO, @Session() session): Promise<GigManagerDTO> {
 //     data.gigId = session.user.id
-//     return this.gigManagerService.addGigManager(data);
+//     return this.gigManagerService.addGigManager(data).catch(err => {
+      //   throw new ConflictException({
+      //     message: err.message
+      //   });
+      // });;
 //   } 
 @Post('addGigManager')
   @UsePipes(new ValidationPipe())
@@ -173,7 +185,11 @@ export class GigManagerController
   @UsePipes(new ValidationPipe())
   async addBand(@Body() data: BandDTO, @Session() session): Promise<BandDTO> {
     data.login = session.user.id
-    return this.bandService.addBand(data);
+    return this.bandService.addBand(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   } 
 
 

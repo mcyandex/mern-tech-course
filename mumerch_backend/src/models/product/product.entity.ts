@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { LoginEntity } from "../login/login.entity";
 import { CategoryEntity } from "../category/category.entity";
 import { BandEntity } from "../band/band.entity";
@@ -9,12 +9,10 @@ import { ProductDetailsEntity } from "../productDetails/productDetails.entity";
 export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({unique:true})
   name:string
   @Column()
   price:number
-  @Column({nullable:true})
-  image:string
   @Column()
   revenuePercentage:number
   @ManyToOne(()=>LoginEntity, login=>login.products, {cascade:true, nullable:true})

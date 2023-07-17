@@ -1,7 +1,7 @@
 import { OrderDTO } from "src/models/order/order.dto";
 import { OrderService } from "src/models/order/order.service";
 import { SessionEmployeeGuard } from "./SessionEmployeeGaurd.gaurd";
-import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param } from "@nestjs/common";
+import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
@@ -95,7 +95,11 @@ export class EmployeeController {
       fs.mkdirSync(destinationDir, { recursive: true });
     }
     await fs.promises.rename(myfileobj.path, filePath);
-    return this.userProfileService.addUserProfile(data);
+    return this.userProfileService.addUserProfile(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
 
   @Put('updateuserprofile')
@@ -277,7 +281,11 @@ export class EmployeeController {
     data.customer.login = session.user.id
     const customer = await this.customerService.addCustomer(data.customer)
     data.customer = customer
-    const order = await this.orderService.addOrder(data)
+    const order = await this.orderService.addOrder(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });
 
     if (order != null) {
       for (const item of data.orderProducts) {
@@ -378,6 +386,39 @@ export class EmployeeController {
       }
       const reportArray = Object.values(report);
       return reportArray;
+    }
+  }
+  @Get('salesreport/:month')
+  async getSalesReportForSpecificMonth(@Param('month', ParseIntPipe) month: number, @Session() session): Promise<any> {
+    const data = await this.orderProductsMapService.getOrderProductsMapWithReportEmp(session.user.id)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No sales data available yet" })
+    }
+    else {
+      const report = {}
+      for (const item of data) {
+        const qMon = new Date(item.date).getMonth() + 1
+        if (month === qMon) {
+          const id = item.productDetails.id
+          const productName = item.productDetails.name
+          const quantity = item.productDetails.quantity
+          const sales = item.orderQuantity
+
+          if (report.hasOwnProperty(id)) {
+            report[id].productName = productName
+            report[id].sales += sales;
+            report[id].quantity = Math.max(report[id].quantity, quantity);
+          } else {
+            report[id] = {
+              productName: productName,
+              sales: sales,
+              quantity: quantity,
+            };
+          }
+        }
+        const reportArray = Object.values(report);
+        return reportArray;
+      }
     }
   }
   //2.Monthly Revenue Report ------------------------- list of products sold in specific month for loginId type = emp.. 

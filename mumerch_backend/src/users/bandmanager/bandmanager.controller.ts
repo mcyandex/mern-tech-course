@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Session, Patch, UseGuards, UploadedFile, UseInterceptors, ValidationPipe, UsePipes, Put, Post, Get, Param, NotFoundException } from "@nestjs/common"
+import { BadRequestException, Body, Controller, ForbiddenException, Session, Patch, UseGuards, UploadedFile, UseInterceptors, ValidationPipe, UsePipes, Put, Post, Get, Param, NotFoundException, ConflictException } from "@nestjs/common"
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
 import { ChangePassword } from "src/models/login/login.dto"
@@ -68,7 +68,11 @@ async addUserProfile(
     fs.mkdirSync(destinationDir, { recursive: true });
   }
   await fs.promises.rename(myfileobj.path, filePath);
-  return this.userProfileService.addUserProfile(data);
+  return this.userProfileService.addUserProfile(data).catch(err => {
+    throw new ConflictException({
+      message: err.message
+    });
+  });
 }
 
 @Put('updateuserprofile')

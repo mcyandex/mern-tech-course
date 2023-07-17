@@ -8,7 +8,7 @@ export class CustomerEntity{
     id: string;
     @Column()
     name: string
-    @Column({unique:true})
+    @Column()
     email: string
     @Column()
     phoneNo: string

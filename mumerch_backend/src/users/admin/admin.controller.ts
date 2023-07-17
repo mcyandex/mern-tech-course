@@ -45,6 +45,9 @@ import { GigManagerEntity } from "src/models/gigManager/gigManager.entity";
 import { GigManagerService } from "src/models/gigManager/gigManager.service";
 import { BandManagerDTO } from "src/models/bandManager/bandManager.dto";
 import { GigManagerDTO } from "src/models/gigManager/gigManager.dto";
+import { DesignationService } from "src/models/designation/designation.service";
+import { DesignationEntity } from "src/models/designation/designation.entity";
+import { DesignationDTO } from "src/models/designation/Designation.dto";
 
 
 @Controller('admin')
@@ -66,7 +69,8 @@ export class AdminController {
     private readonly customerService: CustomerService,
     private readonly commonService: CommonService,
     private readonly bandMService: BandManagerService,
-    private readonly gigMService: GigManagerService
+    private readonly gigMService: GigManagerService,
+    private readonly designationService: DesignationService
   ) { }
 
   //Change Password
@@ -127,10 +131,10 @@ export class AdminController {
     }
     await fs.promises.rename(myfileobj.path, filePath);
     return this.userProfileService.addUserProfile(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
   }
 
   @Put('updateuserprofile')
@@ -155,7 +159,7 @@ export class AdminController {
       }),
     })
   )
-  async updateUserProfile(@UploadedFile() myfileobj: Express.Multer.File, @Body('nidNo', ParseIntPipe) data: UserProfileDTO, @Session() session) {
+  async updateUserProfile(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: UserProfileDTO, @Session() session) {
     if (myfileobj != null || myfileobj.size > 0) {
       const newFileName = `${session.user.id}.${myfileobj.originalname.split('.')[1]}`;
       const destinationDir = './uploads/userProfile';
@@ -166,7 +170,8 @@ export class AdminController {
       }
       await fs.promises.rename(myfileobj.path, filePath);
     }
-    return this.userProfileService.updateUserProfile(session.user.id, data);
+    const exdata = await this.userProfileService.getUserProfileByLoginInfo(session.user.id)
+    return this.userProfileService.updateUserProfile(exdata.id, data);
   }
 
   @Get('getuserprofile')
@@ -205,10 +210,10 @@ export class AdminController {
     data.password = await this.loginService.getHassedPassword(password)
     data.userType = 'admin'
     const res = this.loginService.addUserLoginInfo(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -261,10 +266,10 @@ export class AdminController {
     data.password = await this.loginService.getHassedPassword(password)
     data.userType = 'employee'
     const res = this.loginService.addUserLoginInfo(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -341,7 +346,6 @@ export class AdminController {
 
   @Get('getbandmanager/:name')
   async getBandManagerByName(@Param('name') name: string): Promise<BandManagerEntity[]> {
-    const userType = 'bandmanager'
     const data = await this.bandMService.getBandManagerByUserName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
@@ -393,7 +397,7 @@ export class AdminController {
         throw new ConflictException({
           message: err.message
         });
-      });;
+      });
 
       if (res != null) {
         const gigM = new GigManagerEntity
@@ -464,10 +468,10 @@ export class AdminController {
   async addCategory(@Body() data: CategoryDTO, @Session() session): Promise<CategoryDTO> {
     data.login = session.user.id
     return this.categoryService.addCategory(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
   }
   @Put('updateCategory/:id')
   @UsePipes(new ValidationPipe())
@@ -506,10 +510,10 @@ export class AdminController {
   async addSize(@Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
     data.login = session.user.id
     return this.sizeService.addSize(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
   }
   @Put('updatesize/:id')
   @UsePipes(new ValidationPipe())
@@ -536,7 +540,7 @@ export class AdminController {
     return data
   }
   @Get('getcolor/:name')
-  async getColorByName(@Param() name: string): Promise<ColorDTO[]> {
+  async getColorByName(@Param() name: string): Promise<ColorEntity[]> {
     const data = await this.colorService.getColorByName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
@@ -545,17 +549,17 @@ export class AdminController {
   }
   @Post('addcolor')
   @UsePipes(new ValidationPipe())
-  async addColor(@Body() data: ColorDTO, @Session() session): Promise<ColorDTO> {
+  async addColor(@Body() data: ColorDTO, @Session() session): Promise<ColorEntity> {
     data.login = session.user.id
     return this.colorService.addColor(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
   }
   @Put('updatecolor/:id')
   @UsePipes(new ValidationPipe())
-  updateColor(@Param('id') id: string, @Body() data: ColorDTO, @Session() session): Promise<ColorDTO> {
+  updateColor(@Param('id') id: string, @Body() data: ColorDTO, @Session() session): Promise<ColorEntity> {
     data.login = session.user.id
     return this.colorService.updateColor(id, data);
   }
@@ -597,7 +601,7 @@ export class AdminController {
     proData.band = data.band
     proData.category = data.category
     proData.name = data.name
-    
+
     const product = await this.productService.addProduct(proData)
     if (product != null) {
       for (const item of data.productDetails) {
@@ -647,7 +651,13 @@ export class AdminController {
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
     }
-    return data
+    else {
+      const url = 'localhost:3000/admin/getimage/?type=band&image='
+      for (const item of data) {
+        item.image = url + item.image
+      }
+      return data
+    }
   }
   @Get('getBand/:name')
   async getBandByName(@Param() name: string): Promise<BandDTO[]> {
@@ -655,7 +665,13 @@ export class AdminController {
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
     }
-    return data;
+    else {
+      const url = 'localhost:3000/admin/getimage/?type=band&image='
+      for (const item of data) {
+        item.image = url + item.image
+      }
+      return data;
+    }
   }
   @Post('addBand')
   @UsePipes(new ValidationPipe())
@@ -680,25 +696,25 @@ export class AdminController {
     })
   )
   async addBand(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: BandDTO, @Session() session): Promise<BandDTO> {
-    
-      if (!myfileobj || myfileobj.size == 0) {
-        throw new BadRequestException('Empty file');
-      }
-      const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
-      const destinationDir = './uploads/band';
-      const filePath = `${destinationDir}/${newFileName}`;
-      data.image = newFileName
-      if (!fs.existsSync(destinationDir)) {
-        fs.mkdirSync(destinationDir, { recursive: true });
-      }
-      await fs.promises.rename(myfileobj.path, filePath);
-      data.login = session.user.id
-      return this.bandService.addBand(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });
+
+    if (!myfileobj || myfileobj.size == 0) {
+      throw new BadRequestException('Empty file');
     }
+    const newFileName = `${data.name}.${myfileobj.originalname.split('.')[1]}`;
+    const destinationDir = './uploads/band';
+    const filePath = `${destinationDir}/${newFileName}`;
+    data.image = newFileName
+    if (!fs.existsSync(destinationDir)) {
+      fs.mkdirSync(destinationDir, { recursive: true });
+    }
+    await fs.promises.rename(myfileobj.path, filePath);
+    data.login = session.user.id
+    return this.bandService.addBand(data).catch(err => {
+      throw new ConflictException({
+        message: err.message
+      });
+    });
+  }
   @Put('updateBand/:id')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
@@ -767,10 +783,10 @@ export class AdminController {
   async addGig(@Body() data: GigDTO, @Session() session): Promise<GigDTO> {
     data.login = session.user.id
     return this.gigService.addGig(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
   }
   @Put('updateGig/:id')
   @UsePipes(new ValidationPipe())
@@ -797,46 +813,8 @@ export class AdminController {
     }
     return data
   }
-  //add order
-  @Post('addorder')
-  async addOrder(@Body() data: OrderDTO, @Session() session): Promise<any> {
-    data.login = session.user.id
-    data.customer.login = session.user.id
-    const customer = await this.customerService.addCustomer(data.customer)
-    data.customer = customer
-    const order = await this.orderService.addOrder(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });
 
-    if (order != null) {
-      for (const item of data.orderProducts) {
-        const newData = new OrderProductsMapEntity()
-        newData.order = order
-        newData.orderPrice = item.productDetails.product.price
-        newData.orderQuantity = item.orderQuantity
-        newData.productDetails = item.productDetails
-        const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
-        if (newData != null) {
-          const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
-          const newQuantity = exProduct.quantity - item.orderQuantity
-          exProduct.quantity = newQuantity
-          const newProduct = await this.productDetailsService.updateProductDetails(exProduct.id, exProduct)
-          if (newProduct != null) {
-            const html = await this.commonService.invoiceStructure(order.id)
-            await this.commonService.generatePdf(html, 'invoice', order.id)
-            return order
-          }
-          else {
-            throw new NotFoundException({ message: "Something went wrong" })
-          }
-        }
-      }
-    }
-  }
-
-  //!!---Reports---!!
+  //---Reports---!!
   //1.Sales Report-------------------generate a PDF of total sales
   @Get('salesreport')
   async getSalesReport(): Promise<any> {
@@ -982,5 +960,48 @@ export class AdminController {
     const gigManager = await this.loginService.getUserTypeCount("gigmanager")
     const customer = await this.customerService.getCount()
     return { admin, employee, bandManager, gigManager, customer }
+  }
+
+  //--------configaration----------
+  //3.-----------------------------Color-----------------------------
+  @Get('getdesignation')
+  async getDesignation(): Promise<DesignationEntity[]> {
+    const data = await this.designationService.getDesignation();
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Designation created yet" })
+    }
+    return data
+  }
+  @Get('getdesignation/:name')
+  async getDesignationByName(@Param() name: string): Promise<DesignationEntity[]> {
+    const data = await this.designationService.getDesignationByName(name)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Designation created yet" })
+    }
+    return data;
+  }
+  @Post('adddesignation')
+  @UsePipes(new ValidationPipe())
+  async addDesignation(@Body() data: DesignationDTO, @Session() session): Promise<DesignationEntity> {
+    data.login = session.user.id
+    return this.designationService.addDesignation(data).catch(err => {
+      throw new ConflictException({
+        message: err.message
+      });
+    });;
+  }
+  @Put('updatedesignation/:id')
+  @UsePipes(new ValidationPipe())
+  updateDesignation(@Param('id') id: string, @Body() data: DesignationDTO, @Session() session): Promise<DesignationEntity> {
+    data.login = session.user.id
+    return this.designationService.updateDesignation(id, data);
+  }
+  @Delete('deletedesignation/:id')
+  async deleteDesignation(@Param('id') id: string): Promise<string> {
+    const res = await this.designationService.deleteDesignation(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " couldnot delete, something went wrong"
   }
 }

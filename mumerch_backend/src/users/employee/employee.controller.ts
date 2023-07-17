@@ -1,7 +1,7 @@
 import { OrderDTO } from "src/models/order/order.dto";
 import { OrderService } from "src/models/order/order.service";
 import { SessionEmployeeGuard } from "./SessionEmployeeGaurd.gaurd";
-import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe, Res } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
@@ -38,7 +38,7 @@ import { ProductDetailsEntity } from "src/models/productDetails/productDetails.e
 
 
 @Controller('employee')
-//@UseGuards(SessionEmployeeGuard)
+@UseGuards(SessionEmployeeGuard)
 export class EmployeeController {
   constructor(
     private readonly loginService: LoginService,
@@ -95,11 +95,7 @@ export class EmployeeController {
       fs.mkdirSync(destinationDir, { recursive: true });
     }
     await fs.promises.rename(myfileobj.path, filePath);
-    return this.userProfileService.addUserProfile(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });;
+    return this.userProfileService.addUserProfile(data)
   }
 
   @Put('updateuserprofile')
@@ -166,7 +162,7 @@ export class EmployeeController {
   @Get('getcolor')
   async getColor(): Promise<any> {
     const data = await this.colorService.getColor();
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
     }
     return data
@@ -174,7 +170,7 @@ export class EmployeeController {
   @Get('getcolor/:name')
   async getColorByName(@Param() name: string): Promise<ColorDTO[]> {
     const data = await this.colorService.getColorByName(name)
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
     }
     return data;
@@ -184,7 +180,7 @@ export class EmployeeController {
   @Get('getsize')
   async getSize(): Promise<any> {
     const data = await this.sizeService.getSize();
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No size created yet" })
     }
     return data
@@ -192,7 +188,7 @@ export class EmployeeController {
   @Get('getsize/:name')
   async getSizeByName(@Param() name: string): Promise<SizeDTO[]> {
     const data = await this.sizeService.getSizeByName(name)
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No size created yet" })
     }
     return data;
@@ -202,7 +198,7 @@ export class EmployeeController {
   @Get('getcategory')
   async getCategory(): Promise<any> {
     const data = await this.categoryService.getCategory();
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Category created yet" })
     }
     return data
@@ -211,8 +207,8 @@ export class EmployeeController {
   //4.-----------------------------Product--------------------------
   @Get('getProduct')
   async getProduct(): Promise<ProductDetailsEntity[]> {
-    const data = await this.productDetailsService.getProductDetails();
-    if (data != undefined) {
+    const data = await this.productDetailsService.getProductDetailsWithProductInfo();
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
     return data
@@ -220,7 +216,7 @@ export class EmployeeController {
   @Get('getProduct/:name')
   async getProductByName(@Param() name: string): Promise<ProductDetailsEntity[]> {
     const data = await this.productDetailsService.getProductDetailsByName(name)
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
     return data;
@@ -228,7 +224,7 @@ export class EmployeeController {
   @Get('getCategory/:name')
   async getCategoryByName(@Param() name: string): Promise<CategoryDTO[]> {
     const data = await this.categoryService.getCategoryByName(name)
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Category created yet" })
     }
     return data;
@@ -238,7 +234,7 @@ export class EmployeeController {
   @Get('getBand')
   async getBand(): Promise<any> {
     const data = await this.bandService.getBand();
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
     }
     return data
@@ -246,7 +242,7 @@ export class EmployeeController {
   @Get('getBand/:name')
   async getBandByName(@Param() name: string): Promise<BandDTO[]> {
     const data = await this.bandService.getBandByName(name)
-    if (data != undefined) {
+    if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
     }
     return data;
@@ -276,16 +272,13 @@ export class EmployeeController {
   //add order
   @Post('addorder')
   @UsePipes(new ValidationPipe())
-  async addOrder(@Body() data: OrderDTO, @Session() session): Promise<any> {
+  async addOrder(@Body() data: OrderDTO, @Session() session, @Res() res): Promise<any> {
+    data.date = new Date()
     data.login = session.user.id
     data.customer.login = session.user.id
     const customer = await this.customerService.addCustomer(data.customer)
     data.customer = customer
-    const order = await this.orderService.addOrder(data).catch(err => {
-        throw new ConflictException({
-          message: err.message
-        });
-      });
+    const order = await this.orderService.addOrder(data)
 
     if (order != null) {
       for (const item of data.orderProducts) {
@@ -299,7 +292,7 @@ export class EmployeeController {
           newData.productDetails = item.productDetails
 
           const orderDetails = await this.orderProductsMapService.addOrderProductsMap(newData)
-          if (newData != null) {
+          if (orderDetails != null) {
             const exProduct = await this.productDetailsService.getProductDetailsById(item.productDetails.id)
             const newQuantity = exProduct.quantity - item.orderQuantity
             exProduct.quantity = newQuantity
@@ -307,19 +300,26 @@ export class EmployeeController {
             if (newProduct != null) {
               const html = await this.commonService.invoiceStructure(order.id)
               await this.commonService.generatePdf(html, 'invoice', order.id)
-              return order
+              const fileName = `${order.id}` + `.pdf`
+              const path = `./uploads/invoice/`
+              res.sendFile(fileName, { root: path })
             }
             else {
               throw new NotFoundException({ message: "Something went wrong" })
             }
           }
-
+          else {
+            await this.orderService.deleteOrder(order.id)
+            throw new BadRequestException({ message: "Order details not." });
+          }
         }
         else {
-          await this.orderService.deleteOrder(order.id)
           throw new BadRequestException({ message: "Order quantity exceeds product quantity." });
         }
       }
+    }
+    else{
+      throw new BadRequestException({message:"Something went wrong"})
     }
   }
 
@@ -335,7 +335,7 @@ export class EmployeeController {
   @Get('getorder/:id')
   async getOrderById(@Param() id: string): Promise<OrderEntity> {
     const data = await this.orderService.getOrderById(id);
-    if (data != undefined) {
+    if (data != null) {
       throw new NotFoundException('Order with name ${name} not found');
     }
     return data;

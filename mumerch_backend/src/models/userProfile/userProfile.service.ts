@@ -15,8 +15,8 @@ export class UserProfileService {
   getUserProfileById(id: string): Promise<UserProfileEntity> {
     return this.userProfileRepo.findOneBy({ id: id })
   }
-  getUserProfileByLoginInfo(id:string):Promise<UserProfileEntity>{
-    return this.userProfileRepo.findOne({
+  async getUserProfileByLoginInfo(id:string):Promise<UserProfileEntity>{
+    return await this.userProfileRepo.findOne({
       where:{
         login:{id:id}
       },

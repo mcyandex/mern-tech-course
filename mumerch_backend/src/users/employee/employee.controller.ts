@@ -33,6 +33,8 @@ import { OrderEntity } from "src/models/order/order.entity";
 import { orderProductsMapDTO } from "src/models/orderProductsMap/orderProductsMap.dto";
 import { SessionLoginGuard } from "src/auth/loginSession.gaurd";
 import session from "express-session";
+import { ProductEntity } from "src/models/product/product.entity";
+import { ProductDetailsEntity } from "src/models/productDetails/productDetails.entity";
 
 
 @Controller('employee')
@@ -204,16 +206,16 @@ export class EmployeeController {
 
   //4.-----------------------------Product--------------------------
   @Get('getProduct')
-  async getProduct(): Promise<any> {
-    const data = await this.productService.getProduct();
+  async getProduct(): Promise<ProductDetailsEntity[]> {
+    const data = await this.productDetailsService.getProductDetails();
     if (data != undefined) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
     return data
   }
   @Get('getProduct/:name')
-  async getProductByName(@Param() name: string): Promise<ProductDTO[]> {
-    const data = await this.productService.getProductByName(name)
+  async getProductByName(@Param() name: string): Promise<ProductDetailsEntity[]> {
+    const data = await this.productDetailsService.getProductDetailsByName(name)
     if (data != undefined) {
       throw new NotFoundException({ message: "No Product created yet" })
     }

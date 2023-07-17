@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException, Res, Query, ConflictException, ParseIntPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Session, Delete, NotFoundException, Patch, ForbiddenException, Res, Query, ConflictException, ParseIntPipe, HttpStatus } from "@nestjs/common";
 import { SizeDTO } from "src/models/size/size.dto";
 import { SizeService } from "src/models/size/size.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -46,8 +46,9 @@ import { GigManagerService } from "src/models/gigManager/gigManager.service";
 import { BandManagerDTO } from "src/models/bandManager/bandManager.dto";
 import { GigManagerDTO } from "src/models/gigManager/gigManager.dto";
 
+
 @Controller('admin')
-//@UseGuards(SessionAdminGuard)
+@UseGuards(SessionAdminGuard)
 export class AdminController {
   constructor(
     private readonly loginService: LoginService,
@@ -125,7 +126,11 @@ export class AdminController {
       fs.mkdirSync(destinationDir, { recursive: true });
     }
     await fs.promises.rename(myfileobj.path, filePath);
-    return this.userProfileService.addUserProfile(data);
+    return this.userProfileService.addUserProfile(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
 
   @Put('updateuserprofile')
@@ -199,7 +204,11 @@ export class AdminController {
     data.id = lastID
     data.password = await this.loginService.getHassedPassword(password)
     data.userType = 'admin'
-    const res = this.loginService.addUserLoginInfo(data);
+    const res = this.loginService.addUserLoginInfo(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -235,7 +244,6 @@ export class AdminController {
   async getAdminByName(@Param('name') name: string): Promise<LoginDTO[]> {
     const userType = 'admin'
     const data = await this.loginService.getUserLoginInfoByName(name, userType)
-    console.log(data)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
     }
@@ -252,7 +260,11 @@ export class AdminController {
     data.id = lastID
     data.password = await this.loginService.getHassedPassword(password)
     data.userType = 'employee'
-    const res = this.loginService.addUserLoginInfo(data);
+    const res = this.loginService.addUserLoginInfo(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -310,7 +322,11 @@ export class AdminController {
       data.id = lastID
       data.password = await this.loginService.getHassedPassword(password)
       data.userType = 'bandmanager'
-      const res = await this.loginService.addUserLoginInfo(data);
+      const res = await this.loginService.addUserLoginInfo(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
 
       if (res != null) {
         const bandM = new BandManagerEntity
@@ -373,7 +389,11 @@ export class AdminController {
       data.id = lastID
       data.password = await this.loginService.getHassedPassword(password)
       data.userType = 'gigmanager'
-      const res = await this.loginService.addUserLoginInfo(data);
+      const res = await this.loginService.addUserLoginInfo(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
 
       if (res != null) {
         const gigM = new GigManagerEntity
@@ -443,7 +463,11 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async addCategory(@Body() data: CategoryDTO, @Session() session): Promise<CategoryDTO> {
     data.login = session.user.id
-    return this.categoryService.addCategory(data);
+    return this.categoryService.addCategory(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
   @Put('updateCategory/:id')
   @UsePipes(new ValidationPipe())
@@ -481,7 +505,11 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async addSize(@Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
     data.login = session.user.id
-    return this.sizeService.addSize(data);
+    return this.sizeService.addSize(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
   @Put('updatesize/:id')
   @UsePipes(new ValidationPipe())
@@ -519,7 +547,11 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async addColor(@Body() data: ColorDTO, @Session() session): Promise<ColorDTO> {
     data.login = session.user.id
-    return this.colorService.addColor(data);
+    return this.colorService.addColor(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
   @Put('updatecolor/:id')
   @UsePipes(new ValidationPipe())
@@ -709,7 +741,7 @@ export class AdminController {
     })
   )
   async addBand(@UploadedFile() myfileobj: Express.Multer.File, @Body() data: BandDTO, @Session() session): Promise<BandDTO> {
-    try {
+    
       if (!myfileobj || myfileobj.size == 0) {
         throw new BadRequestException('Empty file');
       }
@@ -722,15 +754,12 @@ export class AdminController {
       }
       await fs.promises.rename(myfileobj.path, filePath);
       data.login = session.user.id
-      return this.bandService.addBand(data);
+      return this.bandService.addBand(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });
     }
-    catch (err) {
-      console.log(err);
-      if (err.constraint === 'UQ_5a0a8d304311b9f623885ea0601') { // '23505' is the Postgres error code for unique constraint violation
-        throw new ConflictException("Duplicate value violates unique constraint");
-      }
-    }
-  }
   @Put('updateBand/:id')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
@@ -798,7 +827,11 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async addGig(@Body() data: GigDTO, @Session() session): Promise<GigDTO> {
     data.login = session.user.id
-    return this.gigService.addGig(data);
+    return this.gigService.addGig(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });;
   }
   @Put('updateGig/:id')
   @UsePipes(new ValidationPipe())
@@ -832,7 +865,11 @@ export class AdminController {
     data.customer.login = session.user.id
     const customer = await this.customerService.addCustomer(data.customer)
     data.customer = customer
-    const order = await this.orderService.addOrder(data)
+    const order = await this.orderService.addOrder(data).catch(err => {
+        throw new ConflictException({
+          message: err.message
+        });
+      });
 
     if (order != null) {
       for (const item of data.orderProducts) {

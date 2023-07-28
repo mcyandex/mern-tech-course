@@ -198,7 +198,8 @@ export class GigManagerController
 @Get('getOrder/:id')
 getOrderByGigId(@Session() session, @Param('id') id:string){
       return this.orderService.getOrderByGigId(session.user.id)
-    }
+   }
+
 // Customer Management 
 // Customer -------------------------------------------- view for his gigId 
 @Get('getCustomer/:id')
@@ -211,7 +212,9 @@ getCustomerByGigId(@Session() session, @Param('id') id:string){
 // Sales Report ---------------------------------------- generate a PDF of total sales for gigId
 @Get('salesreport')
   async getSalesReport(@Session() session, @Param('id') id:string): Promise<any> {
-    const data = await this.orderProductsMapService.getOrderProductsMapWithReportByGigId(session.user.id)
+    const gig = await this.gigService.getGigByGigMId(session.user.id)
+    console.log(gig)
+    const data = await this.orderProductsMapService.getOrderProductsMapWithReportByGigId(gig.id)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No sales data available yet" })
     }

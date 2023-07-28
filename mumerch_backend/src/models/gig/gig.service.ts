@@ -20,14 +20,11 @@ export class GigService {
   async getGigById(id:string): Promise<GigEntity> {
     return await this.gigRepo.findOneBy({id:id});
   }
-  getAllGigByUserId(id:string): Promise<GigEntity>{
+  getGigByGigMId(id:string): Promise<GigEntity>{
     return this.gigRepo.findOne({
         where:{
-          login: {id: id},
+          gigManager: {id: id},
         },
-        relations: {
-          login: true,
-        }
       });
   }
   getGigByUserId(id: string): Promise<GigEntity>{

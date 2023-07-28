@@ -21,6 +21,7 @@ export class AuthController {
     if (user != null) {
       const res = await this.loginService.login(data.password, user.password)
       if (res) {
+        console.log(user)
         session.user = user
         return true
       }
@@ -32,6 +33,7 @@ export class AuthController {
   @Get('forgetpassword/:id')
   async forgetPassword(@Param('id') id: string): Promise<string> {
     const data = await this.loginService.getUserLoginInfoById(id)
+    console.log(id)
     if (data != null) {
       const newToken = new TokenEntity()
       newToken.token = await this.tokenService.generateRandomNumber()

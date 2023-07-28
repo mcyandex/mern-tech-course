@@ -11,3 +11,5 @@ push to branch  :
 
    *** Go to github and create pull request and then merge
    *** If conflicts appear... contact with team mates
+
+***to skip current changes, and pull updates from GitHub: git reset --hard HEAD^

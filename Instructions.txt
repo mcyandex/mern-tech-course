@@ -1,23 +1,46 @@
---------------------------------------- Packages ---------------------------------------
-***go to mumerch_backend folder first:
-***open `cmd` here and run these commands
-# npm install ---> to add npm module after clone
-# npm install class-validator class-transformer ---> for validation and transformation
-# npm i -D @types/multer ---> working with file
-# npm install fs-extra ---> additional file modification
-# npm i @nestjs/config @nestjs/typeorm typeorm pg ---> work with Db and typeOrm
-# npm i bcrypt ---> to use hashing
-# npm i -D @types/bcrypt
-# npm i express-session
-# npm i -D @types/express-session
-# npm install --save @nestjs-modules/mailer nodemailer ---> for enabling Mail service in backend
-# npm i better-html-pdf  ---> to generate html to pdf
-
-
-
------------------------------------------ Run ------------------------------------------
-# npm run ---> run general mode, restart required after changes
-# npm run start:dev ---> run in development mode, auto changes merged
-# if cmd is deleted mistakenly,
-	taskkill /f /im node.exe ---> to off the previously runnung server first, then run again
-
+---------------------------------------------------------------------------------------------------------
+|													|
+|					     Backend : NestJs						|
+|													|
+|-------------------------------------------------------------------------------------------------------|
+|_________________________________________________Packages______________________________________________|
+|***go to mumerch_backend folder first:									|
+|***open `cmd` here and run these commands								|
+|# npm install ---> to add npm module after clone							|
+|# npm install class-validator class-transformer ---> for validation and transformation			|
+|# npm i -D @types/multer ---> working with file							|
+|# npm install fs-extra ---> additional file modification						|
+|# npm i @nestjs/config @nestjs/typeorm typeorm pg ---> work with Db and typeOrm			|
+|# npm i bcrypt ---> to use hashing									|
+|# npm i -D @types/bcrypt										|
+|# npm i express-session										|
+|# npm i -D @types/express-session									|
+|# npm install --save @nestjs-modules/mailer nodemailer ---> for enabling Mail service in backend	|
+|# npm i better-html-pdf  ---> to generate html to pdf							|
+|													|		
+|____________________________________________________Run________________________________________________|
+|# npm run ---> run general mode, restart required after changes					|
+|# npm run start:dev ---> run in development mode, auto changes merged					|
+|# if cmd is deleted mistakenly,									|
+|	taskkill /f /im node.exe ---> to off the previously runnung server first, then run again	|
+|													|
+|													|
+|-------------------------------------------------------------------------------------------------------|
+|													|
+|					     Frontend : Next.js						|
+|													|
+|-------------------------------------------------------------------------------------------------------|
+|_________________________________________________Packages______________________________________________|
+|***go to mumerch_frontend folder first:								|
+|***open `cmd` here and run this command								|
+|# next build ---> to build next app									|
+|													|
+|													|
+|													|
+|													|
+|___________________________________________________Run_________________________________________________|
+|# npm run dev ---> Frontend run in development mode							|
+|													|
+|													|
+|													|
+---------------------------------------------------------------------------------------------------------	

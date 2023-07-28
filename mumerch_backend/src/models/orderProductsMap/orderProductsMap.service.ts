@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, ILike, Repository } from 'typeorm';
+import { DeleteResult, ILike, Repository, getConnection } from 'typeorm';
 import { OrderProductsMapEntity } from './orderProductsMap.entity';
 import { orderProductsMapDTO } from './orderProductsMap.dto';
 
@@ -39,6 +39,20 @@ export class OrderProductsMapService {
       }
     });
   }
+
+  async getSalesReport(): Promise<any> {
+    const data = await this.orderProductsRepo
+      .createQueryBuilder('orderProducts')
+      .leftJoin('orderProducts.productDetails', 'productDetails')
+      .select('productDetails.name', 'productName')
+      .addSelect('SUM(orderProducts.orderQuantity)', 'sales')
+      .addSelect('MAX(productDetails.quantity)', 'quantity')
+      .groupBy('productDetails.name')
+      .getRawMany()
+
+    return data;
+  }
+
   getOrderProductsMapWithReportByGigId(GigId:string):any{
     return this.orderProductsRepo.find({
       where:{

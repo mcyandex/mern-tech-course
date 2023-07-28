@@ -847,6 +847,10 @@ export class AdminController {
       return reportArray;
     }
   }
+  @Get('report')
+  async getReport(): Promise<any> {
+    return this.orderProductsMapService.getSalesReport()
+  }
   @Get('salesreport/:month')
   async getSalesReportForSpecificMonth(@Param('month', ParseIntPipe) month: number): Promise<any> {
     const data = await this.orderProductsMapService.getOrderProductsMapWithReport()

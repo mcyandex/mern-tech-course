@@ -1,0 +1,66 @@
+---------------------------------------------------------------------------------------------------------
+|													|
+|					     Backend : NestJs						|
+|													|
+---------------------------------------------------------------------------------------------------------
+1# TypeORMError: Entity metadata for ProductSizeMapEntity#size was not found. Check if you specified
+ a correct entity object and if it's connected in the connection options.
+
+	Ans: ==> Try to add SizeEntity and ProductSizeMapEntity in the module of typeORM
+---------------------------------------------------------------------------------------------------------
+
+2# [Nest] 5536  - 07/10/2023, 3:32:57 AM   ERROR [ExceptionHandler] Nest can't resolve dependencies 
+of the AdminController (LoginService, UserProfileService, SizeService, ColorService, CategoryService, 
+ProductService, OrderService, AuthService, ProductColorMapService, ProductSizeMapService, BandService,?). 
+Please make sure that the argument GigService at index [11] is available in the AdminModule context.
+
+	Ans: Add GigService to admin.module.ts
+---------------------------------------------------------------------------------------------------------
+
+3# Invalid login: 535-5.7.8 Username and Password not accepted. Learn more at ..........
+
+	Ans: ==> Look at the mailer module in app.module.ts and give proper 'user' and 'password'
+---------------------------------------------------------------------------------------------------------
+
+4# --- can't accept null values
+
+	Ans: go to database, drop the table or make the new nullable like this => @Column({nullable:true})
+---------------------------------------------------------------------------------------------------------
+
+5# ERROR [ExceptionsHandler] data and hash arguments required
+
+	Ans: look if parameter of compare function is properly given or not
+---------------------------------------------------------------------------------------------------------
+
+6# ERROR [ExceptionsHandler] Cannot read properties of undefined (reading 'password')
+
+	Ans: look for session is working or not if applied, @Param('veriable') verible....
+---------------------------------------------------------------------------------------------------------
+
+7# ERROR [ExceptionsHandler] data and hash arguments required
+
+	Ans: Look in entity class if password status is {select:false}..... remove it
+---------------------------------------------------------------------------------------------------------
+
+8# ERROR [TypeOrmModule] Unable to connect to the database. Retrying (4)...
+QueryFailedError: column "name" of relation "ProductDetails" contains null values
+
+	Ans: add to column:{nullable:true}... else go to Database and delete the table												
+---------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+
+			
+---------------------------------------------------------------------------------------------------------
+|													|
+|					     Frontend : Next.js						|
+|													|						
+---------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

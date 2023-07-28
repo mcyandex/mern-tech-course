@@ -14,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         secure: true,
         auth: {
           user: 'team.robust.dev@gmail.com',
-          pass: 'exogkkvfdfetegso'
+          pass: 'uaqrepczoymezgfh'
         },
       }
     })

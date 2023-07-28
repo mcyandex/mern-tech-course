@@ -14,6 +14,7 @@ import { OrderService } from "src/models/order/order.service";
 import { CustomerService } from "src/models/customer/customer.service";
 import { GigService } from "src/models/gig/gig.service";
 import { OrderProductsMapService } from "src/models/orderProductsMap/orderProductsMap.service";
+import { GigDTO } from "src/models/gig/gig.dto";
 
 @Controller('bandmanager')
 
@@ -132,17 +133,29 @@ async resetPassword(@Body() data: ChangePassword, @Session() session) {
 //!!---Product Management---!!
 //Product------------------------->view product related to bandId
 
-@Get('getProduct/:id')
-getProductByBandId(@Session() session, @Param('id') id:string){
-      return this.productService.getProductByBandId(session.user.id)
-    }
+// @Get('getProduct/:id')
+// getProductByBandId(@Session() session, @Param('id') id:string){
+//       return this.productService.getProductByBandId(session.user.id)
+//     }
+
+
+@Get('getProduct/:name')
+async getProductByName(@Param() name: string): Promise<ProductEntity[]> {
+  const data = await this.productService.getProductByName(name)
+  if (data.length === 0) {
+    throw new NotFoundException({ message: "No Product created yet" })
+  }
+  return data;
+}
 
 //!!---Order Management---!!
 //Order---------------------------> view for hid bandId
-@Get('getOrder/:id')
-getOrderByBandId(@Session() session, @Param('id') id:string){
-      return this.orderService.getOrderByBandId(session.user.id)
-    }
+// @Get('getOrder/:id')
+// getOrderByBandId(@Session() session, @Param('id') id:string){
+//       return this.orderService.getOrderByBandId(session.user.id)
+//     }
+
+
 
 //!!---Customer Management---!!
 // Customer -------------------------------------------- view for his bandId
@@ -151,12 +164,23 @@ getCustomerByBandId(@Session() session, @Param('id') id:string){
       return this.customerService.getCustomerByBandId(session.user.id)
     }
 
+
+
 //!!---Gig Management---!!
 // Gig ----------------------------------------------- view upcoming gig related to bandId
-@Get('getGig/:id')
-getGigByBandId(@Session() session, @Param('id') id:string){
-      return this.gigService.getGigByBandId(session.user.id)
-    }
+// @Get('getGig/:id')
+// getGigByBandId(@Session() session, @Param('id') id:string){
+//       return this.gigService.getGigByBandId(session.user.id)
+//     }
+
+@Get('getGig/:name')
+async getGigByName(@Param() name: string): Promise<GigDTO[]> {
+  const data = await this.gigService.getGigByName(name)
+  if (data.length === 0) {
+    throw new NotFoundException({ message: "No Gig created yet" })
+  }
+  return data;
+}
 
 // !!---Reports---!! 
 // 1.Sales Report ---------------------------------------- generate a PDF of total sales for bandId. 

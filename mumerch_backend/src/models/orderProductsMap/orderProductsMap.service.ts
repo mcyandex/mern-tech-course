@@ -78,6 +78,7 @@ export class OrderProductsMapService {
 
 
   getOrderProductsMapWithReportEmp(id:string):any{
+    console.log(id)
     return this.orderProductsRepo.find({
       where : {
         order:{
@@ -88,7 +89,16 @@ export class OrderProductsMapService {
         },
       },
       relations:{
-        order: true,
+        order:{
+          gig:true
+        },
+        productDetails:{
+          size:true,
+          color:true,
+          product:{
+            band:true
+          }
+        }
       }
     })
   }

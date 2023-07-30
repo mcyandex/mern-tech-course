@@ -1,10 +1,12 @@
+import Head from "next/head"
+
 export default function Title(props) {
-  console.log(props)
+  const title = props.page!=null ? props.page : "A marchendise management app"
   return (
     <>
-      <head>
-        <title>MuMerch - {props.page}</title>
-      </head>
+      <Head>
+        <title>MuMerch - {title}</title>
+      </Head>
     </>
   )
 }

@@ -17,7 +17,7 @@
 |# npm i -D @types/express-session									|
 |# npm install --save @nestjs-modules/mailer nodemailer ---> for enabling Mail service in backend	|
 |# npm i better-html-pdf  ---> to generate html to pdf							|
-|													|		
+|													|	
 |____________________________________________________Run________________________________________________|
 |# npm run ---> run general mode, restart required after changes					|
 |# npm run start:dev ---> run in development mode, auto changes merged					|
@@ -33,7 +33,7 @@
 |_________________________________________________Packages______________________________________________|
 |***go to mumerch_frontend folder first:								|
 |***open `cmd` here and run this command								|
-|# next build ---> to build next app									|
+|# npm install ---> to build next app									|
 |													|
 |													|
 |													|

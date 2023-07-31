@@ -11,14 +11,14 @@ export default function HorizontalNav() {
           </Link>
         </div>
         <ul>
-          <li><Link href='/dashboards/admin/adminprofile'>Welcome, Elahi</Link></li>
+          <li><Link href='/dashboards/admin/userprofile/userprofile'>Welcome, Elahi</Link></li>
           <li>
-            <Link href='/dashboards/admin/changepassword'>
+            <Link href='/dashboards/admin/notifications/notifications'>
               <Image src='/icons/notifications.png' width={30} height={30} alt="Notifications" />
             </Link>
           </li>
           <li>
-            <Link href='/dashboards/admin/changepassword'>
+            <Link href='/dashboards/admin/changepassword/changepassword'>
               <Image src='/icons/settings.png' width={30} height={30} alt="Settings" />
             </Link>
           </li>

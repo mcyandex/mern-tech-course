@@ -2,13 +2,13 @@ import dynamic from "next/dynamic"
 const AdminLayout = dynamic(()=>import("../../../components/dashboards/admin/adminlayout"))
 const Title = dynamic(()=>import("../../../components/title"))
 
-export default function SalesReport() {
+export default function BandList() {
   return (
     <>
-      <Title page="Sales Report"></Title>
+      <Title page="Band List"></Title>
       <AdminLayout>
         <div>
-          <h3>Sales Report</h3>
+          <h3>Band List</h3>
         </div>
       </AdminLayout>
     </>

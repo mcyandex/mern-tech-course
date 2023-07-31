@@ -10,7 +10,7 @@ export default function Contact() {
       <Layout>
         <div>
           <h3>Contact Us</h3>
-          <form>
+          <form action="/" method="post">
             <input name="id" type="text" placeholder="Enter Name" />
             <br />
             <input name="password" type="text" placeholder="Enter Phone Number" />

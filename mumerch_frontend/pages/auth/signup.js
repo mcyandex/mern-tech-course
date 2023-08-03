@@ -11,15 +11,22 @@ export default function Signup() {
         <div>
           <h3>Sign Up</h3>
           <form method="post" action='/'>
-            <input name="name" type="text" placeholder="Enter Name" />
+            <label>Name</label>
+            <input name="name" type="text" placeholder="Enter Name" required/>
             <br />
-            <input name="email" type="text" placeholder="Enter Email" />
+            <input name="email" type="text" placeholder="Enter Email" required/>
             <br />
-            <input name="phone" type="text" placeholder="Enter Phone" />
+            <input name="phone" type="text" placeholder="Enter Phone" required/>
             <br />
-            <input name="password" type="password" placeholder="Enter Password" />
+            <input name="password" type="password" placeholder="Enter Password" required/>
             <br />
-            <input name="repassword" type="password" placeholder="Retype Password" />
+            <input name="gig" type="text" placeholder="Enter Event Name" required/>
+            <br />
+            Start Date: <input name="startDate" type="date" required/>
+            <br />
+            End Date: <input name="endDate" type="date" required/>
+            <br />
+            <input name="repassword" type="password" placeholder="Retype Password" required/>
             <br />
             <input type="submit" />
           </form>

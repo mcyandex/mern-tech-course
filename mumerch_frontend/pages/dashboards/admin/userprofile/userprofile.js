@@ -33,6 +33,10 @@ export default function UserProfile() {
                 <td>Email</td>
                 <td>alshakibeelahi@gmail.com</td>
               </tr>
+              <tr>
+                <td>Designation</td>
+                <td>GM</td>
+              </tr>
             </tbody>
           </table>
         </div>

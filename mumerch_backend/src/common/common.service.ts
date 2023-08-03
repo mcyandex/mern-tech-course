@@ -23,7 +23,7 @@ export class CommonService {
 
   loginMailStructure(id: string, password: string, email): object {
     const subject = "Login credentials for MuMerch"
-    const url = `http://localhost:3000/auth/login`
+    const url = `http://localhost:8000/auth/login`
     const html =
       `<h3>Welcome to MuMerch, a sister concern of MuShophia</h3>
       <p><b>Your login info:</b></p>
@@ -45,7 +45,7 @@ export class CommonService {
   forgetPasswordMailStructure(data: TokenEntity): object {
     const email = data.login.email
     const subject = "Password recovery code for MuMerch"
-    const url = `http://localhost:3000/auth/checkforgetpasswordcode/${data.login.id}`
+    const url = `http://localhost:8000/auth/checkforgetpasswordcode/${data.login.id}`
     const html =
       `<h4>MuMerch system received a request to recover password associated with email: ${data.login.email}.</h4>
       <p>Use this code to recover your password:</p>

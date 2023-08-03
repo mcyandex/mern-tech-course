@@ -14,20 +14,26 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly tokenService: TokenService
   ) { }
+  
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() data: Login, @Session() session): Promise<any> {
+  async login(@Body() data: Login, @Session() session): Promise<LoginEntity> {
+    console.log(data)
     const user = await this.loginService.getUserLoginInfoById(data.id)
     if (user != null) {
       const res = await this.loginService.login(data.password, user.password)
       if (res) {
         console.log(user)
         session.user = user
-        return true
+        return user
       }
-      return new NotFoundException({ message: "User Id or Password didnot match" })
+      else{
+        throw new NotFoundException({ message: "User Id or Password didnot match" })
+      }
     }
-    return new UnauthorizedException({ message: "User not found" })
+    else{
+      throw new UnauthorizedException({ message: "User is not authorised" })
+    }
   }
 
   @Get('forgetpassword/:id')
@@ -70,7 +76,7 @@ export class AuthController {
           if (newLogin != null && delRes['affected'] > 0) {
             return {
               message: "Password changed successfully",
-              url: "http://localhost:3000/auth/login"
+              url: "http://localhost:8000/auth/login"
             }
           }
         }

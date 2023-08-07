@@ -31,12 +31,19 @@ export default function About() {
                 /></td>
               </tr>
               <tr>
-                <td>Meem</td>
-                <td>**-*****-**</td>
-                <td>Image</td>
+                <td>Sadia</td>
+                <td>20-43666-2</td>
+                <td><Image
+                  src="/aboutUs/sadia.jpg"
+                  alt="image of user"
+                  width={100}
+                  height={120}
+                />
+
+                </td>
               </tr>
               <tr>
-                <td>Sadia</td>
+                <td>Meem</td>
                 <td>**-*****-**</td>
                 <td>Image</td>
               </tr>

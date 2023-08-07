@@ -13,7 +13,7 @@ export default function HorizontalNav() {
         <ul>
           <li><Link href='/dashboards/employee/userprofile/userprofile'>Welcome, Sadia</Link></li>
           <li>
-            <Link href='/dashboards/employee/notifications/notifications'>
+            <Link href='/dashboards/admin/notifications/notificationlist'>
               <Image src='/icons/notifications.png' width={30} height={30} alt="Notifications" />
             </Link>
           </li>

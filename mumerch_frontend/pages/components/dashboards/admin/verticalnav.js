@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function HorizontalNav() {
+export default function VerticalNav() {
   return (
     <>
       <nav>

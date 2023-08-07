@@ -10,7 +10,7 @@ export default function Login() {
       <Layout>
         <div>
           <h3>Login</h3>
-          <form method="post" action='/dashboards/admin/admindashboard'>
+          <form method="post" action='/dashboards/employee/employeedashboard'>
             <input name="id" type="text" placeholder="Enter id" />
             <br />
             <input name="password" type="password" placeholder="Enter password" />

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SizeEntity } from './size.entity';
 import { DeleteResult, ILike, Repository } from 'typeorm';
@@ -18,41 +18,52 @@ export class SizeService {
   getSize(): Promise<SizeEntity[]> {
     return this.sizeRepo.find();
   }
-  getAllSizeByUserId(id:string):Promise<SizeEntity>{
+  getAllSizeByUserId(id: string): Promise<SizeEntity> {
     return this.sizeRepo.findOne({
       where: {
         login: { id: id },
       },
       relations: {
         login: true,
-    }
+      }
     });
   }
 
-  getSizeById(id:string):Promise<SizeEntity>{
-    return this.sizeRepo.findOneBy({id:id});
+  getSizeById(id: string): Promise<SizeEntity> {
+    return this.sizeRepo.findOneBy({ id: id });
   }
 
-  getSizeByUserId(uid:string, sid:string):Promise<SizeEntity>{
+  getSizeByUserId(uid: string, sid: string): Promise<SizeEntity> {
     return this.sizeRepo.findOne({
       where: {
-        id:sid,
+        id: sid,
         login: { id: uid },
       },
       relations: {
         login: true,
-    }
+      }
 
     });
   }
-  
+
   async getSizeByName(name: string): Promise<SizeEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
+    console.log(name)
     return await this.sizeRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
+    })
+  }
+
+  async getSizeByNameWithLoginInfo(name: string): Promise<SizeEntity[]> {
+    //console.log(name)
+    return await this.sizeRepo.find({
+      where: {
+        name: ILike(`${name}`)
+      },
+      relations: {
+        login: true
+      }
     })
   }
 
@@ -65,7 +76,11 @@ export class SizeService {
     return this.sizeRepo.delete(id);
   }
 
-  addSize(data: SizeDTO): Promise<SizeEntity> {
-    return this.sizeRepo.save(data);
+  async addSize(data: SizeDTO): Promise<SizeEntity> {
+    return this.sizeRepo.save(data).catch(err => {
+      throw new ConflictException({
+        message: err.message
+      });
+    });
   }
 }

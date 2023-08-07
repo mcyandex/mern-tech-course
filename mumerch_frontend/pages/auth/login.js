@@ -25,27 +25,38 @@ export default function Login() {
       setError('Id and password are required');
     }
     else {
-      console.log(id, password)
-      const data = await createUser(id, password)
-      if (data == true) {
-        router.push('/dashboards/admin/admindashboard');
+      const data = await login(id, password)
+      if (data != null) {
+        if (data.userType == 'admin' || data.userType == 'employee' || data.userType == 'bandmanager' || data.userType == 'gigmanager') {
+          router.push({
+            pathname: `/dashboards/${data.userType}/${data.userType}dashboard`,
+            query: { 
+              uid:data.id,
+              username: data.name
+            }
+          });
+        }
+        else {
+          setError('User role not found, please contact admin')
+        }
       }
       else {
         setError('User id or password not found')
       }
       setId('');
       setPassword('');
+      setError('');
     }
   };
-  async function createUser(id, password) {
+  async function login(id, password) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_URL+'auth/login'
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/login'
       const jsonData = await axios.post(url, { id, password })
       return jsonData.data
     }
     catch (error) {
-      console.log("error22: " + error.message)
-      setError("invalid login")
+      console.log(error.message)
+      setError("Something went wrong, please try again")
     }
   }
 
@@ -57,18 +68,22 @@ export default function Login() {
           <h3>Login</h3>
           <form onSubmit={handleSubmit}>
             <div>
-              <label>Id : </label>
-              <br />
+              <label>ID : </label>
               <input name="id" type="text" placeholder="Enter id" value={id} required onChange={handleChangeId} />
             </div>
             <div>
               <label>Password : </label>
-              <br />
               <input name="password" type="password" placeholder="Enter password" value={password} required onChange={handleChangePassword} />
             </div>
-            <Link href="forgetpassword">Forget Password</Link>
-            <span>{error && <p>{error}</p>}</span>
-            <input type="submit" />
+            <div>
+              <Link href="forgetpassword">Forget Password</Link>
+            </div>
+            <div>
+              <span>{error && <p>{error}</p>}</span>
+            </div>
+            <div>
+              <input type="submit" />
+            </div>
           </form>
           <div>
             <Link href="signup">Don't have an account, sign-up</Link>

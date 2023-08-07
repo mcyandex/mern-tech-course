@@ -51,7 +51,7 @@ import { DesignationDTO } from "src/models/designation/Designation.dto";
 
 
 @Controller('admin')
-@UseGuards(SessionAdminGuard)
+//@UseGuards(SessionAdminGuard)
 export class AdminController {
   constructor(
     private readonly loginService: LoginService,
@@ -497,23 +497,21 @@ export class AdminController {
     }
     return data
   }
-  @Get('getsize/:name')
-  async getSizeByName(@Param() name: string): Promise<SizeDTO[]> {
-    const data = await this.sizeService.getSizeByName(name)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No size created yet" })
-    }
+  @Get('getsizebyname/:name?')
+  async getSizeByName(@Param('name') name: string): Promise<SizeEntity[]> {
+    const searchingName = name==undefined?'%':name+'%'
+    //console.log(searchingName)
+    const data = await this.sizeService.getSizeByNameWithLoginInfo(searchingName)
     return data;
   }
   @Post('addsize')
   @UsePipes(new ValidationPipe())
   async addSize(@Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
+    console.log(data)
     data.login = session.user.id
-    return this.sizeService.addSize(data).catch(err => {
-      throw new ConflictException({
-        message: err.message
-      });
-    });;
+    const resdata = this.sizeService.addSize(data)
+    console.log(resdata)
+    return resdata
   }
   @Put('updatesize/:id')
   @UsePipes(new ValidationPipe())

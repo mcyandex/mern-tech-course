@@ -34,7 +34,7 @@
 |***go to mumerch_frontend folder first:								|
 |***open `cmd` here and run this command								|
 |# npm install ---> to build next app									|
-|													|
+|# npm install axios											|
 |													|
 |													|
 |													|

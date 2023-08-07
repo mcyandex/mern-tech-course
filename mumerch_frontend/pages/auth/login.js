@@ -27,17 +27,14 @@ export default function Login() {
     else {
       const data = await login(id, password)
       if (data != null) {
-        if (data.userType == 'admin') {
-          router.push('/dashboards/admin/admindashboard');
-        }
-        else if (data.userType == 'employee') {
-          router.push('/dashboards/employee/employeedashboard');
-        }
-        else if (data.userType == 'bandmanager') {
-          router.push('/dashboards/bandmanager/bandmanagerdashboard');
-        }
-        else if (data.userType == 'gigmanager') {
-          router.push('/dashboards/gigmanager/gigmanagerdashboard');
+        if (data.userType == 'admin' || data.userType == 'employee' || data.userType == 'bandmanager' || data.userType == 'gigmanager') {
+          router.push({
+            pathname: `/dashboards/${data.userType}/${data.userType}dashboard`,
+            query: { 
+              uid:data.id,
+              username: data.name
+            }
+          });
         }
         else {
           setError('User role not found, please contact admin')
@@ -53,7 +50,7 @@ export default function Login() {
   };
   async function login(id, password) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/login'
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/login'
       const jsonData = await axios.post(url, { id, password })
       return jsonData.data
     }

@@ -23,7 +23,6 @@ export class AuthController {
     if (user != null) {
       const res = await this.loginService.login(data.password, user.password)
       if (res) {
-        console.log(user)
         session.user = user
         return user
       }

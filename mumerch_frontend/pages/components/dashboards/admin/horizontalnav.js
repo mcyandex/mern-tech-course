@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function HorizontalNav() {
+export default function HorizontalNav(props) {
+  const uname = props.uname!=null?"":props.uname
   return (
     <>
       <nav>
@@ -11,7 +12,7 @@ export default function HorizontalNav() {
           </Link>
         </div>
         <ul>
-          <li><Link href='/dashboards/admin/userprofile/userprofile'>Welcome, Elahi</Link></li>
+          <li><Link href='/dashboards/admin/userprofile/userprofile'>Welcome, {uname}</Link></li>
           <li>
             <Link href='/dashboards/admin/notifications/notificationlist'>
               <Image src='/icons/notifications.png' width={30} height={30} alt="Notifications" />

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 const Layout = dynamic(() => import("../components/homepage/layout"))
@@ -12,7 +12,13 @@ export default function CheckForgerPasswordCode() {
   const [retypepassword, setRetypePassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
-  const {uid} = router.query
+  const { uid } = router.query
+
+  useEffect(() => {
+    if (!uid) {
+      router.push("./forgetpassword")
+    }
+  })
 
   const handleChangeToken = (e) => {
     setToken(e.target.value)
@@ -25,9 +31,8 @@ export default function CheckForgerPasswordCode() {
   };
   const handleResendCode = async (e) => {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_URL + `auth/forgetpassword/${uid}`
-      const returnData = await axios.get(url)
-      return returnData.data
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + `auth/forgetpassword/${uid}`
+      await axios.get(url)
     }
     catch (err) {
       setError('Something went wrong, try again')
@@ -63,7 +68,7 @@ export default function CheckForgerPasswordCode() {
       const returnData = await axios.patch(url, data, {
         headers: {
           'Content-Type': 'application/json'
-          }
+        }
       })
       return returnData.data
     }
@@ -75,10 +80,10 @@ export default function CheckForgerPasswordCode() {
 
   return (
     <>
-      <Title page='Check Forget Password'></Title>
+      <Title page='Verification'></Title>
       <Layout>
         <div>
-          <h3>Forget Password</h3>
+          <h3>Verification</h3>
           <form onSubmit={hangleForgetPasswordCode}>
             <div>
               <label>Token : </label>

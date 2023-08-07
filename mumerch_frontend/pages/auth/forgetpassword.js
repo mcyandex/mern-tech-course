@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 const Layout = dynamic(() => import("../components/homepage/layout"))
 const Title = dynamic(() => import("../components/title"))
 
-export default function ForgerPassword(props) {
+export default function ForgerPassword() {
   const [id, setId] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
@@ -23,8 +23,8 @@ export default function ForgerPassword(props) {
       const data = await forgetpassword(id)
       if (data != null) {
         router.push({
-          pathname:'./checkforgetpasswordcode',
-          query:{uid:id}
+          pathname: './checkforgetpasswordcode',
+          query: { uid: id }
         })
       }
       else {
@@ -36,7 +36,7 @@ export default function ForgerPassword(props) {
   };
   async function forgetpassword(id) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_URL + `auth/forgetpassword/${id}`
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + `auth/forgetpassword/${id}`
       const returnData = await axios.get(url)
       return returnData.data
     }
@@ -59,7 +59,7 @@ export default function ForgerPassword(props) {
             <div>
               <span>{error && <p>{error}</p>}</span>
             </div>
-            <input type="submit" value="Enter"/>
+            <input type="submit" value="Enter" />
           </form>
           <div>
             <Link href="login">Go back to Login</Link>

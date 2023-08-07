@@ -9,6 +9,8 @@ export class SizeEntity {
   id: string;
   @Column({unique:true})
   name:string
+  @Column()
+  measurement:number
   @ManyToOne(()=>LoginEntity, login=>login.sizes, {cascade:true})
   login:LoginEntity
   @OneToMany(()=>ProductDetailsEntity, productDetails=>productDetails.size)

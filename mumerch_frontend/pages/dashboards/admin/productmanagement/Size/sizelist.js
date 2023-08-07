@@ -9,6 +9,22 @@ export default function SizeList() {
       <AdminLayout>
         <div>
           <h3>Size List</h3>
+          <table border={1}>
+            <tbody>
+              <tr>
+                <td>Name</td>
+                <td>Measurement</td>
+              </tr>
+              <tr>
+                <td>XL</td>
+                <td>40</td>
+              </tr>
+              <tr>
+                <td>L</td>
+                <td>30</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </AdminLayout>
     </>

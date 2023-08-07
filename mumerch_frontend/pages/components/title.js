@@ -5,7 +5,7 @@ export default function Title(props) {
   return (
     <>
       <Head>
-        <title>MuMerch - {title}</title>
+        <title>{`MuMerch - ${title}`}</title>
       </Head>
     </>
   )

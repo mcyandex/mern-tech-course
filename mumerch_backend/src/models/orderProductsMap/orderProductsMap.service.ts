@@ -23,17 +23,17 @@ export class OrderProductsMapService {
   addOrderProductsMap(data: OrderProductsMapEntity): Promise<OrderProductsMapEntity> {
     return this.orderProductsRepo.save(data);
   }
-  getOrderProductsMapWithReport():any{
+  getOrderProductsMapWithReport(): any {
     return this.orderProductsRepo.find({
-      relations:{
-        order:{
-          gig:true
+      relations: {
+        order: {
+          gig: true
         },
-        productDetails:{
-          size:true,
-          color:true,
-          product:{
-            band:true
+        productDetails: {
+          size: true,
+          color: true,
+          product: {
+            band: true
           }
         }
       }
@@ -53,23 +53,24 @@ export class OrderProductsMapService {
     return data;
   }
 
-  getOrderProductsMapWithReportByGigId(GigId:string):any{
+  getOrderProductsMapWithReportByGigId(GigId: string): any {
     return this.orderProductsRepo.find({
-      where:{
-        order:{
-          gig:{
-                id:GigId
-              }
-      }},
-      relations:{
-        order:{
-          gig:true
+      where: {
+        order: {
+          gig: {
+            id: GigId
+          }
+        }
+      },
+      relations: {
+        order: {
+          gig: true
         },
-        productDetails:{
-          size:true,
-          color:true,
-          product:{
-            band:true
+        productDetails: {
+          size: true,
+          color: true,
+          product: {
+            band: true
           }
         }
       }
@@ -77,52 +78,52 @@ export class OrderProductsMapService {
   }
 
 
-  getOrderProductsMapWithReportEmp(id:string):any{
+  getOrderProductsMapWithReportEmp(id: string): any {
     console.log(id)
     return this.orderProductsRepo.find({
-      where : {
-        order:{
-          login :{
-            id:id,
+      where: {
+        order: {
+          login: {
+            id: id,
             userType: 'employee'
           }
         },
       },
-      relations:{
-        order:{
-          gig:true
+      relations: {
+        order: {
+          gig: true
         },
-        productDetails:{
-          size:true,
-          color:true,
-          product:{
-            band:true
+        productDetails: {
+          size: true,
+          color: true,
+          product: {
+            band: true
           }
         }
       }
     })
   }
-        
-  getOrderProductsMapWithReportByBandId(bandId: string):any{
+
+  getOrderProductsMapWithReportByBandId(bandId: string): any {
     return this.orderProductsRepo.find({
-      where:{
-          productDetails:{
-            product:{
-              band:{
-                id:bandId
-              }
+      where: {
+        productDetails: {
+          product: {
+            band: {
+              id: bandId
             }
           }
+        }
       },
-      relations:{
-        order:{
-          gig:true
+      relations: {
+        order: {
+          gig: true
         },
-        productDetails:{
-          size:true,
-          color:true,
-          product:{
-            band:true
+        productDetails: {
+          size: true,
+          color: true,
+          product: {
+            band: true
           }
         }
       }

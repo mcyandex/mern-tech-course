@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function HorizontalNav(props) {
-  const uname = props.uname!=null?"":props.uname
+  const router = useRouter()
+  const uname = router.query.username
+  const uid = router.query.uid
   return (
     <>
       <nav>
@@ -12,7 +15,7 @@ export default function HorizontalNav(props) {
           </Link>
         </div>
         <ul>
-          <li><Link href='/dashboards/admin/userprofile/userprofile'>Welcome, {uname}</Link></li>
+          <li><Link href={`/dashboards/admin/userprofile/userprofile?uid=${uid}`}>Welcome, {uname}</Link></li>
           <li>
             <Link href='/dashboards/admin/notifications/notificationlist'>
               <Image src='/icons/notifications.png' width={30} height={30} alt="Notifications" />

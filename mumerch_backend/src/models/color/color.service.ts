@@ -12,9 +12,6 @@ export class ColorService {
   getColorWithUserInfo(): Promise<ColorEntity[]> {
     return this.colorRepo.find({ relations: ['user'] });
   }
-  getColor(): Promise<ColorEntity[]> {
-    return this.colorRepo.find();
-  }
   getAllColorByUserId(id:string):Promise<ColorEntity>{
     return this.colorRepo.findOne({
       where: {
@@ -28,6 +25,19 @@ export class ColorService {
   getColorById(id:string):Promise<ColorEntity>{
     return this.colorRepo.findOneBy({id:id});
   }
+  getColor():Promise<ColorEntity[]>{
+    return this.colorRepo.find();
+  }
+  getColorByIdWithLoginInfo(id:string): Promise<ColorEntity> {
+    return this.colorRepo.findOne({
+      where:{
+        id:id
+      },
+      relations:{
+        login:true
+      }
+    });
+  }
   async getColorByName(name: string): Promise<ColorEntity[]> {
     let finalName = name + '%'
     console.log(finalName)
@@ -37,18 +47,14 @@ export class ColorService {
       },
     })
   }
-
   async updateColor(id: string, data: ColorDTO): Promise<ColorEntity> {
     await this.colorRepo.update(id, data)
     return await this.colorRepo.findOneBy({ id: id })
   }
-
   deleteColor(id: string): Promise<DeleteResult> {
     return this.colorRepo.delete(id);
   }
-
   addColor(data: ColorDTO): Promise<ColorEntity> {
     return this.colorRepo.save(data);
   }
-
 }

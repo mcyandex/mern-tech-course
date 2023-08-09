@@ -172,14 +172,15 @@ export class AdminController {
     return this.userProfileService.updateUserProfile(exdata.id, data);
   }
 
-  @Get('getuserprofile')
-  async GetUserProfile(@Session() session) {
-    const data = await this.userProfileService.getUserProfileByLoginInfo(session.user.id)
+  @Get('getuserprofile/:id')
+  //async GetUserProfile(@Session() session) {
+  async GetUserProfile(@Param('id') id:string) {
+    const data = await this.userProfileService.getUserProfileByLoginInfo(id)
     if (data == null) {
       throw new NotFoundException({ message: "No user profile created yet" })
     }
     else {
-      const url = 'localhost:3000/admin/getimage/?type=userProfile&image='
+      const url = 'http://localhost:3000/admin/getimage/?type=userProfile&image='
       data.image = url + data.image
       return data
     }
@@ -510,7 +511,6 @@ export class AdminController {
     else{
       throw new NotFoundException({message:`Size with: ${id} not found`})
     }
-    
   }
   @Post('addsize')
   @UsePipes(new ValidationPipe())
@@ -535,13 +535,15 @@ export class AdminController {
   }
 
   //3.-----------------------------Color-----------------------------
-  @Get('getcolor')
-  async getColor(): Promise<ColorEntity[]> {
-    const data = await this.colorService.getColor();
-    if (data.length === 0) {
+  @Get('getcolor/:id')
+  async getColor(@Param('id') id:string): Promise<ColorEntity> {
+    const data = await this.colorService.getColorByIdWithLoginInfo(id);
+    if (data!=null) {
+      return data
+    }
+    else{
       throw new NotFoundException({ message: "No Color created yet" })
     }
-    return data
   }
   @Get('getcolor/:name')
   async getColorByName(@Param() name: string): Promise<ColorEntity[]> {

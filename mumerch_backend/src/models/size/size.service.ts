@@ -18,10 +18,10 @@ export class SizeService {
   getSize(): Promise<SizeEntity[]> {
     return this.sizeRepo.find();
   }
-  getAllSizeByUserId(id: string): Promise<SizeEntity> {
+  getSizeByIdWithLoginInfo(id: string): Promise<SizeEntity> {
     return this.sizeRepo.findOne({
       where: {
-        login: { id: id },
+        id:id
       },
       relations: {
         login: true,
@@ -47,7 +47,7 @@ export class SizeService {
   }
 
   async getSizeByName(name: string): Promise<SizeEntity[]> {
-    console.log(name)
+    // console.log(name)
     return await this.sizeRepo.find({
       where: {
         name: ILike(`${name}`)

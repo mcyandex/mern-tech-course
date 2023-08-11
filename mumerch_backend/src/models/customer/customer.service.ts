@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CustomerEntity } from "./customer.entity";
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, ILike, Repository } from "typeorm";
 import { CustomerDTO } from "./customer.dto";
 
 @Injectable()
@@ -26,6 +26,16 @@ export class CustomerService{
         }
       });
   }
+
+  async getCustomerByName(name: string): Promise<CustomerEntity[]> {
+    // console.log(name)
+    return await this.customerRepo.find({
+      where: {
+        name: ILike(`${name}`)
+      },
+    })
+  }
+  
   getCustomerByUserId(id: string): Promise<CustomerEntity>{
     return this.customerRepo.findOne({
       where:{

@@ -108,7 +108,6 @@ export class AdminController {
         destination: './temp/userprofile',
         filename: function (req, file, cb) {
           let name = req.body.name;
-          console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
         },
       }),
@@ -153,7 +152,6 @@ export class AdminController {
         destination: './temp/userprofile',
         filename: function (req, file, cb) {
           let name = req.body.name;
-          console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
         },
       }),
@@ -174,14 +172,15 @@ export class AdminController {
     return this.userProfileService.updateUserProfile(exdata.id, data);
   }
 
-  @Get('getuserprofile')
-  async GetUserProfile(@Session() session) {
-    const data = await this.userProfileService.getUserProfileByLoginInfo(session.user.id)
+  @Get('getuserprofile/:id')
+  //async GetUserProfile(@Session() session) {
+  async GetUserProfile(@Param('id') id:string) {
+    const data = await this.userProfileService.getUserProfileByLoginInfo(id)
     if (data == null) {
       throw new NotFoundException({ message: "No user profile created yet" })
     }
     else {
-      const url = 'localhost:3000/admin/getimage/?type=userProfile&image='
+      const url = 'http://localhost:3000/admin/getimage/?type=userProfile&image='
       data.image = url + data.image
       return data
     }
@@ -500,24 +499,31 @@ export class AdminController {
   @Get('getsizebyname/:name?')
   async getSizeByName(@Param('name') name: string): Promise<SizeEntity[]> {
     const searchingName = name==undefined?'%':name+'%'
-    //console.log(searchingName)
     const data = await this.sizeService.getSizeByNameWithLoginInfo(searchingName)
     return data;
+  }
+  @Get('getsizebyid/:id')
+  async getSizeById(@Param('id') id: string): Promise<SizeEntity> {
+    const data = await this.sizeService.getSizeByIdWithLoginInfo(id)
+    if(data!=null){
+      return data;
+    }
+    else{
+      throw new NotFoundException({message:`Size with: ${id} not found`})
+    }
   }
   @Post('addsize')
   @UsePipes(new ValidationPipe())
   async addSize(@Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
-    console.log(data)
-    data.login = session.user.id
-    const resdata = this.sizeService.addSize(data)
-    console.log(resdata)
+    //data.login = session.user.id
+    const resdata = await this.sizeService.addSize(data)
     return resdata
   }
   @Put('updatesize/:id')
   @UsePipes(new ValidationPipe())
-  updateSize(@Param('id') id: string, @Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
-    data.login = session.user.id
-    return this.sizeService.updateSize(id, data);
+  async updateSize(@Param('id') id: string, @Body() data: SizeDTO): Promise<SizeEntity> {
+    //data.login = session.user.id
+    return await this.sizeService.updateSize(id, data);
   }
   @Delete('deletesize/:id')
   async deleteSize(@Param('id') id: string): Promise<string> {
@@ -529,13 +535,15 @@ export class AdminController {
   }
 
   //3.-----------------------------Color-----------------------------
-  @Get('getcolor')
-  async getColor(): Promise<ColorEntity[]> {
-    const data = await this.colorService.getColor();
-    if (data.length === 0) {
+  @Get('getcolor/:id')
+  async getColor(@Param('id') id:string): Promise<ColorEntity> {
+    const data = await this.colorService.getColorByIdWithLoginInfo(id);
+    if (data!=null) {
+      return data
+    }
+    else{
       throw new NotFoundException({ message: "No Color created yet" })
     }
-    return data
   }
   @Get('getcolor/:name')
   async getColorByName(@Param() name: string): Promise<ColorEntity[]> {
@@ -606,7 +614,6 @@ export class AdminController {
         const color = await this.colorService.getColorById(item.colorId)
         const size = await this.sizeService.getSizeById(item.sizeId)
         if (color != null && size != null) {
-          console.log(color, size)
           const newData = new ProductDetailsEntity()
           newData.color = color
           newData.size = size
@@ -687,7 +694,6 @@ export class AdminController {
         destination: './temp/band',
         filename: function (req, file, cb) {
           let name = req.body.name;
-          console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
         },
       }),
@@ -729,7 +735,6 @@ export class AdminController {
         destination: './temp/band',
         filename: function (req, file, cb) {
           let name = req.body.name;
-          console.log(name);
           cb(null, `${name}.${file.originalname.split('.')[1]}`);
         },
       }),

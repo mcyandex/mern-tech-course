@@ -18,12 +18,12 @@ export class AuthController {
   @Post('login')
   @UsePipes(new ValidationPipe())
   async login(@Body() data: Login, @Session() session): Promise<LoginEntity> {
-    console.log(data)
     const user = await this.loginService.getUserLoginInfoById(data.id)
     if (user != null) {
       const res = await this.loginService.login(data.password, user.password)
       if (res) {
         session.user = user
+        console.log(session)
         return user
       }
       else{
@@ -95,7 +95,7 @@ export class AuthController {
   @Get('logout')
   @UseGuards(SessionLoginGuard)
   logout(@Session() session): boolean {
-    console.log(session.user)
+    //console.log(session.user)
     if (session.user != null) {
       session.destroy()
       return true

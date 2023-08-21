@@ -8,8 +8,9 @@ export default function Home() {
       <Title page="A marchendise management app"></Title>
       <Layout>
         <div>
-          <h3>Welcome to MuMerch</h3>
+          <h3 className="p-100">Welcome to MuMerch</h3>
         </div>
+
       </Layout>
     </>
   )

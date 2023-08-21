@@ -1,4 +1,3 @@
-import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import axios from "axios"
@@ -8,23 +7,20 @@ const Title = dynamic(() => import("../../../components/title"))
 
 export default function UserProfile() {
   const [userProfile, setUserProfile] = useState('')
-  const [image, setImage] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
   const uid = router.query.uid
   async function getUserProfile() {
     const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getuserprofile/' + uid
-    const responce = await axios.get(url)
+    const responce = await axios.get(url,{
+      withCredentials:true
+    })
     if (responce != null) {
       setUserProfile(responce.data)
     }
     else {
       setError('No profile found')
     }
-  }
-  const handleImage = async (url) => {
-    const res = await axios.get(url)
-    return res.data
   }
   useEffect(() => {
     getUserProfile()
@@ -45,8 +41,8 @@ export default function UserProfile() {
               <tbody>
                 <tr>
                   <td>Image</td>
-                  <td><Image
-                    src={() => handleImage(data.Image)}
+                  <td><img
+                    src={userProfile.image}
                     alt="image of user"
                     width={100}
                     height={120}
@@ -65,8 +61,12 @@ export default function UserProfile() {
                   <td>{userProfile.login.email}</td>
                 </tr>
                 <tr>
-                  <td>Designation</td>
-                  <td>{userProfile.dateOfBirth}</td>
+                  <td>Date of Birth</td>
+                  <td>{new Date(userProfile.dateOfBirth).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}</td>
                 </tr>
               </tbody>
             </table>

@@ -12,8 +12,8 @@ export default function UserProfile() {
   const uid = router.query.uid
   async function getUserProfile() {
     const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getuserprofile/' + uid
-    const responce = await axios.get(url,{
-      withCredentials:true
+    const responce = await axios.get(url, {
+      withCredentials: true
     })
     if (responce != null) {
       setUserProfile(responce.data)
@@ -34,42 +34,38 @@ export default function UserProfile() {
       <>
         <Title page="User Profile"></Title>
         <AdminLayout>
-          <div>
-            <h1>{uid}</h1>
-            <h3>User Profile</h3>
-            <table border={1}>
-              <tbody>
-                <tr>
-                  <td>Image</td>
-                  <td><img
-                    src={userProfile.image}
-                    alt="image of user"
-                    width={100}
-                    height={120}
-                  /></td>
-                </tr>
-                <tr>
-                  <td>Name</td>
-                  <td>{userProfile.login.name}</td>
-                </tr>
-                <tr>
-                  <td>Phone Number</td>
-                  <td>{userProfile.login.phoneNumber}</td>
-                </tr>
-                <tr>
-                  <td>Email</td>
-                  <td>{userProfile.login.email}</td>
-                </tr>
-                <tr>
-                  <td>Date of Birth</td>
-                  <td>{new Date(userProfile.dateOfBirth).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'long',
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+            <div className="w-full md:w-1/2 p-4 flex flex-col items-center justify-center">
+              <div className="w-32 h-32 rounded-full bg-blue-500 flex items-center justify-center">
+                <img src={userProfile.image} alt="image of user" className="w-28 h-28 rounded-full" />
+              </div>
+              <input type="file" accept="image/*" className="mt-2" />
+            </div>
+            <div className="w-full md:w-1/2 p-4">
+              <h5 className="text-lg font-semibold">Personal Information</h5>
+              <label className="block">
+                Name
+                <input className="border rounded w-full py-1 px-2 mt-1" type="text" value={userProfile.login.name} readOnly />
+              </label>
+              <label className="block">
+                Phone Number
+                <input className="border rounded w-full py-1 px-2 mt-1" type="text" value={userProfile.login.phoneNumber}
+                  readOnly />
+              </label>
+              <label className="block">
+                Email
+                <input className="border rounded w-full py-1 px-2 mt-1" type="email" value={userProfile.login.email}
+                  readOnly />
+              </label>
+              <label className="block">
+                Date of Birth
+                <input className="border rounded w-full py-1 px-2 mt-1" type="text" value={new
+                  Date(userProfile.dateOfBirth).toLocaleDateString(undefined, {
+                    year: 'numeric', month: 'long',
                     day: 'numeric',
-                  })}</td>
-                </tr>
-              </tbody>
-            </table>
+                  })} readOnly />
+              </label>
+            </div>
           </div>
         </AdminLayout>
       </>

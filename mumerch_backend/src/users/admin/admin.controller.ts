@@ -14,7 +14,6 @@ import { UserProfileService } from "src/models/userProfile/userProfile.service";
 import { ProductDTO, ProductRegistrationDTO } from "src/models/product/product.dto";
 import { ProductService } from "src/models/product/product.service";
 import { OrderService } from "src/models/order/order.service";
-import { OrderDTO } from "src/models/order/order.dto";
 import { CategoryDTO } from "src/models/category/category.dto";
 import { CategoryService } from "src/models/category/category.service";
 import { ColorService } from "src/models/color/color.service";
@@ -24,7 +23,6 @@ import { LoginEntity } from "src/models/login/login.entity";
 import { GigService } from "src/models/gig/gig.service";
 import { GigDTO } from "src/models/gig/gig.dto";
 import { OrderProductsMapService } from "src/models/orderProductsMap/orderProductsMap.service";
-import { OrderProductsMapEntity } from "src/models/orderProductsMap/orderProductsMap.entity";
 import { ProductEntity } from "src/models/product/product.entity";
 import { ProductDetailsService } from "src/models/productDetails/productDetails.service";
 import { ProductDetailsEntity } from "src/models/productDetails/productDetails.entity";
@@ -39,7 +37,6 @@ import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto"
 import { AuthService } from "src/auth/auth.service";
 import { CommonService } from "src/common/common.service";
 import { BandManagerEntity } from "src/models/bandManager/bandManager.entity";
-import session from "express-session";
 import { BandManagerService } from "src/models/bandManager/bandManager.service";
 import { GigManagerEntity } from "src/models/gigManager/gigManager.entity";
 import { GigManagerService } from "src/models/gigManager/gigManager.service";
@@ -51,7 +48,7 @@ import { DesignationDTO } from "src/models/designation/Designation.dto";
 
 
 @Controller('admin')
-//@UseGuards(SessionAdminGuard)
+@UseGuards(SessionAdminGuard)
 export class AdminController {
   constructor(
     private readonly loginService: LoginService,

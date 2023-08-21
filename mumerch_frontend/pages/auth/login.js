@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from 'axios';
+import { useAuth } from "../utils/authcontext";
 
 const Layout = dynamic(() => import("../components/homepage/layout"))
 const Title = dynamic(() => import("../components/title"))
@@ -12,6 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
+  const { login } = useAuth();
 
   const handleChangeId = (e) => {
     setId(e.target.value)
@@ -25,13 +27,14 @@ export default function Login() {
       setError('Id and password are required');
     }
     else {
-      const data = await login(id, password)
+      const data = await checkLogin(id, password)
       if (data != null) {
+        login(data, document.cookie);
         if (data.userType == 'admin' || data.userType == 'employee' || data.userType == 'bandmanager' || data.userType == 'gigmanager') {
           router.push({
             pathname: `/dashboards/${data.userType}/${data.userType}dashboard`,
-            query: { 
-              uid:data.id,
+            query: {
+              uid: data.id,
               username: data.name
             }
           });
@@ -48,10 +51,14 @@ export default function Login() {
       setError('');
     }
   };
-  async function login(id, password) {
+  async function checkLogin(id, password) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/login'
-      const jsonData = await axios.post(url, { id, password })
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/login/'
+      const jsonData = await axios.post(url, { id, password },
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          withCredentials: true
+        })
       return jsonData.data
     }
     catch (error) {

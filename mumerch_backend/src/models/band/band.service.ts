@@ -63,4 +63,8 @@ export class BandService {
   addBand(data: BandDTO): Promise<BandEntity>{
     return this.bandRepo.save(data);
   }
+
+  getCount():any{
+    return this.bandRepo.count()
+  }
 }

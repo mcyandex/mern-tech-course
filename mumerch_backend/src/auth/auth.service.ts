@@ -35,7 +35,7 @@ export class AuthService {
 
   async sendForgetPasswordMail(data: TokenEntity): Promise<boolean> {
     const subject = "Password recovery code for MuMerch"
-    const url = `http://localhost:3000/auth/checkforgetpasswordcode/${data.login.id}`
+    const url = `http://localhost:8000/auth/checkforgetpasswordcode?uid=${data.login.id}`
     await this.mailerService.sendMail({
       to: data.login.email,
       subject: subject,

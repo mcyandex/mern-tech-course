@@ -171,7 +171,7 @@ export class AdminController {
 
   @Get('getuserprofile/:id')
   //async GetUserProfile(@Session() session) {
-  async GetUserProfile(@Param('id') id:string) {
+  async GetUserProfile(@Param('id') id: string) {
     const data = await this.userProfileService.getUserProfileByLoginInfo(id)
     if (data == null) {
       throw new NotFoundException({ message: "No user profile created yet" })
@@ -495,18 +495,18 @@ export class AdminController {
   }
   @Get('getsizebyname/:name?')
   async getSizeByName(@Param('name') name: string): Promise<SizeEntity[]> {
-    const searchingName = name==undefined?'%':name+'%'
+    const searchingName = name == undefined ? '%' : name + '%'
     const data = await this.sizeService.getSizeByNameWithLoginInfo(searchingName)
     return data;
   }
   @Get('getsizebyid/:id')
   async getSizeById(@Param('id') id: string): Promise<SizeEntity> {
     const data = await this.sizeService.getSizeByIdWithLoginInfo(id)
-    if(data!=null){
+    if (data != null) {
       return data;
     }
-    else{
-      throw new NotFoundException({message:`Size with: ${id} not found`})
+    else {
+      throw new NotFoundException({ message: `Size with: ${id} not found` })
     }
   }
   @Post('addsize')
@@ -533,12 +533,12 @@ export class AdminController {
 
   //3.-----------------------------Color-----------------------------
   @Get('getcolor/:id')
-  async getColor(@Param('id') id:string): Promise<ColorEntity> {
+  async getColor(@Param('id') id: string): Promise<ColorEntity> {
     const data = await this.colorService.getColorByIdWithLoginInfo(id);
-    if (data!=null) {
+    if (data != null) {
       return data
     }
-    else{
+    else {
       throw new NotFoundException({ message: "No Color created yet" })
     }
   }
@@ -958,18 +958,31 @@ export class AdminController {
 
   @Get('getcount')
   async getAllsCount(): Promise<object> {
-    const admin = await this.loginService.getUserTypeCount("admin")
-    const employee = await this.loginService.getUserTypeCount("employee")
-    const bandManager = await this.loginService.getUserTypeCount("bandmanager")
-    const gigManager = await this.loginService.getUserTypeCount("gigmanager")
-    const customer = await this.customerService.getCount()
-    const band = await this.bandService.getCount()
-    const gig = await this.gigService.getCount()
-    return { admin, employee, bandManager, gigManager, customer }
+    const adminCount = await this.loginService.getUserTypeCount("admin");
+    const employeeCount = await this.loginService.getUserTypeCount("employee");
+    const bandManagerCount = await this.loginService.getUserTypeCount("bandmanager");
+    const gigManagerCount = await this.loginService.getUserTypeCount("gigmanager");
+    const customerCount = await this.customerService.getCount();
+    const bandCount = await this.bandService.getCount();
+    const gigCount = await this.gigService.getCount();
+    const productCount = await this.productDetailsService.getCount();
+
+    const counts = {
+      admin: adminCount,
+      employee: employeeCount,
+      bandManager: bandManagerCount,
+      gigManager: gigManagerCount,
+      customer: customerCount,
+      band: bandCount,
+      gig: gigCount,
+      product: productCount
+    };
+    return counts;
   }
 
+
   //--------configaration----------
-  //3.-----------------------------Color-----------------------------
+  //3.-----------------------------Designation-----------------------------
   @Get('getdesignation')
   async getDesignation(): Promise<DesignationEntity[]> {
     const data = await this.designationService.getDesignation();

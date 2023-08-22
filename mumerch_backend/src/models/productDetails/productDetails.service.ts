@@ -63,4 +63,7 @@ export class ProductDetailsService {
   addProductDetails(data: ProductDetailsEntity): Promise<ProductDetailsEntity> {
     return this.productDetailsRepo.save(data);
   }
+  getCount():any{
+    return this.productDetailsRepo.count()
+  }
 }

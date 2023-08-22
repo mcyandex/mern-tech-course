@@ -10,8 +10,6 @@ export const AuthProvider = ({ children }) => {
     setUser({ user, cookie });
   };
   const checkUser = () => {
-    //console.log("user:  " + user.user.name)
-    //console.log("user:  " + user.cookie)
     return user!= null;
   };
   const logout = () => {
@@ -21,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/logout',
         {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           withCredentials: true
         }
       );

@@ -10,14 +10,13 @@ export default function HorizontalNav() {
   const username = user?.user?.name || null;
   const userId = user?.user?.id || null;
 
-  console.log(checkUser())
   useEffect(() => {
     checkSession();
   }, []);
 
   function checkSession()
   {
-    if (user==null) {
+    if (!checkUser()) {
       router.push('/auth/login')
     }
   }
@@ -31,8 +30,6 @@ export default function HorizontalNav() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const uname = router.query.username;
-  const uid = router.query.uid;
   return (
     <>
       <nav className="bg-white border-blue-600 px-4 lg:px-6 dark:bg-gray-800 border-2">

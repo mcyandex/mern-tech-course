@@ -1,47 +1,85 @@
 import dynamic from "next/dynamic"
-import React from 'react';
-import { useRouter } from "next/router"
+import axios from "axios"
+import Link from "next/link";
+import { useEffect, useState } from 'react';
 const AdminLayout = dynamic(() => import("../../components/dashboards/admin/adminlayout"))
 const Title = dynamic(() => import("../../components/title"))
 
 export default function AdminDashboard() {
-  const router = useRouter()
-  const uid = router.query.uid
-  const username = router.query.username
+  const [counts, setCounts] = useState({});
+  const getCounts = async (e) => {
+    try {
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getcount';
+      const result = await axios.get(url, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        withCredentials: true
+      })
+      console.log(url, result, result.data)
+      setCounts(result.data)
+    }
+    catch (err) {
+      console.log(err)
+    }
+  };
+  useEffect(() => {
+    getCounts();
+  }, []);
   return (
     <>
       <Title page="Admin Dashboard"></Title>
       <AdminLayout>
-        <div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
-          <div class="hidden p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-            <dl class="grid max-w-screen-xl grid-cols-2 gap-8 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-6 dark:text-white sm:p-8">
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">73M+</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Developers</dd>
+        <div class="container px-4 py-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+            <Link href={'usermanagement/admin/adminlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Admins:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.admin}</p>
               </div>
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">100M+</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Public repositories</dd>
+            </Link>
+            <Link href={'usermanagement/employee/employeelist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Employees:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.employee}</p>
               </div>
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">1000s</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Open source projects</dd>
+            </Link>
+            <Link href={'usermanagement/bandmanager/bandmanagerlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Band_Managers:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.bandManager}</p>
               </div>
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">1B+</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Contributors</dd>
+            </Link>
+            <Link href={'usermanagement/gigmanager/gigmanagerlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Gig_Managers:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.gigManager}</p>
               </div>
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">90+</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Top Forbes companies</dd>
+            </Link>
+            <Link href={'bandmanagement/bandlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Bands:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.band}</p>
               </div>
-              <div class="flex flex-col items-center justify-center">
-                <dt class="mb-2 text-3xl font-extrabold">4M+</dt>
-                <dd class="text-gray-800 dark:text-gray-400">Organizations</dd>
+            </Link>
+            <Link href={'gigmanagement/giglist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Events:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.gig}</p>
               </div>
-            </dl>
+            </Link>
+            <Link href={'productmanagement/product/productlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Products:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.product}</p>
+              </div>
+            </Link>
+            <Link href={'customermanagement/customerlist'}>
+              <div class="bg-white p-6 rounded-lg m-6 shadow-md text-center hover:bg-blue-300 transform hover:scale-105 transition duration-300 ease-in-out">
+                <p class="text-gray-600 text-lg font-semibold">Customers:</p>
+                <p class="text-4xl text-indigo-600 font-bold mt-2 hover:text-black">{counts.customer}</p>
+              </div>
+            </Link>
           </div>
-          </div>
+        </div>
       </AdminLayout>
     </>
   )

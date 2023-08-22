@@ -21,7 +21,9 @@ export class UserProfileService {
         login:{id:id}
       },
       relations:{
-        login:true
+        login:{
+          designation:true
+        }
       }
     })
   }

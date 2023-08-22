@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import axios from 'axios';
 import { useAuth } from "../utils/authcontext";
 
-const Layout = dynamic(() => import("../components/homepage/layout"))
 const Title = dynamic(() => import("../components/title"))
 
 export default function Login() {
@@ -31,13 +30,7 @@ export default function Login() {
       if (data != null) {
         login(data, document.cookie);
         if (data.userType == 'admin' || data.userType == 'employee' || data.userType == 'bandmanager' || data.userType == 'gigmanager') {
-          router.push({
-            pathname: `/dashboards/${data.userType}/${data.userType}dashboard`,
-            query: {
-              uid: data.id,
-              username: data.name
-            }
-          });
+          router.push(`/dashboards/${data.userType}/${data.userType}dashboard`);
         }
         else {
           setError('User role not found, please contact admin')

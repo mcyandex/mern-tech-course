@@ -7,8 +7,8 @@ export default function HorizontalNav() {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, logout, checkUser } = useAuth();
-  const username = !user.user.name?'':user.user.name
-  const userId = !user.user.id?'':user.user.id
+  const username = !user.user.name?null:user.user.name
+  const userId = !user.user.id?null:user.user.id
 
   console.log(checkUser())
   useEffect(() => {

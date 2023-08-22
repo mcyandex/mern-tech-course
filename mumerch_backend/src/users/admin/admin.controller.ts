@@ -179,6 +179,7 @@ export class AdminController {
     else {
       const url = 'http://localhost:3000/admin/getimage/?type=userProfile&image='
       data.image = url + data.image
+      console.log(data)
       return data
     }
   }

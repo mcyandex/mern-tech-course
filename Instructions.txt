@@ -35,8 +35,9 @@
 |***open `cmd` here and run this command								|
 |# npm install ---> to build next app									|
 |# npm install axios											|
-|													|
-|													|
+|# npm install -D tailwindcss postcss autoprefixer							|
+|# npx tailwindcss init -p										|
+|# npm install flowbite											|
 |													|
 |___________________________________________________Run_________________________________________________|
 |# npm run dev ---> Frontend run in development mode							|

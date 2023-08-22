@@ -83,4 +83,8 @@ export class GigService {
   addGig(data: GigDTO): Promise<GigEntity>{
     return this.gigRepo.save(data);
   }
+
+  getCount():any{
+    return this.gigRepo.count()
+  }
 }

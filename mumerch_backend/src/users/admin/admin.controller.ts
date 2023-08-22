@@ -179,7 +179,6 @@ export class AdminController {
     else {
       const url = 'http://localhost:3000/admin/getimage/?type=userProfile&image='
       data.image = url + data.image
-      console.log(data)
       return data
     }
   }
@@ -513,14 +512,14 @@ export class AdminController {
   @Post('addsize')
   @UsePipes(new ValidationPipe())
   async addSize(@Body() data: SizeDTO, @Session() session): Promise<SizeDTO> {
-    //data.login = session.user.id
+    data.login = session.user.id
     const resdata = await this.sizeService.addSize(data)
     return resdata
   }
   @Put('updatesize/:id')
   @UsePipes(new ValidationPipe())
-  async updateSize(@Param('id') id: string, @Body() data: SizeDTO): Promise<SizeEntity> {
-    //data.login = session.user.id
+  async updateSize(@Param('id') id: string, @Body() data: SizeDTO, @Session() session): Promise<SizeEntity> {
+    data.login = session.user.id
     return await this.sizeService.updateSize(id, data);
   }
   @Delete('deletesize/:id')
@@ -964,6 +963,8 @@ export class AdminController {
     const bandManager = await this.loginService.getUserTypeCount("bandmanager")
     const gigManager = await this.loginService.getUserTypeCount("gigmanager")
     const customer = await this.customerService.getCount()
+    const band = await this.bandService.getCount()
+    const gig = await this.gigService.getCount()
     return { admin, employee, bandManager, gigManager, customer }
   }
 

@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
+import { useAlert } from "../../../../utils/alertcontext"
 const AdminLayout = dynamic(() => import("../../../../components/dashboards/admin/adminlayout"))
 const Title = dynamic(() => import("../../../../components/title"))
 
@@ -13,10 +14,7 @@ export default function SizeList() {
   const [measurement, setMeasurement] = useState(0)
   const [searchName, setSearchName] = useState('')
   const [sizes, setSizes] = useState('')
-  const [error, setError] = useState('')
-  const [addionError, setAdditionError] = useState('')
-  const [message, setMessage] = useState('')
-  const [additionMessage, setAdditionMessage] = useState('')
+  const { showAlert } = useAlert()
   const router = useRouter()
   const handleChangeSearchName = (e) => {
     setSearchName(e.target.value);
@@ -25,7 +23,6 @@ export default function SizeList() {
     const inputValue = e.target.value;
     if (/^[A-Z][a-zA-z ]*$/.test(inputValue)) {
       setName(inputValue);
-      setNameError('')
     }
     else {
       setNameError('Name should start with a capital letter')
@@ -41,18 +38,19 @@ export default function SizeList() {
   const handleAdd = async (e) => {
     e.preventDefault()
     if (!name || !measurement) {
-      setAdditionError('Must provide name and measurement properly')
+      showAlert('Must provide name and measurement properly')
     }
     else {
       const result = await addSize(name, measurement)
       if (result != null) {
-        setAdditionMessage(`Size added successfully`)
+        showAlert(`Size added successfully`)
         getSizes()
         setName('')
         setMeasurement(0)
       }
       else {
-        setAdditionError(`Size Couldnot added`)
+        showAlert(`Size Couldnot added`)
+        setName('')
       }
       setName('')
       setMeasurement(0)
@@ -72,7 +70,7 @@ export default function SizeList() {
     }
     catch (err) {
       console.log(err)
-      setAdditionError('Something went wrong, try again')
+      showAlert('Something went wrong, try again')
     }
   }
   const getSizes = async (e) => {
@@ -84,17 +82,16 @@ export default function SizeList() {
         withCredentials: true
       })
       setSizes(result.data)
-      if (sizes.length == 0) {
-        setError("No size found")
+      if (result.data.length===0) {
+        showAlert('No size found')
       }
       else {
-        setError('')
         return result.data
       }
     }
     catch (err) {
       console.log(err)
-      setError("Something went wrong, please try again letter")
+      showAlert("Something went wrong, please try again letter")
     }
   };
   const handleUpdate = (id) => {
@@ -112,50 +109,16 @@ export default function SizeList() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
-      setMessage(result.data)
+      showAlert(result.data)
       getSizes()
     }
     catch (err) {
-      setError('Couldnot perform delete operations, try again')
+      showAlert('Couldnot perform delete operations, try again')
     }
   }
   useEffect(() => {
     getSizes();
   }, [searchName]);
-
-  function Alert({ message }) {
-    const [showAlert, setShowAlert] = useState(true);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setShowAlert(false);
-      }, 5000);
-
-      return () => clearTimeout(timeout);
-    }, []);
-
-    return (
-      showAlert && (
-        <div className="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4">
-          <div className="bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 shadow-md relative">
-            <p>{message}</p>
-            <button
-              type="button"
-              className="absolute top-0 right-0 -mt-2 -mr-2 p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-200 focus:ring-2 focus:ring-red-400"
-              onClick={() => setShowAlert(false)}
-              aria-label="Close"
-            >
-              <span className="sr-only">Close</span>
-              <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )
-    );
-  }
-
 
   return (
     <>
@@ -187,8 +150,6 @@ export default function SizeList() {
                 </button>
               </div>
             </form>
-            <span>{addionError && <p>{addionError}</p>}</span>
-            <span>{additionMessage && <p>{additionMessage}</p>}</span>
           </div>
           <hr className="h-px bg-gray-200 border-1 dark:bg-gray-700" />
           <div>
@@ -207,10 +168,8 @@ export default function SizeList() {
                   </div>
                   <input type="text" className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter size name" required onKeyUp={handleChangeSearchName} />
                 </div>
-                <span>{error && <p>{error}</p>}</span>
               </div>
             </div>
-            <span>{message && <p>{message}</p>}</span>
             {Array.isArray(sizes) ? (
               <div class="relative py-2 overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">

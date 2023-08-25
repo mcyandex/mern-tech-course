@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { LoginEntity } from "./login.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { DeleteResult, ILike, Repository } from "typeorm"
-import { LoginDTO, LoginRegistrationDTO } from "./login.dto"; 
+import { LoginDTO, LoginRegistrationDTO } from "./login.dto";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -46,24 +46,32 @@ export class LoginService {
       throw new Error('Failed to retrieve the last Id');
     }
   }
-  getUserLoginInfoByUserType(userType:string): Promise<LoginEntity[]> {
+  getUserLoginInfoByUserType(userType: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
-      where:{
-        userType:userType
+      where: {
+        userType: userType
       },
       // relations:{
       //   user:true
       // }
     });
   }
-  getUserLoginInfoByName(name: string, userType:string): Promise<LoginEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
+  getUserLoginInfoByUserTypeWithLoginInfo(id: string, userType: string): Promise<LoginEntity> {
+    return this.loginRepo.findOne({
+      where: {
+        userType: userType
+      }
+    });
+  }
+  getUserLoginInfoByName(name: string, userType: string): Promise<LoginEntity[]> {
     return this.loginRepo.find({
       where: {
-        name: ILike(`${finalName}`),
-        userType:userType
+        name: ILike(`${name}`),
+        userType: userType
       },
+      relations:{
+        designation:true
+      }
     })
   }
   getUserLoginInfoById(id: string): Promise<LoginEntity> {
@@ -76,10 +84,10 @@ export class LoginService {
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
     return this.loginRepo.delete(id);
   }
-  addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginEntity> {
-    return this.loginRepo.save(data);
+  async addUserLoginInfo(data: LoginRegistrationDTO): Promise<LoginEntity> {
+    return await this.loginRepo.save(data);
   }
-  async login(inputPassword:string, userPassword:string): Promise<boolean> {
+  async login(inputPassword: string, userPassword: string): Promise<boolean> {
     const match: boolean = await bcrypt.compare(inputPassword, userPassword);
     if (match) {
       return true
@@ -102,15 +110,15 @@ export class LoginService {
   //     },
   //   });
   // }
-  async getHassedPassword(password:any):Promise<string>{
+  async getHassedPassword(password: any): Promise<string> {
     const salt = await bcrypt.genSalt();
     const hassedpassword = await bcrypt.hash(password, salt);
     return hassedpassword
   }
-  getUserTypeCount(userType:string):Promise<number>{
+  getUserTypeCount(userType: string): Promise<number> {
     return this.loginRepo.count({
-      where:{
-        userType:userType
+      where: {
+        userType: userType
       }
     })
   }

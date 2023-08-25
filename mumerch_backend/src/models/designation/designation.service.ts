@@ -15,7 +15,12 @@ export class DesignationService {
   }
 
   getDesignation(): Promise <DesignationEntity[]>{
-    return this.designationRepo.find();
+  return this.designationRepo.find({
+    select:{
+      id:true,
+      name:true
+    }
+  });
   }
   getAllDesignationByUserId(id:string): Promise<DesignationEntity>{
     return this.designationRepo.findOne({

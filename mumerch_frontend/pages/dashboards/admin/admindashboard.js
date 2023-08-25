@@ -14,7 +14,6 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
-      console.log(url, result, result.data)
       setCounts(result.data)
     }
     catch (err) {

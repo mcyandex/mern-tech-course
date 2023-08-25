@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CategoryEntity } from "./category.entity";
 import { DeleteResult, ILike, Repository } from "typeorm";
@@ -17,8 +17,8 @@ export class CategoryService {
   async getCategory(): Promise<CategoryEntity[]> {
     return await this.categoryRepo.find();
   }
-  getAllCategoryByUserId(id:string): Promise<CategoryEntity>{
-    return this.categoryRepo.findOne({
+  async getAllCategoryByUserId(id:string): Promise<CategoryEntity>{
+    return await this.categoryRepo.findOne({
         where:{
           login: {id: id},
         },
@@ -27,8 +27,8 @@ export class CategoryService {
         }
       });
   }
-  getCategoryByUserId(id: string): Promise<CategoryEntity>{
-    return this.categoryRepo.findOne({
+  async getCategoryWithLoginId(id: string): Promise<CategoryEntity>{
+    return await this.categoryRepo.findOne({
       where:{
         id: id
       },
@@ -38,12 +38,13 @@ export class CategoryService {
     });
   }
   async getCategoryByName(name: string): Promise<CategoryEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
     return await this.categoryRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
+      relations: {
+        login:true
+      }
     })
   }
   async updateCategory(id: string, data: CategoryDTO): Promise<CategoryEntity>{
@@ -55,7 +56,11 @@ export class CategoryService {
     return this.categoryRepo.delete(id);
   }
 
-  addCategory(data: CategoryDTO): Promise<CategoryEntity>{
-    return this.categoryRepo.save(data);
+  async addCategory(data: CategoryDTO): Promise<CategoryEntity>{
+    return await this.categoryRepo.save(data).catch(err => {
+      throw new ConflictException({
+        message: err.message
+      });
+    });
   }
 }

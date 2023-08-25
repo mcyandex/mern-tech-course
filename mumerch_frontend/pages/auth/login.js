@@ -4,15 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from 'axios';
 import { useAuth } from "../utils/authcontext";
+import { useAlert } from "../utils/alertcontext";
 
 const Title = dynamic(() => import("../components/title"))
 
 export default function Login() {
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const router = useRouter()
   const { login } = useAuth();
+  const { showAlert } = useAlert()
 
   const handleChangeId = (e) => {
     setId(e.target.value)
@@ -23,7 +24,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!id || !password) {
-      setError('Id and password are required');
+      showAlert('Id and password are required');
     }
     else {
       const data = await checkLogin(id, password)
@@ -33,15 +34,14 @@ export default function Login() {
           router.push(`/dashboards/${data.userType}/${data.userType}dashboard`);
         }
         else {
-          setError('User role not found, please contact admin')
+          showAlert('User role not found, please contact admin')
         }
       }
       else {
-        setError('User id or password not found')
+        showAlert('User id or password not found')
       }
       setId('');
       setPassword('');
-      setError('');
     }
   };
   async function checkLogin(id, password) {
@@ -56,7 +56,7 @@ export default function Login() {
     }
     catch (error) {
       console.log(error.message)
-      setError("Something went wrong, please try again")
+      showAlert("Something went wrong, please try again")
     }
   }
 

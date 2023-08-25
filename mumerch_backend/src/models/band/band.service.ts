@@ -43,12 +43,20 @@ export class BandService {
     });
   }
   async getBandByName(name: string): Promise<BandEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
     return await this.bandRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
+    })
+  }
+  async getBandByNameWithLoginInfo(name: string): Promise<BandEntity[]> {
+    return await this.bandRepo.find({
+      where: {
+        name: ILike(`${name}`)
+      },
+      relations:{
+        login:true
+      }
     })
   }
   async updateBand(id: string, data: BandDTO): Promise<BandEntity>{

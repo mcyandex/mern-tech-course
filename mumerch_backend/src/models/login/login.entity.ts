@@ -55,4 +55,6 @@ export class LoginEntity {
   catagories:CategoryEntity[]
   @OneToMany(()=>CustomerEntity, customers=>customers.login)
   customers:CustomerEntity[]
+  @OneToMany(()=>DesignationEntity, des_creator=>des_creator.updater)
+  des_creator:DesignationEntity[]
 }

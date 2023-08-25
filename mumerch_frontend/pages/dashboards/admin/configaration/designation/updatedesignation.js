@@ -2,13 +2,13 @@ import axios from "axios"
 import Link from "next/link";
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router";
-import { useEffect, useId, useState } from "react"
+import { useEffect, useState } from "react"
 const AdminLayout = dynamic(() => import("../../../../components/dashboards/admin/adminlayout"))
 const Title = dynamic(() => import("../../../../components/title"))
 
-export default function UpdateCategory() {
+export default function UpdateDesignation() {
   const router = useRouter()
-  const [category, setCategory] = useState('')
+  const [designation, setDesignation] = useState('')
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState('')
   const [error, setError] = useState('')
@@ -27,14 +27,14 @@ export default function UpdateCategory() {
       setName('')
     }
   }
-  const getCategoryById = async () => {
+  const getDesignationById = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getcategorybyid/' + id
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getdesignation/' + id
       const responce = await axios.get(url, {
         withCredentials: true
       })
       if (responce != null) {
-        setCategory(responce.data)
+        setDesignation(responce.data)
       }
       else {
         setError(`${id} not found`)
@@ -42,15 +42,15 @@ export default function UpdateCategory() {
     }
     catch (err) {
       console.log(err)
-      router.push('./categorylist')
+      router.push('./designationlist')
     }
   }
   const handleEdit = async (e) => {
     e.preventDefault()
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/updatecategory/' + id
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/updatedesignation/' + id
       const data = {
-        name: (!name ? category.name : name)
+        name: (!name ? designation.name : name)
       }
       const responce = await axios.put(url, data, {
         withCredentials: true
@@ -68,23 +68,23 @@ export default function UpdateCategory() {
   }
   useEffect(() => {
     if (!id) {
-      router.push('./categorylist')
+      router.push('./designationlist')
     }
     else {
-      getCategoryById()
+      getDesignationById()
     }
   }, [id])
   return (
     <>
-      <Title page="Update Category"></Title>
+      <Title page="Update Designation"></Title>
       <AdminLayout>
         <section class="bg-white dark:bg-gray-900">
           <div class="py-4 px-4 mx-auto">
             <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Update Category
+                Update Designation
               </h3>
-              <Link href={'./categorylist'} type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="updateProductModal">
+              <Link href={'./designationlist'} type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="updateProductModal">
                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 <span class="sr-only">Close</span>
               </Link>
@@ -93,7 +93,7 @@ export default function UpdateCategory() {
               <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <div class="sm:col-span-2">
                   <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
-                  <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={category.name} onChange={handleChangeName} value={name}/>
+                  <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={designation.name} onChange={handleChangeName} value={name}/>
                   <span className="font-medium">
                     {nameError && <p className="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{nameError}</p>}
                   </span>
@@ -103,7 +103,7 @@ export default function UpdateCategory() {
                 <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                   Update product
                 </button>
-                <Link href={'./categorylist'} class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                <Link href={'./designationlist'} class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
                   Cancel
                 </Link>
               </div>

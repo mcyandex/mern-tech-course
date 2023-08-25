@@ -130,7 +130,7 @@ export class AdminController {
       throw new ConflictException({
         message: err.message
       });
-    });;
+    });
   }
 
   @Put('updateuserprofile')
@@ -209,7 +209,7 @@ export class AdminController {
       throw new ConflictException({
         message: err.message
       });
-    });;
+    });
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -217,11 +217,11 @@ export class AdminController {
     return false
   }
 
-  @Get('getadmin')
-  async getAdmin(): Promise<LoginEntity[]> {
+  @Get('getadmin/:id')
+  async getAdmin(@Param('id') id: string): Promise<LoginEntity> {
     const userType = 'admin'
-    const data = await this.loginService.getUserLoginInfoByUserType(userType);
-    if (data.length === 0) {
+    const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+    if (data == null) {
       throw new NotFoundException({ message: "No Admin created yet" })
     }
     return data
@@ -241,10 +241,11 @@ export class AdminController {
     return "ID: " + id + " couldnot delete, something went wrong"
   }
 
-  @Get('getadmin/:name')
+  @Get('getadminbyname/:name?')
   async getAdminByName(@Param('name') name: string): Promise<LoginDTO[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
     const userType = 'admin'
-    const data = await this.loginService.getUserLoginInfoByName(name, userType)
+    const data = await this.loginService.getUserLoginInfoByName(searchingName, userType)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
     }
@@ -265,7 +266,7 @@ export class AdminController {
       throw new ConflictException({
         message: err.message
       });
-    });;
+    });
 
     if (res != null) {
       return this.authService.sendLoginInfoMail(lastID, password, data.email)
@@ -273,10 +274,11 @@ export class AdminController {
     return false
   }
 
-  @Get('getemployee/:name')
+  @Get('getemployee/:name?')
   async getEmployeeByName(@Param('name') name: string): Promise<LoginDTO[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
     const userType = 'employee'
-    const data = await this.loginService.getUserLoginInfoByName(name, userType)
+    const data = await this.loginService.getUserLoginInfoByName(searchingName, userType)
 
     if (data.length === 0) {
       throw new NotFoundException({ message: "No employee found" })
@@ -327,7 +329,7 @@ export class AdminController {
         throw new ConflictException({
           message: err.message
         });
-      });;
+      });
 
       if (res != null) {
         const bandM = new BandManagerEntity
@@ -340,9 +342,10 @@ export class AdminController {
     }
   }
 
-  @Get('getbandmanager/:name')
+  @Get('getbandmanager/:name?')
   async getBandManagerByName(@Param('name') name: string): Promise<BandManagerEntity[]> {
-    const data = await this.bandMService.getBandManagerByUserName(name)
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.bandMService.getBandManagerByUserName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
     }
@@ -406,10 +409,10 @@ export class AdminController {
     }
   }
 
-  @Get('getGigmanager/:name')
+  @Get('getGigmanager/:name?')
   async getGigManagerByName(@Param('name') name: string): Promise<GigManagerEntity[]> {
-    const userType = 'Gigmanager'
-    const data = await this.gigMService.getGigManagerByUserName(name)
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.gigMService.getGigManagerByUserName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Admin found" })
     }
@@ -443,39 +446,37 @@ export class AdminController {
 
   //!!---ProductManagement CRUD Part---!!
   //1.-----------------------------Category-----------------------------
-  @Get('getcategory')
-  async getCategory(): Promise<CategoryEntity[]> {
-    const data = await this.categoryService.getCategory();
-    if (data.length === 0) {
+  @Get('getcategorybyid/:id')
+  async getCategory(@Param('id') id: string): Promise<CategoryEntity> {
+    const data = await this.categoryService.getCategoryWithLoginId(id);
+    if (data == null) {
       throw new NotFoundException({ message: "No Category created yet" })
     }
     return data
   }
-  @Get('getCategory/:name')
-  async getCategoryByName(@Param('name') name: string): Promise<CategoryDTO[]> {
-    const data = await this.categoryService.getCategoryByName(name)
+  @Get('getcategory/:name?')
+  async getCategoryByName(@Param('name') name: string): Promise<CategoryEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.categoryService.getCategoryByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Category created yet" })
     }
     return data;
   }
-  @Post('addCategory')
+  @Post('addcategory')
   @UsePipes(new ValidationPipe())
-  async addCategory(@Body() data: CategoryDTO, @Session() session): Promise<CategoryDTO> {
+  async addCategory(@Body() data: CategoryDTO, @Session() session): Promise<CategoryEntity> {
     data.login = session.user.id
-    return this.categoryService.addCategory(data).catch(err => {
-      throw new ConflictException({
-        message: err.message
-      });
-    });;
+    console.log(data)
+    return await this.categoryService.addCategory(data)
   }
-  @Put('updateCategory/:id')
+  @Put('updatecategory/:id')
   @UsePipes(new ValidationPipe())
-  updateCategory(@Param('id') id: string, @Body() data: CategoryDTO, @Session() session): Promise<CategoryDTO> {
+  async updateCategory(@Param('id') id: string, @Body() data: CategoryDTO, @Session() session): Promise<CategoryEntity> {
     data.login = session.user.id
-    return this.categoryService.updateCategory(id, data);
+    return await this.categoryService.updateCategory(id, data);
   }
-  @Delete('deleteCategory/:id')
+  @Delete('deletecategory/:id')
   async deleteCategory(@Param('id') id: string): Promise<string> {
     const res = await this.categoryService.deleteCategory(id);
     if (res['affected'] > 0) {
@@ -542,9 +543,10 @@ export class AdminController {
       throw new NotFoundException({ message: "No Color created yet" })
     }
   }
-  @Get('getcolor/:name')
-  async getColorByName(@Param() name: string): Promise<ColorEntity[]> {
-    const data = await this.colorService.getColorByName(name)
+  @Get('getcolorbyname/:name?')
+  async getColorByName(@Param('name') name: string): Promise<ColorEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.colorService.getColorByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
     }
@@ -554,11 +556,7 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async addColor(@Body() data: ColorDTO, @Session() session): Promise<ColorEntity> {
     data.login = session.user.id
-    return this.colorService.addColor(data).catch(err => {
-      throw new ConflictException({
-        message: err.message
-      });
-    });;
+    return this.colorService.addColor(data)
   }
   @Put('updatecolor/:id')
   @UsePipes(new ValidationPipe())
@@ -584,9 +582,10 @@ export class AdminController {
     }
     return data
   }
-  @Get('getProduct/:name')
-  async getProductByName(@Param() name: string): Promise<ProductEntity[]> {
-    const data = await this.productService.getProductByName(name)
+  @Get('getProduct/:name?')
+  async getProductByName(@Param('name') name: string): Promise<ProductEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.productService.getProductByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
@@ -661,9 +660,10 @@ export class AdminController {
       return data
     }
   }
-  @Get('getBand/:name')
-  async getBandByName(@Param() name: string): Promise<BandDTO[]> {
-    const data = await this.bandService.getBandByName(name)
+  @Get('getBand/:name?')
+  async getBandByName(@Param('name') name: string): Promise<BandDTO[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.bandService.getBandByNameWithLoginInfo(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
     }
@@ -770,9 +770,10 @@ export class AdminController {
     }
     return data
   }
-  @Get('getGig/:name')
-  async getGigByName(@Param() name: string): Promise<GigDTO[]> {
-    const data = await this.gigService.getGigByName(name)
+  @Get('getGig/:name?')
+  async getGigByName(@Param('name') name: string): Promise<GigDTO[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.gigService.getGigByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Gig created yet" })
     }
@@ -786,7 +787,7 @@ export class AdminController {
       throw new ConflictException({
         message: err.message
       });
-    });;
+    });
   }
   @Put('updateGig/:id')
   @UsePipes(new ValidationPipe())
@@ -983,17 +984,26 @@ export class AdminController {
 
   //--------configaration----------
   //3.-----------------------------Designation-----------------------------
-  @Get('getdesignation')
-  async getDesignation(): Promise<DesignationEntity[]> {
+  @Get('getdesignation/:id')
+  async getDesignation(@Param('id') id: string): Promise<DesignationEntity> {
+    const data = await this.designationService.getDesignationByUserId(id);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Designation created yet" })
+    }
+    return data
+  }
+  @Get('getalldesignations')
+  async getAllDesignations(): Promise<DesignationEntity[]> {
     const data = await this.designationService.getDesignation();
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Designation created yet" })
     }
     return data
   }
-  @Get('getdesignation/:name')
-  async getDesignationByName(@Param() name: string): Promise<DesignationEntity[]> {
-    const data = await this.designationService.getDesignationByName(name)
+  @Get('getdesignationbyname/:name?')
+  async getDesignationByName(@Param('name') name: string): Promise<DesignationEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.designationService.getDesignationByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Designation created yet" })
     }
@@ -1002,17 +1012,17 @@ export class AdminController {
   @Post('adddesignation')
   @UsePipes(new ValidationPipe())
   async addDesignation(@Body() data: DesignationDTO, @Session() session): Promise<DesignationEntity> {
-    data.login = session.user.id
+    data.updater = session.user.id
     return this.designationService.addDesignation(data).catch(err => {
       throw new ConflictException({
         message: err.message
       });
-    });;
+    });
   }
   @Put('updatedesignation/:id')
   @UsePipes(new ValidationPipe())
   updateDesignation(@Param('id') id: string, @Body() data: DesignationDTO, @Session() session): Promise<DesignationEntity> {
-    data.login = session.user.id
+    data.updater = session.user.id
     return this.designationService.updateDesignation(id, data);
   }
   @Delete('deletedesignation/:id')

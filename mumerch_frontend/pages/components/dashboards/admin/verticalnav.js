@@ -6,6 +6,7 @@ export default function VerticalNav() {
   const [dropdownVisibleUser, setDropdownVisibleUser] = useState(false);
   const [dropdownVisibleProduct, setDropdownVisibleProduct] = useState(false);
   const [dropdownVisibleReport, setDropdownVisibleReport] = useState(false);
+  const [dropdownVisibleConfigaration, setDropdownVisibleConfigaration] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -19,6 +20,9 @@ export default function VerticalNav() {
   };
   const toggleDropdownReport = () => {
     setDropdownVisibleReport(!dropdownVisibleReport);
+  };
+  const toggleDropdownConfigaration = () => {
+    setDropdownVisibleConfigaration(!dropdownVisibleConfigaration);
   };
 
   return (
@@ -184,6 +188,28 @@ export default function VerticalNav() {
                 <li>
                   <Link href="/dashboards/admin/reports/barchart"
                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Bar Charts</Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <button type="button"
+                onClick={toggleDropdownConfigaration}
+                class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-blue-400 bg-gray-200"
+                aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M1 5h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 1 0 0-2H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2Zm18 4h-1.424a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2h10.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Zm0 6H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 0 0 0 2h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Z" />
+                </svg>
+                <span class="flex-1 ml-3 text-left whitespace-nowrap">Configaration</span>
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 4 4 4-4" />
+                </svg>
+              </button>
+              <ul id="dropdown-example" className={`${dropdownVisibleConfigaration ? "" : "hidden"
+                } py-2 space-y-2`}>
+                <li>
+                  <Link href="/dashboards/admin/configaration/designation/designationlist"
+                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Designation</Link>
                 </li>
               </ul>
             </li>

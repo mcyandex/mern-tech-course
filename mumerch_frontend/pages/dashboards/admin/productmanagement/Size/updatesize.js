@@ -10,12 +10,23 @@ export default function UpdateSize() {
   const router = useRouter()
   const [size, setSize] = useState('')
   const [name, setName] = useState('')
+  const [nameError, setNameError] = useState('')
   const [measurement, setMeasurement] = useState(0)
   const [error, setError] = useState('')
   const { id } = router.query
 
   const handleChangeName = (e) => {
-    setName(e.target.value)
+    const inputValue = e.target.value;
+    if (/^[A-Z][a-zA-z ]*$/.test(inputValue)) {
+      setName(inputValue);
+      setNameError('')
+    }
+    else {
+      setNameError('Name should start with a capital letter')
+    }
+    if (inputValue == "") {
+      setName('')
+    }
   }
   const handleChangeMeasurement = (e) => {
     setMeasurement(e.target.value)
@@ -87,11 +98,14 @@ export default function UpdateSize() {
             <form onSubmit={handleEdit}>
               <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <div class="sm:col-span-2">
-                  <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
-                  <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={size.name} onChange={handleChangeName}/>
+                  <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                  <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={size.name} onChange={handleChangeName} value={name}/>
+                  <span className="font-medium">
+                    {nameError && <p className="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{nameError}</p>}
+                  </span>
                 </div>
                 <div class="sm:col-span-2">
-                  <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
+                  <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chest Measurement (in inch)</label>
                   <input type="number" name="measurement" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={size.measurement} onChange={handleChangeMeasurement} min={30} max={60} />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ColorEntity } from "./color.entity";
 import { DeleteResult, ILike, Repository } from "typeorm";
@@ -39,22 +39,27 @@ export class ColorService {
     });
   }
   async getColorByName(name: string): Promise<ColorEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
     return await this.colorRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
+      relations:{
+        login:true
+      }
     })
   }
   async updateColor(id: string, data: ColorDTO): Promise<ColorEntity> {
     await this.colorRepo.update(id, data)
     return await this.colorRepo.findOneBy({ id: id })
   }
-  deleteColor(id: string): Promise<DeleteResult> {
-    return this.colorRepo.delete(id);
+  async deleteColor(id: string): Promise<DeleteResult> {
+    return await this.colorRepo.delete(id);
   }
-  addColor(data: ColorDTO): Promise<ColorEntity> {
-    return this.colorRepo.save(data);
+  async addColor(data: ColorDTO): Promise<ColorEntity> {
+    return await this.colorRepo.save(data).catch(err => {
+      throw new ConflictException({
+        message: err.message
+      });
+    });
   }
 }

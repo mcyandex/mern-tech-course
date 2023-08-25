@@ -23,6 +23,7 @@ export default function SizeList() {
     const inputValue = e.target.value;
     if (/^[A-Z][a-zA-z ]*$/.test(inputValue)) {
       setName(inputValue);
+      setNameError('')
     }
     else {
       setNameError('Name should start with a capital letter')

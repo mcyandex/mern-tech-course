@@ -9,4 +9,6 @@ export class DesignationEntity{
   name: string;
   @OneToMany(()=>LoginEntity, login=>login.designation, {nullable:true})
   login:LoginEntity[]
+  @ManyToOne(()=>LoginEntity, updater=>updater.des_creator, {cascade:true})
+  updater:LoginEntity
 }

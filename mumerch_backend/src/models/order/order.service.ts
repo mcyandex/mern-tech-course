@@ -32,7 +32,11 @@ export class OrderService {
   getOrderWithOrderProductsMap(): Promise<OrderEntity[]> {
     return this.orderRepo.find({
       relations:{
-        orderProducts:true
+        orderProducts:{
+          order:true,
+          productDetails:true
+        },
+        customer:true
       }
     });
   }

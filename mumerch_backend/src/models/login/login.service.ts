@@ -60,6 +60,9 @@ export class LoginService {
     return this.loginRepo.findOne({
       where: {
         userType: userType
+      },
+      relations:{
+        designation:true
       }
     });
   }

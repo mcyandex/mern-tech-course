@@ -58,7 +58,7 @@ export class LoginRegistrationDTO{
 
     @IsNotEmpty({message:"Phone name must have a value"})
     @IsString({message:"Phone name must have a string"})
-    @Matches(/^01[3-9]\d{8}$/, {message:"Phone name can contain only letters and numbers"})
+    @Matches(/^01[3-9]\d{8}$/, {message:"Enter Proper phone number"})
     phoneNumber:string
 
     password:string

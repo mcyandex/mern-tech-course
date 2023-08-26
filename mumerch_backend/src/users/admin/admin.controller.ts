@@ -48,7 +48,7 @@ import { DesignationDTO } from "src/models/designation/Designation.dto";
 
 
 @Controller('admin')
-@UseGuards(SessionAdminGuard)
+//@UseGuards(SessionAdminGuard)
 export class AdminController {
   constructor(
     private readonly loginService: LoginService,
@@ -791,9 +791,9 @@ export class AdminController {
   }
   @Put('updateGig/:id')
   @UsePipes(new ValidationPipe())
-  updateGig(@Param('id') id: string, @Body() data: GigDTO, @Session() session): Promise<GigDTO> {
+  async updateGig(@Param('id') id: string, @Body() data: GigDTO, @Session() session): Promise<GigDTO> {
     data.login = session.user.id
-    return this.gigService.updateGig(id, data);
+    return await this.gigService.updateGig(id, data);
   }
   @Delete('deleteGig/:id')
   async deleteGig(@Param('id') id: string): Promise<string> {

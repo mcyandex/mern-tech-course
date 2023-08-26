@@ -274,7 +274,7 @@ export class AdminController {
     return false
   }
 
-  @Get('getemployee/:name?')
+  @Get('getemployeebyname/:name?')
   async getEmployeeByName(@Param('name') name: string): Promise<LoginDTO[]> {
     const searchingName = name == undefined ? '%' : name + '%'
     const userType = 'employee'
@@ -286,7 +286,17 @@ export class AdminController {
     return data;
   }
 
-  @Get('getemployee')
+  @Get('getemployee/:id')
+  async getEmployeeById(@Param('id') id: string): Promise<LoginEntity> {
+    const userType = 'employee'
+    const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Admin created yet" })
+    }
+    return data
+  }
+
+  @Get('getallemployee')
   async getEmployee(): Promise<LoginEntity[]> {
     const userType = 'employee'
     const data = await this.loginService.getUserLoginInfoByUserType(userType);
@@ -341,6 +351,16 @@ export class AdminController {
       }
     }
   }
+
+  // @Get('getadmin/:id')
+  // async getAdmin(@Param('id') id: string): Promise<LoginEntity> {
+  //   const userType = 'admin'
+  //   const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+  //   if (data == null) {
+  //     throw new NotFoundException({ message: "No Admin created yet" })
+  //   }
+  //   return data
+  // }
 
   @Get('getbandmanager/:name?')
   async getBandManagerByName(@Param('name') name: string): Promise<BandManagerEntity[]> {
@@ -408,6 +428,16 @@ export class AdminController {
       }
     }
   }
+
+  // @Get('getadmin/:id')
+  // async getAdmin(@Param('id') id: string): Promise<LoginEntity> {
+  //   const userType = 'admin'
+  //   const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+  //   if (data == null) {
+  //     throw new NotFoundException({ message: "No Admin created yet" })
+  //   }
+  //   return data
+  // }
 
   @Get('getGigmanager/:name?')
   async getGigManagerByName(@Param('name') name: string): Promise<GigManagerEntity[]> {

@@ -25,6 +25,10 @@ export default function AdminList() {
   const handleChangeSearchName = (e) => {
     setSearchName(e.target.value);
   }
+  const handleChangeDesignation = (e) => {
+    setDesignation(e.target.value);
+    setDesignationError('')
+  }
   const handleChangeName = (e) => {
     const inputValue = e.target.value;
     if (/^[A-Z][a-zA-z ]*$/.test(inputValue)) {
@@ -42,8 +46,8 @@ export default function AdminList() {
     const inputValue = e.target.value;
     setEmail(inputValue);
     setEmailError('');
-  
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(inputValue)) {
+
+    if (!checkEmail(inputValue)) {
       setEmailError('Incorrect email format');
     }
   };
@@ -51,14 +55,36 @@ export default function AdminList() {
     const inputValue = e.target.value;
     setPhone(inputValue);
     setPhoneError('');
-  
-    if (!/^01[3-9]\d{8}$/.test(inputValue)) {
+
+    if (!checkPhone(inputValue)) {
       setPhoneError('Incorrect phone number format');
     }
   };
 
+  function checkPhone(data) {
+    if (/^01[3-9]\d{8}$/.test(data)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+  function checkEmail(data) {
+    if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
   const handleAdd = async (e) => {
     e.preventDefault()
+    if(!designation){
+      setDesignationError('Select a designation')
+    }
+    if (!checkEmail(email) || !checkPhone(phone)) {
+      showAlert('Must provide valid email and phone number')
+    }
     if (!name || !phone || !email || !designation) {
       showAlert('Must provide name, phone, email and designation properly')
     }
@@ -130,16 +156,9 @@ export default function AdminList() {
     try {
       const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getalldesignations';
       const result = await axios.get(url, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
       setAllDesignation(result.data)
-      if (result.data.length === 0) {
-        showAlert('No designation found')
-      }
-      else {
-        return result.data
-      }
     }
     catch (err) {
       console.log(err)
@@ -166,6 +185,7 @@ export default function AdminList() {
   }
   useEffect(() => {
     getUsers();
+    getAllDesignations()
   }, [searchName]);
   return (
     <>
@@ -187,40 +207,38 @@ export default function AdminList() {
                 </div>
                 <div class="w-full">
                   <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                  <input type="email" name="email" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter email" required onKeyDown={handleChangeEmail} value={email} />
+                  <input type="email" name="email" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter email" required onChange={handleChangeEmail} value={email} />
                   <span class="font-medium">
                     {emailError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{emailError}</p>}
                   </span>
                 </div>
                 <div class="w-full">
                   <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
-                  <input type="text" name="phone" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name" required onKeyDown={handleChangePhone} value={phone} />
+                  <input type="text" name="phone" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name" required onChange={handleChangePhone} value={phone} />
                   <span class="font-medium">
                     {phoneError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{phoneError}</p>}
                   </span>
                 </div>
                 <div>
-                  <div>
-
-                  </div>
                   <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Designation</label>
-                  <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                  <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" onChange={handleChangeDesignation}>
+                    <option selected="">Select Designation</option>
                     {Array.isArray(allDesignation)
                       ? (
-                        <>
-                          <option selected="">Select category</option>
-                          <option value="TV">TV/Monitors</option>
-                          <option value="PC">PC</option>
-                          <option value="GA">Gaming/Console</option>
-                          <option value="PH">Phones</option>
-                        </>
-                      ) : (
+                        allDesignation.map((item, index) => (
+                          <>
+                            <option value={`${item.id}`}>{item.name}</option>
+                          </>
+                        ))) : (
                         <>
                           <option selected="">No Designation found</option>
                         </>
                       )
                     }
                   </select>
+                  <span class="font-medium">
+                    {designationError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{designationError}</p>}
+                  </span>
                 </div>
               </div>
               <div className="md:col-span-2 py-4 flex justify-center">

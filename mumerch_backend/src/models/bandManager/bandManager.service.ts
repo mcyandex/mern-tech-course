@@ -18,6 +18,20 @@ export class BandManagerService {
       }
     })
   }
+  getBandManagerWithUserandLoginInfo(id:string): Promise<BandManagerEntity> {
+    return this.bandManagerRepo.findOne({
+      where:{
+        id:id
+      },
+      relations: {
+        login:true,
+        band: true,
+        bandManager:{
+          designation:true
+        }
+      }
+    })
+  }
   async getBandManager(): Promise<BandManagerEntity[]> {
     return await this.bandManagerRepo.find({
       relations: {
@@ -26,17 +40,20 @@ export class BandManagerService {
       }
     });
   }
-  getBandManagerByUserName(name: string): Promise<BandManagerEntity[]> {
-    const finalName = name + '%'
+  getBandManagerByBandMName(name: string): Promise<BandManagerEntity[]> {
     return this.bandManagerRepo.find({
       where: {
-        login: {
-          name: ILike(`${finalName}`)
+        bandManager: {
+          name: ILike(`${name}`),
+          userType: 'bandmanager'
         },
       },
       relations: {
         login: true,
-        band: true
+        band: true,
+        bandManager:{
+          designation:true
+        }
       }
     });
   }
@@ -62,5 +79,8 @@ export class BandManagerService {
 
   addBandManager(data: BandManagerDTO): Promise<BandManagerEntity> {
     return this.bandManagerRepo.save(data);
+  }
+  getCount():any{
+    return this.bandManagerRepo.count()
   }
 }

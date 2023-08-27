@@ -7,7 +7,7 @@ import { ColorDTO } from "src/models/color/color.dto";
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
-import { ChangePassword, LoginDTO, LoginRegistrationDTO } from "src/models/login/login.dto";
+import { ChangePassword, LoginDTO, LoginRegistrationDTO, LoginUpdateDTO } from "src/models/login/login.dto";
 import { LoginService } from "src/models/login/login.service";
 import { SessionAdminGuard } from "./sessionAdminGaurd.gaurd";
 import { UserProfileService } from "src/models/userProfile/userProfile.service";
@@ -246,9 +246,6 @@ export class AdminController {
     const searchingName = name == undefined ? '%' : name + '%'
     const userType = 'admin'
     const data = await this.loginService.getUserLoginInfoByName(searchingName, userType)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No Admin found" })
-    }
     return data;
   }
 
@@ -274,19 +271,25 @@ export class AdminController {
     return false
   }
 
-  @Get('getemployee/:name?')
+  @Get('getemployeebyname/:name?')
   async getEmployeeByName(@Param('name') name: string): Promise<LoginDTO[]> {
     const searchingName = name == undefined ? '%' : name + '%'
     const userType = 'employee'
     const data = await this.loginService.getUserLoginInfoByName(searchingName, userType)
-
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No employee found" })
-    }
     return data;
   }
 
-  @Get('getemployee')
+  @Get('getemployee/:id')
+  async getEmployeeById(@Param('id') id: string): Promise<LoginEntity> {
+    const userType = 'employee'
+    const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Admin created yet" })
+    }
+    return data
+  }
+
+  @Get('getallemployee')
   async getEmployee(): Promise<LoginEntity[]> {
     const userType = 'employee'
     const data = await this.loginService.getUserLoginInfoByUserType(userType);
@@ -342,30 +345,31 @@ export class AdminController {
     }
   }
 
-  @Get('getbandmanager/:name?')
+  @Get('getbandmanagerbyname/:name?')
   async getBandManagerByName(@Param('name') name: string): Promise<BandManagerEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
-    const data = await this.bandMService.getBandManagerByUserName(searchingName)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No Admin found" })
-    }
+    const data = await this.bandMService.getBandManagerByBandMName(searchingName)
     return data;
   }
 
-  @Get('getbandmanager')
-  async getBandManager(): Promise<BandManagerEntity[]> {
-    const userType = 'bandmanager'
-    const data = await this.bandMService.getBandManagerWithUserInfo();
-    if (data.length === 0) {
+  @Get('getbandmanager/:id')
+  async getBandManager(@Param('id') id: string): Promise<BandManagerEntity> {
+    const data = await this.bandMService.getBandManagerWithUserandLoginInfo(id);
+    if (data == null) {
       throw new NotFoundException({ message: "No bandmanager created yet" })
     }
     return data
   }
+  @Put('updateuser/:id')
+  @UsePipes(new ValidationPipe())
+  async updateUser(@Param('id') id: string, @Body() data: LoginUpdateDTO, @Session() session): Promise<LoginEntity> {
+    return await this.loginService.updateUserLoginInfo(id, data)
+  }
   @Put('updatebandmanager/:id')
   @UsePipes(new ValidationPipe())
-  updateBandManager(@Param('id') id: string, @Body() data: BandManagerDTO, @Session() session): Promise<BandManagerEntity> {
+  async updateBandManager(@Param('id') id: string, @Body() data: BandManagerDTO, @Session() session): Promise<BandManagerEntity> {
     data.login = session.user
-    data.bandManager.userType = 'bandmanager'
+    console.log(data, data)
     return this.bandMService.updateBandManager(id, data);
   }
   @Delete('deletebandmanager/:id')
@@ -408,6 +412,16 @@ export class AdminController {
       }
     }
   }
+
+  // @Get('getadmin/:id')
+  // async getAdmin(@Param('id') id: string): Promise<LoginEntity> {
+  //   const userType = 'admin'
+  //   const data = await this.loginService.getUserLoginInfoByUserTypeWithLoginInfo(id, userType);
+  //   if (data == null) {
+  //     throw new NotFoundException({ message: "No Admin created yet" })
+  //   }
+  //   return data
+  // }
 
   @Get('getGigmanager/:name?')
   async getGigManagerByName(@Param('name') name: string): Promise<GigManagerEntity[]> {
@@ -660,6 +674,14 @@ export class AdminController {
       return data
     }
   }
+  @Get('getBandfordropdown')
+  async getBandForDropDOwn(): Promise<BandEntity[]> {
+    const data = await this.bandService.getBandforDropdown();
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Band created yet" })
+    }
+    return data
+  }
   @Get('getBand/:name?')
   async getBandByName(@Param('name') name: string): Promise<BandDTO[]> {
     const searchingName = name == undefined ? '%' : name + '%'
@@ -762,8 +784,16 @@ export class AdminController {
 
   //!!---GigManagement CRUD Part---!!
   //1.Gig(Gig, Gig manager, Band)----------View in poster mode
-  @Get('getGig')
-  async getGig(): Promise<GigEntity[]> {
+  @Get('getgig/:id')
+  async getGig(@Param('id') id: string): Promise<GigEntity> {
+    const data = await this.gigService.getGigById(id);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Gig created yet" })
+    }
+    return data
+  }
+  @Get('getallgigs')
+  async getAllGig(): Promise<GigEntity[]> {
     const data = await this.gigService.getGig();
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Gig created yet" })
@@ -961,8 +991,8 @@ export class AdminController {
   async getAllsCount(): Promise<object> {
     const adminCount = await this.loginService.getUserTypeCount("admin");
     const employeeCount = await this.loginService.getUserTypeCount("employee");
-    const bandManagerCount = await this.loginService.getUserTypeCount("bandmanager");
-    const gigManagerCount = await this.loginService.getUserTypeCount("gigmanager");
+    const bandManagerCount = await this.bandMService.getCount();
+    const gigManagerCount = await this.gigMService.getCount();
     const customerCount = await this.customerService.getCount();
     const bandCount = await this.bandService.getCount();
     const gigCount = await this.gigService.getCount();

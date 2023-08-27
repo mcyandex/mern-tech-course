@@ -8,7 +8,7 @@ import { useAlert } from "../../../../utils/alertcontext"
 const AdminLayout = dynamic(() => import("../../../../components/dashboards/admin/adminlayout"))
 const Title = dynamic(() => import("../../../../components/title"))
 
-export default function AdminList() {
+export default function BandManagerList() {
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState('')
   const [phone, setPhone] = useState('')
@@ -16,8 +16,11 @@ export default function AdminList() {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [designation, setDesignation] = useState('')
+  const [band, setBand] = useState('')
+  const [bandError, setBandError] = useState('')
   const [designationError, setDesignationError] = useState('')
   const [allDesignation, setAllDesignation] = useState('')
+  const [allBands, setAllBands] = useState('')
   const [searchName, setSearchName] = useState('')
   const [users, setUsers] = useState('')
   const { showAlert } = useAlert()
@@ -28,6 +31,10 @@ export default function AdminList() {
   const handleChangeDesignation = (e) => {
     setDesignation(e.target.value);
     setDesignationError('')
+  }
+  const handleChangeBand = (e) => {
+    setBand(e.target.value);
+    setBandError('')
   }
   const handleChangeName = (e) => {
     const inputValue = e.target.value;
@@ -79,17 +86,20 @@ export default function AdminList() {
   }
   const handleAdd = async (e) => {
     e.preventDefault()
-    if(!designation){
+    if (!designation) {
       setDesignationError('Select a designation')
+    }
+    if (!band) {
+      setBandError('Select a Band')
     }
     if (!checkEmail(email) || !checkPhone(phone)) {
       showAlert('Must provide valid email and phone number')
     }
-    if (!name || !phone || !email || !designation) {
-      showAlert('Must provide name, phone, email and designation properly')
+    if (!name || !phone || !email || !designation || !band) {
+      showAlert('Must provide name, phone, email, designation and band properly')
     }
     else {
-      const result = await addUser(name, email, phone, designation)
+      const result = await addUser(name, email, phone, designation, band)
       if (result != null) {
         showAlert(`User added successfully`)
         getUsers()
@@ -97,6 +107,7 @@ export default function AdminList() {
         setEmail('')
         setPhone('')
         setDesignation('')
+        setBandError('')
       }
       else {
         showAlert(`User Couldnot added`)
@@ -104,26 +115,29 @@ export default function AdminList() {
         setEmail('')
         setPhone('')
         setDesignation('')
+        setBandError('')
       }
       setName('')
       setEmail('')
       setPhone('')
       setDesignation('')
+      setBandError('')
     }
   }
-  async function addUser(name, email, phone, designation) {
+  async function addUser(name, email, phone, designation, band) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addadmin'
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addbandmanager'
       const userData = {
         name: name,
         email: email,
         phoneNumber: phone,
-        designation: designation
+        designation: designation,
+        bandId: band
       }
       const result = await axios.post(url, userData, {
         withCredentials: true
       });
-      return result.data
+      return result
     }
     catch (err) {
       console.log(err)
@@ -133,14 +147,14 @@ export default function AdminList() {
   const getUsers = async (e) => {
     try {
       const searchingName = searchName == undefined ? undefined : searchName
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getadminbyname/' + searchingName;
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getbandmanagerbyname/' + searchingName;
       const result = await axios.get(url, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
       setUsers(result.data)
       if (result.data.length === 0) {
-        showAlert('No admin found')
+        showAlert('No user found')
       }
       else {
         return result.data
@@ -166,12 +180,26 @@ export default function AdminList() {
     }
   };
 
+  const getAllBands = async (e) => {
+    try {
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getBandfordropdown';
+      const result = await axios.get(url, {
+        withCredentials: true
+      })
+      setAllBands(result.data)
+    }
+    catch (err) {
+      console.log(err)
+      showAlert("Something went wrong, please try again letter")
+    }
+  };
+
   const handleUpdate = (id) => {
-    router.push(`./updateadmin?id=${id}`)
+    router.push(`./updatebandmanager?id=${id}`)
   }
   const handleDelete = async (id) => {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/deleteadmin/' + id
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/deletebandmanager/' + id
       const result = await axios.delete(url, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
@@ -186,25 +214,26 @@ export default function AdminList() {
   useEffect(() => {
     getUsers();
     getAllDesignations()
+    getAllBands()
   }, [searchName]);
   return (
     <>
-      <Title page="User List"></Title>
+      <Title page="Band Manager List"></Title>
       <AdminLayout>
         <div>
-          <h6 className="text-xl font-semibold dark:text-white">Admin Corner</h6>
+          <h6 className="text-xl font-semibold dark:text-white">Band Manager Corner</h6>
           <hr className="h-px bg-gray-200 border-1 dark:bg-gray-700" />
           <div>
-            <h6 className="text-md font-semibold text-center py-4">Add New Admin</h6>
+            <h6 className="text-md font-semibold text-center py-4">Add New Band Manager</h6>
             <form onSubmit={handleAdd}>
-              <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                <div class="w-full">
-                  <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                  <input type="text" name="name" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter name" required onChange={handleChangeName} value={name} />
-                  <span class="font-medium">
-                    {nameError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{nameError}</p>}
-                  </span>
-                </div>
+              <div class="w-full">
+                <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                <input type="text" name="name" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter name" required onChange={handleChangeName} value={name} />
+                <span class="font-medium">
+                  {nameError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{nameError}</p>}
+                </span>
+              </div>
+              <div class="grid gap-4 py-4 sm:grid-cols-2 sm:gap-6">
                 <div class="w-full">
                   <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                   <input type="email" name="email" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter email" required onChange={handleChangeEmail} value={email} />
@@ -238,6 +267,27 @@ export default function AdminList() {
                   </select>
                   <span class="font-medium">
                     {designationError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{designationError}</p>}
+                  </span>
+                </div>
+                <div>
+                  <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Band</label>
+                  <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" onChange={handleChangeBand}>
+                    <option selected="">Select Band</option>
+                    {Array.isArray(allBands)
+                      ? (
+                        allBands.map((item, index) => (
+                          <>
+                            <option value={`${item.id}`}>{item.name}</option>
+                          </>
+                        ))) : (
+                        <>
+                          <option selected="">No Band found</option>
+                        </>
+                      )
+                    }
+                  </select>
+                  <span class="font-medium">
+                    {bandError && <p class="pb-2 mt-0.5 text-xs text-red-600 dark:text-red-400">{bandError}</p>}
                   </span>
                 </div>
               </div>
@@ -288,6 +338,9 @@ export default function AdminList() {
                       <th scope="col" class="px-6 py-3 text-center">
                         Designation
                       </th>
+                      <th scope="col" class="px-6 py-3 text-center">
+                        Band
+                      </th>
                       <th scope="col" class="px-6 py-3">
                         Actions
                       </th>
@@ -299,18 +352,27 @@ export default function AdminList() {
                         <td class="px-6 py-4 text-center">
                           {index + 1}
                         </td>
-                        <td class="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          {item.name}
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                          {item.email}
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                          {item.phoneNumber}
-                        </td>
                         {
-                          !item.designation ? null : (<td class="px-6 py-4 text-center">
-                            {item.designation.name}
+                          !item.bandManager ? null :
+                            <>
+                              <td class="px-2 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {item.bandManager.name}
+                              </td>
+                              <td class="px-2 text-center">
+                                {item.bandManager.email}
+                              </td>
+                              <td class="px-2 text-center">
+                                {item.bandManager.phoneNumber}
+                              </td>
+                              {
+                                !item.bandManager.designation ? null : (<td class="px-2 text-center">
+                                  {item.bandManager.designation.name}
+                                </td>)
+                              }
+                            </>}
+                        {
+                          !item.band ? null : (<td class="px-2 text-center">
+                            {item.band.name}
                           </td>)
                         }
 

@@ -6,8 +6,6 @@ import { BandEntity } from "../band/band.entity";
 export class BandManagerDTO {
   id: string
   login: LoginEntity
-  @IsNotEmpty({ message: "Band Id required" })
   band: BandEntity
-  @IsNotEmpty({ message: "Band Manager Id required" })
   bandManager: LoginEntity
 }

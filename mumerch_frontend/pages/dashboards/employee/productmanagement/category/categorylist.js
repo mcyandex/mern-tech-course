@@ -76,9 +76,6 @@ export default function CategoryList() {
                       <th scope="col" class="px-6 py-3 text-center">
                         Updated By
                       </th>
-                      <th scope="col" class="px-6 py-3">
-                        Actions
-                      </th>
                     </tr>
                   </thead>
                   {category.map((item, index) => (

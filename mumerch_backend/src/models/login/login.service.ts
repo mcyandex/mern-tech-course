@@ -81,9 +81,18 @@ export class LoginService {
     return this.loginRepo.findOneBy({ id: id })
   }
   async updateUserLoginInfo(id: string, data: LoginDTO): Promise<LoginEntity> {
-    await this.loginRepo.update(id, data)
-    return await this.loginRepo.findOneBy({ id: id })
-  }
+    try {
+        console.log(`updateUserLoginInfo: id = ${id}, data = ${JSON.stringify(data)}`);
+        await this.loginRepo.update(id, data);
+        const updatedEntity = await this.loginRepo.findOneBy({ id: id });
+        console.log(`updateUserLoginInfo: updatedEntity = ${JSON.stringify(updatedEntity)}`);
+        return updatedEntity;
+    } catch (error) {
+        console.error(`updateUserLoginInfo Error: ${error}`);
+        throw error;
+    }
+}
+
   deleteUserLoginInfo(id: string): Promise<DeleteResult> {
     return this.loginRepo.delete(id);
   }

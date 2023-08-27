@@ -18,8 +18,24 @@ export class BandService {
     return await this.bandRepo.find();
   }
 
+  async getBandforDropdown(): Promise<BandEntity[]> {
+    return await this.bandRepo.find({
+      select:{
+        id:true,
+        name:true
+      }
+    });
+  }
+
   async getBandById(id:string): Promise<BandEntity> {
-    return await this.bandRepo.findOneBy({id:id});
+    return await this.bandRepo.findOne({
+      where:{
+        id:id
+      },
+      relations:{
+        login:true
+      }
+    });
   }
 
   getAllBandByUserId(id:string): Promise<BandEntity>{

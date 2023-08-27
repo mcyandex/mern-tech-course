@@ -102,4 +102,7 @@ export class GigManagerService {
   addGigManager(data: GigManagerDTO): Promise<GigManagerEntity>{
     return this.gigManagerRepo.save(data);
   }
+  getCount():any{
+    return this.gigManagerRepo.count()
+  }
 }

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const Title = dynamic(() => import("../../../../components/title"));
 const AdminLayout = dynamic(() => import("../../../../components/dashboards/admin/adminlayout"))
 
-export default function UpdateAdmin() {
+export default function UpdateEmployee() {
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState('')
   const [phone, setPhone] = useState('')
@@ -76,7 +76,7 @@ export default function UpdateAdmin() {
 
   const getUserById = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getadmin/' + id;
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getemployee/' + id;
       const response = await axios.get(url, {
         withCredentials: true
       });
@@ -88,7 +88,7 @@ export default function UpdateAdmin() {
       }
     } catch (err) {
       console.log(err);
-      router.push('./adminlist');
+      router.push('./employeelist');
     }
   }
   const getAllDesignations = async (e) => {
@@ -108,7 +108,7 @@ export default function UpdateAdmin() {
   const handleEdit = async (e) => {
     e.preventDefault()
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/updateadmin/' + id
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/updateemployee/' + id
       const data = {
         name: (!name ? user.name : name),
         phoneNumber: (!phone ? user.phoneNumber : phone),
@@ -133,7 +133,7 @@ export default function UpdateAdmin() {
 
   useEffect(() => {
     if (!id) {
-      router.push('./adminlist');
+      router.push('./employeelist');
     } else {
       getUserById();
       getAllDesignations();
@@ -142,15 +142,15 @@ export default function UpdateAdmin() {
 
   return (
     <>
-      <Title page={'Update Admin Details'}></Title>
+      <Title page={'Update Employee Details'}></Title>
       <AdminLayout>
         <section class="bg-white dark:bg-gray-900">
           <div class="py-4 px-4 mx-auto">
             <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Update Admin Details
+                Update Employee Details
               </h3>
-              <Link href={'./adminlist'} type="button"
+              <Link href={'./employeelist'} type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="updateProductModal">
                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -216,9 +216,9 @@ export default function UpdateAdmin() {
               </div>
               <div class="flex items-center justify-center space-x-4 py-4">
                 <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Update Admin
+                  Update Employee
                 </button>
-                <Link href={'./adminlist'} class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                <Link href={'./employeelist'} class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
                   Cancel
                 </Link>
               </div>

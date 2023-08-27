@@ -49,7 +49,6 @@ export class LoginRegistrationDTO{
     @IsString({message:"Name must have a string"})
     @Matches(/^[A-Z][a-zA-Z ]+$/, {message:"Enter a proper name"})
     name:string
-
     userType:string
 
     @IsNotEmpty({message:"Email must have a value"})
@@ -62,8 +61,16 @@ export class LoginRegistrationDTO{
     phoneNumber:string
 
     password:string
+    designation:DesignationEntity
+}
 
-    @IsNotEmpty()
+export class LoginUpdateDTO{
+    id:string
+    name:string
+    userType:string
+    email:string
+    phoneNumber:string
+    password:string
     designation:DesignationEntity
 }
 

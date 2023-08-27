@@ -27,13 +27,13 @@ export default function CheckForgetPasswordCode() {
 
   const handleChangePassword = (e) => {
     const inputValue = e.target.value;
-    setPassword(e.target.value);
-    if (/^[A-Z][a-zA-z ]*$/.test(inputValue)) {
+    if (!checkPassword(inputValue)) {
       setError('Password format not matched')
     }
     else {
       setError('')
     }
+    setPassword(e.target.value);
   };
 
   const handleChangeRetypePassword = (e) => {
@@ -48,6 +48,14 @@ export default function CheckForgetPasswordCode() {
 
   };
 
+  function checkPassword(data){
+    if (/^(?=.*[@$&!_-])[A-Za-z0-9@$&!_-]{6,}$/.test(data)) {
+      return true
+    }
+    else{
+      return false
+    }
+  }
   const handleResendCode = async () => {
     try {
       const url =
@@ -81,14 +89,13 @@ export default function CheckForgetPasswordCode() {
     }
   };
 
-  async function forgetPasswordCode(uid, token, password) {
+  async function forgetPasswordCode(token, password) {
     try {
       const data = {
         token: token,
-        password: password,
-        id: myId
+        password: password
       };
-      const url = process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/checkforgetpasswordcode';
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'auth/checkforgetpasswordcode/'+myId;
       const returnData = await axios.patch(url, data, {
         headers: {
           "Content-Type": "application/json",

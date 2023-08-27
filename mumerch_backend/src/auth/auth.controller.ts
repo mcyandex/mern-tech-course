@@ -58,10 +58,9 @@ export class AuthController {
       throw new NotFoundException({ message: "User not found" })
     }
   }
-  @Patch('checkforgetpasswordcode')
+  @Patch('checkforgetpasswordcode/:id')
   @UsePipes(new ValidationPipe())
-  async checkForgetPasswordCode(@Body() data: ForgetPassword, id:string): Promise<any> {
-    console.log(data)
+  async checkForgetPasswordCode(@Param('id') id:string,@Body() data: ForgetPassword): Promise<any> {
     const res = await this.tokenService.getTokenByLoginId(id)
     if (res != null) {
       const now = new Date()
@@ -73,6 +72,7 @@ export class AuthController {
           const newLogin = await this.loginService.updateUserLoginInfo(id, newData)
           const delRes = await this.tokenService.deleteToken(res.id)
           if (newLogin != null && delRes['affected'] > 0) {
+            console.log('password-changed')
             return true
           }
         }

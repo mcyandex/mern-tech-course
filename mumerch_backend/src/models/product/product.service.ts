@@ -46,36 +46,60 @@ export class ProductService {
     }
   }
   getProduct(): Promise<ProductEntity[]> {
-    return this.productRepo.find();
+    return this.productRepo.find({
+      select: {
+        name: true,
+        id: true
+      }
+    });
   }
   getProductWithDetails(): Promise<ProductEntity[]> {
     return this.productRepo.find({
-      relations:{
-        productDetails:{
-          size:true,
-          color:true
+      relations: {
+        productDetails: {
+          size: true,
+          color: true
         }
       }
     });
   }
-  getProductById(id:string): Promise<ProductEntity> {
-    return this.productRepo.findOneBy({id:id});
+  getProductById(id: string): Promise<ProductEntity> {
+    return this.productRepo.findOneBy({ id: id });
+  }
+  getProductByIdWithAllInfo(id: string): Promise<ProductEntity> {
+    return this.productRepo.findOne(
+      {
+        where: {
+          id:id
+        },
+        relations:{
+          productDetails:{
+            size:true,
+            color:true
+          }
+        }
+      });
   }
   async getProductByName(name: string): Promise<ProductEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
+
     return await this.productRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
+      relations: {
+        band: true,
+        category: true
+      }
     })
   }
-  getProductByBandId(bandId:string): Promise<ProductEntity> {
+  getProductByBandId(bandId: string): Promise<ProductEntity> {
     return this.productRepo.findOne({
-      where:{
-        band:{id: bandId
-      }},
-      relations:{
+      where: {
+        band: {
+          id: bandId
+        }
+      },
+      relations: {
         band: true,
       }
     });

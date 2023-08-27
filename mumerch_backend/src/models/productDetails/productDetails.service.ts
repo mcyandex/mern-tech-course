@@ -20,6 +20,20 @@ export class ProductDetailsService {
       }
     });
   }
+  getProductDetailsByProIdWithProductInfo(id:string): Promise<ProductDetailsEntity> {
+    return this.productDetailsRepo.findOne({
+      where:{
+        product:{
+          id:id
+        }
+      },
+      relations:{
+        product:true,
+        size:true,
+        color:true
+      }
+    });
+  }
   async getProductDetailsByName(name: string): Promise<ProductDetailsEntity[]> {
     let finalName = name + '%'
     console.log(finalName)

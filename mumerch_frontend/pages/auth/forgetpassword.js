@@ -11,9 +11,11 @@ export default function ForgerPassword() {
   const [error, setError] = useState('')
   const router = useRouter()
 
+
   const handleChangeId = (e) => {
     setId(e.target.value)
   };
+  console.log(id)
   const hangleForgetPassword = async (e) => {
     e.preventDefault()
     if (!id) {
@@ -22,10 +24,7 @@ export default function ForgerPassword() {
     else {
       const data = await forgetpassword(id)
       if (data != null) {
-        router.push({
-          pathname: './checkforgetpasswordcode',
-          query: { uid: id }
-        })
+        router.push(`./checkforgetpasswordcode?id=${id}`)
       }
       else {
         setError('Enter corrent user ID')

@@ -10,15 +10,20 @@ const Title = dynamic(() => import("../../../components/title"))
 
 export default function BandList() {
   const [name, setName] = useState('')
-  const [image, setImage] = useState('')
+  const [image, setImage] = useState(null)
   const [nameError, setNameError] = useState('')
   const [colorCode, setColorCode] = useState('')
   const [searchName, setSearchName] = useState('')
   const [colors, setColors] = useState('')
+  const [bands, setBands] = useState('')
   const { showAlert } = useAlert()
   const router = useRouter()
   const handleChangeSearchName = (e) => {
     setSearchName(e.target.value);
+  }
+  const handleChangeImage = (e) => {
+    const selectedImage = e.target.files[0];
+    setImage(selectedImage);
   }
   const handleChangeName = (e) => {
     const inputValue = e.target.value;
@@ -38,57 +43,60 @@ export default function BandList() {
   }
   const handleAdd = async (e) => {
     e.preventDefault()
-    if (!name || !colorCode) {
-      showAlert('Must provide name and colorCode properly')
-    }
-    else {
-      const result = await addColor(name, colorCode)
+    if (!name && !image) {
+      showAlert('Must provide name and colorCode properly');
+    } else {
+      console.log("Selected Image:", image); // Add this line
+      const result = await addBand(name, image)
+      console.log(name, result)
       if (result != null) {
-        showAlert(`Color added successfully`)
-        getColors()
+        showAlert(`Band added successfully`)
+        getBands()
         setName('')
-        setColorCode('')
+        setImage('')
       }
       else {
-        showAlert(`Color Couldnot added`)
+        showAlert(`Band Couldnot added`)
         setName('')
-        setColorCode('')
+        setImage('')
       }
       setName('')
-      setColorCode('')
+      setImage('')
     }
   }
-  async function addColor(name, colorCode) {
+  async function addBand(name, image) {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addcolor'
-      const colorData = {
-        name: name,
-        colorCode: colorCode,
-      }
-      const result = await axios.post(url, colorData, {
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addband'
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('myfile', image);
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         withCredentials: true
       });
-      return result.data
+      return response.data
     }
     catch (err) {
       console.log(err)
       showAlert('Something went wrong, try again')
     }
   }
-  const getColors = async (e) => {
+  const getBands = async (e) => {
     try {
       const searchingName = searchName == undefined ? undefined : searchName
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getcolorbyname/' + searchingName;
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getband/' + searchingName;
       const result = await axios.get(url, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
-      setColors(result.data)
+      console.log(result.data)
       if (result.data.length === 0) {
         showAlert('No color found')
       }
       else {
-        return result.data
+        setBands(result.data)
       }
     }
     catch (err) {
@@ -101,30 +109,30 @@ export default function BandList() {
   }
   const handleDelete = async (id) => {
     try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/deletecolor/' + id
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/deleteband/' + id
       const result = await axios.delete(url, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true
       })
       showAlert(result.data)
-      getColors()
+      getBands()
     }
     catch (err) {
       showAlert('Couldnot perform delete operations, try again')
     }
   }
   useEffect(() => {
-    getColors();
+    getBands();
   }, [searchName]);
   return (
     <>
-      <Title page="Color List"></Title>
+      <Title page="Band List"></Title>
       <AdminLayout>
         <div>
-          <h6 className="text-xl font-semibold dark:text-white">Color Corner</h6>
+          <h6 className="text-xl font-semibold dark:text-white">Band Corner</h6>
           <hr className="h-px bg-gray-200 border-1 dark:bg-gray-700" />
           <div>
-            <h6 className="text-md font-semibold text-center py-4">Add Color</h6>
+            <h6 className="text-md font-semibold text-center py-4">Add Band</h6>
             <form onSubmit={handleAdd}>
               <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <div class="w-full">
@@ -137,14 +145,13 @@ export default function BandList() {
                 <div class="w-full">
                   <label for="colorImage" class="block text-sm font-medium text-gray-900 dark:text-white">Color Image</label>
                   <div class="flex items-center py-1.5">
-                    <input type="file" accept="image/*" name="colorImage" id="colorImage" class="border border-gray-300 focus:ring-blue-600 focus:border-blue-600" />
-                  </div>
+                    <input type="file" name="myfile" onChange={handleChangeImage} />                 </div>
                 </div>
               </div>
               <div className="md:col-span-2 py-4 flex justify-center">
                 <button type="submit"
                   className="my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Add color
+                  Add Band
                 </button>
               </div>
             </form>
@@ -152,7 +159,7 @@ export default function BandList() {
           <hr className="h-px bg-gray-200 border-1 dark:bg-gray-700" />
           <div>
             <div className="flex py-2 flex-col items-center space-y-4 md:flex-row md:justify-between md:items-center">
-              <h6 className="text-md text-center font-semibold px-2 py-4">Color List :</h6>
+              <h6 className="text-md text-center font-semibold px-2 py-4">Band List :</h6>
               <div className="w-full md:w-1/2">
                 <label htmlFor="default-search"
                   className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
@@ -168,7 +175,7 @@ export default function BandList() {
                 </div>
               </div>
             </div>
-            {Array.isArray(colors) ? (
+            {Array.isArray(bands) ? (
               <div class="relative py-2 overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                   <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -180,7 +187,7 @@ export default function BandList() {
                         Name
                       </th>
                       <th scope="col" class="px-6 py-3 text-center">
-                        Color Code
+                        Logo
                       </th>
                       <th scope="col" class="px-6 py-3 text-center">
                         Updated By
@@ -190,7 +197,7 @@ export default function BandList() {
                       </th>
                     </tr>
                   </thead>
-                  {colors.map((item, index) => (
+                  {bands.map((item, index) => (
                     <tbody>
                       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4 text-center">
@@ -199,8 +206,8 @@ export default function BandList() {
                         <td class="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
                           {item.name}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                          <input type="color" name="colorCode" id="color" class="w-full/2 h-8 border border-gray-300 focus:ring-blue-600 focus:border-blue-600" value={item.colorCode} readOnly />
+                        <td class="px-6 py-4">
+                          <img className="item-center" type="color" src={item.image} width={80} height={25}/>
                         </td>
                         {
                           !item.login ? null : (<td class="px-6 py-4 text-center">
@@ -208,7 +215,8 @@ export default function BandList() {
                           </td>)
                         }
 
-                        <td class="px-6 py-4 space-x-2 flex items-center">
+                        <td class="px-6 py-4  flex space-x-2 items-center">
+
                           <button onClick={() => handleUpdate(item.id)}>
                             <Image src="/icons/update.png" alt='Update' width={15} height={15} />
                           </button>
@@ -218,6 +226,7 @@ export default function BandList() {
                           <Link href={`./${item.id}`}>
                             <Image src="/icons/details.png" alt='Details' width={15} height={15} />
                           </Link>
+
                         </td>
                       </tr>
                     </tbody>

@@ -15,7 +15,11 @@ export class BandService {
   }
 
   async getBand(): Promise<BandEntity[]> {
-    return await this.bandRepo.find();
+    return await this.bandRepo.find({
+      relations:{
+        login:true
+      }
+    });
   }
 
   async getBandforDropdown(): Promise<BandEntity[]> {

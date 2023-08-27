@@ -38,6 +38,8 @@ import { ProductDetailsEntity } from "src/models/productDetails/productDetails.e
 import { SizeEntity } from "src/models/size/size.entity";
 import { CategoryEntity } from "src/models/category/category.entity";
 import { ColorEntity } from "src/models/color/color.entity";
+import { CustomerEntity } from "src/models/customer/customer.entity";
+import { CustomerDTO } from "src/models/customer/customer.dto";
 
 
 @Controller('employee')
@@ -307,6 +309,49 @@ export class EmployeeController {
   }
   //!!----------------Order Management CRUD Part----------------------!!
   //1.Order(Customer,login, ProductOrderMap)
+  @Get('getcustomerbyid/:id')
+  async getCustomer(@Param('id') id: string): Promise<CustomerEntity> {
+    const data = await this.customerService.getCustomerByUserId(id);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
+  }
+  @Get('getcustomers')
+  async getCustomers(): Promise<CustomerEntity[]> {
+    const data = await this.customerService.getCustomerWithUserInfo();
+    return data
+  }
+  @Get('getcustomer/:name?')
+  async getCustomerByName(@Param('name') name: string): Promise<CustomerEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.customerService.getCustomerByName(searchingName)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
+  }
+  @Post('addcustomer')
+  @UsePipes(new ValidationPipe())
+  async addCategory(@Body() data: CustomerDTO, @Session() session): Promise<CustomerEntity> {
+    data.login = session.user.id
+    console.log(data)
+    return await this.customerService.addCustomer(data)
+  }
+  @Put('updatecustomer/:id')
+  @UsePipes(new ValidationPipe())
+  async updateCustomer(@Param('id') id: string, @Body() data: CustomerDTO, @Session() session): Promise<CustomerEntity> {
+    data.login = session.user.id
+    return await this.customerService.updateCustomer(id, data);
+  }
+  @Delete('deletecustomer/:id')
+  async deleteCustomer(@Param('id') id: string): Promise<string> {
+    const res = await this.customerService.deleteCustomer(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " could not delete, something went wrong"
+  }
   //2.Generate Invoice
   //add order
   @Post('addorder')

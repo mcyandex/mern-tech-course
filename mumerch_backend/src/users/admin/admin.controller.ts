@@ -768,9 +768,10 @@ export class AdminController {
       throw new NotFoundException({ message: "No Band created yet" })
     }
     else {
-      const url = 'localhost:3000/admin/getimage/?type=band&image='
+      const url = 'http://localhost:3000/admin/getimage/?type=band&image='
       for (const item of data) {
-        item.image = url + item.image
+        const img=item.image
+        item.image = url + img
       }
       return data
     }
@@ -791,7 +792,7 @@ export class AdminController {
       throw new NotFoundException({ message: "No Band created yet" })
     }
     else {
-      const url = 'localhost:3000/admin/getimage/?type=band&image='
+      const url = 'http://localhost:3000/admin/getimage/?type=band&image='
       for (const item of data) {
         item.image = url + item.image
       }
@@ -833,6 +834,7 @@ export class AdminController {
     }
     await fs.promises.rename(myfileobj.path, filePath);
     data.login = session.user.id
+    console.log(data)
     return this.bandService.addBand(data).catch(err => {
       throw new ConflictException({
         message: err.message

@@ -38,6 +38,9 @@ import { ProductDetailsEntity } from "src/models/productDetails/productDetails.e
 import { SizeEntity } from "src/models/size/size.entity";
 import { CategoryEntity } from "src/models/category/category.entity";
 import { ColorEntity } from "src/models/color/color.entity";
+import { CustomerEntity } from "src/models/customer/customer.entity";
+import { CustomerDTO } from "src/models/customer/customer.dto";
+import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto";
 
 
 @Controller('employee')
@@ -233,6 +236,21 @@ export class EmployeeController {
     }
   }
 
+  @Put('updatesize/:id')
+  @UsePipes(new ValidationPipe())
+  async updateSize(@Param('id') id: string, @Body() data: SizeDTO, @Session() session): Promise<SizeEntity> {
+    data.login = session.user.id
+    return await this.sizeService.updateSize(id, data);
+  }
+  @Delete('deletesize/:id')
+  async deleteSize(@Param('id') id: string): Promise<string> {
+    const res = await this.sizeService.deleteSize(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " couldnot delete, something went wrong"
+  }
+
   //3.-----------------------------Category-----------------------
   @Get('getcategorybyid/:id')
   async getCategory(@Param('id') id: string): Promise<CategoryEntity> {
@@ -260,14 +278,53 @@ export class EmployeeController {
     }
     return data
   }
-  @Get('getProduct/:name')
-  async getProductByName(@Param('name') name: string): Promise<ProductDetailsEntity[]> {
-    const data = await this.productDetailsService.getProductDetailsByName(name)
+  @Get('getProductdetails/:id')
+  async getProductDetails(@Param('id') id: string): Promise<ProductEntity> {
+    const data = await this.productService.getProductByIdWithAllInfo(id);
+    //console.log(id, data)
+    return data
+  }
+  @Get('getProduct/:name?')
+  async getProductByName(@Param('name') name: string): Promise<ProductEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.productService.getProductByName(searchingName)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Product created yet" })
+    }
+    console.log(data)
+    return data;
+  }
+  @Get('getProductforaddition/:name?')
+  async getProductForAddition(@Param('name') name: string): Promise<ProductEntity[]> {
+    console.log(name)
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.productService.getProductByName(searchingName)
+    return data;
+  }
+  @Get('getallproducts')
+  async getAllProducts(): Promise<ProductEntity[]> {
+    const data = await this.productService.getProduct()
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
     return data;
   }
+  @Put('updateProduct/:id')
+  @UsePipes(new ValidationPipe())
+  async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session): Promise<ProductDetailsDTO> {
+    data.product.login = session.user.id
+    return this.productDetailsService.updateProductDetails(id, data)
+  }
+  @Delete('deleteProduct/:id')
+  async deleteProduct(@Param('id') id: string): Promise<string> {
+    const res = await this.productDetailsService.deleteProductDetails(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " couldnot delete, something went wrong"
+  }
+
+
 
   //6.-----------------------------Band--------------------------
   @Get('getBand')
@@ -307,6 +364,49 @@ export class EmployeeController {
   }
   //!!----------------Order Management CRUD Part----------------------!!
   //1.Order(Customer,login, ProductOrderMap)
+  @Get('getcustomerbyid/:id')
+  async getCustomer(@Param('id') id: string): Promise<CustomerEntity> {
+    const data = await this.customerService.getCustomerByUserId(id);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
+  }
+  @Get('getcustomers')
+  async getCustomers(): Promise<CustomerEntity[]> {
+    const data = await this.customerService.getCustomerWithUserInfo();
+    return data
+  }
+  @Get('getcustomer/:name?')
+  async getCustomerByName(@Param('name') name: string): Promise<CustomerEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.customerService.getCustomerByName(searchingName)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
+  }
+  @Post('addcustomer')
+  @UsePipes(new ValidationPipe())
+  async addCategory(@Body() data: CustomerDTO, @Session() session): Promise<CustomerEntity> {
+    data.login = session.user.id
+    console.log(data)
+    return await this.customerService.addCustomer(data)
+  }
+  @Put('updatecustomer/:id')
+  @UsePipes(new ValidationPipe())
+  async updateCustomer(@Param('id') id: string, @Body() data: CustomerDTO, @Session() session): Promise<CustomerEntity> {
+    data.login = session.user.id
+    return await this.customerService.updateCustomer(id, data);
+  }
+  @Delete('deletecustomer/:id')
+  async deleteCustomer(@Param('id') id: string): Promise<string> {
+    const res = await this.customerService.deleteCustomer(id);
+    if (res['affected'] > 0) {
+      return "ID: " + id + " deleted successfully"
+    }
+    return "ID: " + id + " could not delete, something went wrong"
+  }
   //2.Generate Invoice
   //add order
   @Post('addorder')

@@ -468,6 +468,11 @@ export class AdminController {
     }
     return data
   }
+  @Get('getallcategory')
+  async getAllCategory(): Promise<CategoryEntity[]> {
+    const data = await this.categoryService.getCategory();
+    return data
+  }
   @Get('getcategory/:name?')
   async getCategoryByName(@Param('name') name: string): Promise<CategoryEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
@@ -506,6 +511,11 @@ export class AdminController {
     if (data.length === 0) {
       throw new NotFoundException({ message: "No size created yet" })
     }
+    return data
+  }
+  @Get('getsizefordropdown')
+  async getSizeForDDown(): Promise<SizeEntity[]> {
+    const data = await this.sizeService.getSize();
     return data
   }
   @Get('getsizebyname/:name?')
@@ -557,6 +567,13 @@ export class AdminController {
       throw new NotFoundException({ message: "No Color created yet" })
     }
   }
+
+  @Get('getcolorfordropdown')
+  async getColorForDDown(): Promise<ColorEntity[]> {
+    const data = await this.colorService.getColor();
+    return data
+  }
+  
   @Get('getcolorbyname/:name?')
   async getColorByName(@Param('name') name: string): Promise<ColorEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
@@ -596,10 +613,32 @@ export class AdminController {
     }
     return data
   }
+  @Get('getProductdetails/:id')
+  async getProductDetails(@Param('id') id:string): Promise<ProductEntity> {
+    const data = await this.productService.getProductByIdWithAllInfo(id);
+    //console.log(id, data)
+    return data
+  }
   @Get('getProduct/:name?')
   async getProductByName(@Param('name') name: string): Promise<ProductEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
     const data = await this.productService.getProductByName(searchingName)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Product created yet" })
+    }
+    console.log(data)
+    return data;
+  }
+  @Get('getProductforaddition/:name?')
+  async getProductForAddition(@Param('name') name: string): Promise<ProductEntity[]> {
+    console.log(name)
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.productService.getProductByName(searchingName)
+    return data;
+  }
+  @Get('getallproducts')
+  async getAllProducts(): Promise<ProductEntity[]> {
+    const data = await this.productService.getProduct()
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
     }
@@ -616,7 +655,6 @@ export class AdminController {
     proData.revenuePercentage = data.revenuePercentage
     proData.band = data.band
     proData.category = data.category
-    proData.name = data.name
 
     const product = await this.productService.addProduct(proData)
     if (product != null) {
@@ -643,6 +681,7 @@ export class AdminController {
       throw new BadRequestException({ message: "Please fill all the fields correctly" })
     }
   }
+  
   @Put('updateProduct/:id')
   @UsePipes(new ValidationPipe())
   async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session): Promise<ProductDetailsDTO> {

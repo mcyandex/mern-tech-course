@@ -1,7 +1,7 @@
 import { OrderDTO } from "src/models/order/order.dto";
 import { OrderService } from "src/models/order/order.service";
 import { SessionEmployeeGuard } from "./SessionEmployeeGaurd.gaurd";
-import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe, Res } from "@nestjs/common";
+import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe, Res, Query } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
@@ -37,6 +37,7 @@ import { ProductEntity } from "src/models/product/product.entity";
 import { ProductDetailsEntity } from "src/models/productDetails/productDetails.entity";
 import { SizeEntity } from "src/models/size/size.entity";
 import { CategoryEntity } from "src/models/category/category.entity";
+import { ColorEntity } from "src/models/color/color.entity";
 
 
 @Controller('employee')
@@ -135,7 +136,30 @@ export class EmployeeController {
     }
     return this.userProfileService.updateUserProfile(session.user.id, data);
   }
+    @Get('getuserprofile/:id')
+  //async GetUserProfile(@Session() session) {
+  async GetUserProfile(@Param('id') id: string) {
+    const data = await this.userProfileService.getUserProfileByLoginInfo(id)
+    if (data == null) {
+      throw new NotFoundException({ message: "No user profile created yet" })
+    }
+    else {
+      const url = 'http://localhost:3000/employee/getimage/?type=userProfile&image='
+      data.image = url + data.image
+      return data
+    }
+  }
 
+  @Get('getimage')
+  getProfilePic(@Query() qry: any, @Res() res) {
+    const image = qry.image
+    const path = `./uploads/${qry.type}/`
+    const fullpath = path + image
+    if (!fs.existsSync(fullpath)) {
+      throw new NotFoundException('Image not found');
+    }
+    res.sendFile(image, { root: path })
+  }
 
   //ChangePassword(login)
   @Post('changepassword')
@@ -161,17 +185,21 @@ export class EmployeeController {
   //Product(Color,Size,Category,Product,,Band)-------->view
 
   //1.-----------------------------Color-----------------------------
-  @Get('getcolor')
-  async getColor(): Promise<any> {
-    const data = await this.colorService.getColor();
-    if (data.length === 0) {
+  @Get('getcolor/:id')
+  async getColor(@Param('id') id: string): Promise<ColorEntity> {
+    const data = await this.colorService.getColorByIdWithLoginInfo(id);
+    if (data != null) {
+      return data
+    }
+    else {
       throw new NotFoundException({ message: "No Color created yet" })
     }
-    return data
+    return data;
   }
-  @Get('getcolor/:name')
-  async getColorByName(@Param('name') name: string): Promise<ColorDTO[]> {
-    const data = await this.colorService.getColorByName(name)
+  @Get('getcolorbyname/:name?')
+  async getColorByName(@Param('name') name: string): Promise<ColorEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.colorService.getColorByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
     }

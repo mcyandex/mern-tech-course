@@ -1,7 +1,7 @@
 import { OrderDTO } from "src/models/order/order.dto";
 import { OrderService } from "src/models/order/order.service";
 import { SessionEmployeeGuard } from "./SessionEmployeeGaurd.gaurd";
-import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe, Res } from "@nestjs/common";
+import { BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Get, Post, Put, Delete, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe, Param, ConflictException, ParseIntPipe, Res, Query } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { UserProfileDTO } from "src/models/userProfile/userProfile.dto";
@@ -35,6 +35,9 @@ import { SessionLoginGuard } from "src/auth/loginSession.gaurd";
 import session from "express-session";
 import { ProductEntity } from "src/models/product/product.entity";
 import { ProductDetailsEntity } from "src/models/productDetails/productDetails.entity";
+import { SizeEntity } from "src/models/size/size.entity";
+import { CategoryEntity } from "src/models/category/category.entity";
+import { ColorEntity } from "src/models/color/color.entity";
 
 
 @Controller('employee')
@@ -133,7 +136,30 @@ export class EmployeeController {
     }
     return this.userProfileService.updateUserProfile(session.user.id, data);
   }
+    @Get('getuserprofile/:id')
+  //async GetUserProfile(@Session() session) {
+  async GetUserProfile(@Param('id') id: string) {
+    const data = await this.userProfileService.getUserProfileByLoginInfo(id)
+    if (data == null) {
+      throw new NotFoundException({ message: "No user profile created yet" })
+    }
+    else {
+      const url = 'http://localhost:3000/employee/getimage/?type=userProfile&image='
+      data.image = url + data.image
+      return data
+    }
+  }
 
+  @Get('getimage')
+  getProfilePic(@Query() qry: any, @Res() res) {
+    const image = qry.image
+    const path = `./uploads/${qry.type}/`
+    const fullpath = path + image
+    if (!fs.existsSync(fullpath)) {
+      throw new NotFoundException('Image not found');
+    }
+    res.sendFile(image, { root: path })
+  }
 
   //ChangePassword(login)
   @Post('changepassword')
@@ -159,17 +185,21 @@ export class EmployeeController {
   //Product(Color,Size,Category,Product,,Band)-------->view
 
   //1.-----------------------------Color-----------------------------
-  @Get('getcolor')
-  async getColor(): Promise<any> {
-    const data = await this.colorService.getColor();
-    if (data.length === 0) {
+  @Get('getcolor/:id')
+  async getColor(@Param('id') id: string): Promise<ColorEntity> {
+    const data = await this.colorService.getColorByIdWithLoginInfo(id);
+    if (data != null) {
+      return data
+    }
+    else {
       throw new NotFoundException({ message: "No Color created yet" })
     }
-    return data
+    return data;
   }
-  @Get('getcolor/:name')
-  async getColorByName(@Param() name: string): Promise<ColorDTO[]> {
-    const data = await this.colorService.getColorByName(name)
+  @Get('getcolorbyname/:name?')
+  async getColorByName(@Param('name') name: string): Promise<ColorEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.colorService.getColorByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Color created yet" })
     }
@@ -185,25 +215,42 @@ export class EmployeeController {
     }
     return data
   }
-  @Get('getsize/:name')
-  async getSizeByName(@Param() name: string): Promise<SizeDTO[]> {
-    const data = await this.sizeService.getSizeByName(name)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No size created yet" })
-    }
+  @Get('getsizebyname/:name?')
+  async getSizeByName(@Param('name') name: string): Promise<SizeEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.sizeService.getSizeByNameWithLoginInfo(searchingName)
     return data;
   }
 
+  @Get('getsizebyid/:id')
+  async getSizeById(@Param('id') id: string): Promise<SizeEntity> {
+    const data = await this.sizeService.getSizeByIdWithLoginInfo(id)
+    if (data != null) {
+      return data;
+    }
+    else {
+      throw new NotFoundException({ message: `Size with: ${id} not found` })
+    }
+  }
+
   //3.-----------------------------Category-----------------------
-  @Get('getcategory')
-  async getCategory(): Promise<any> {
-    const data = await this.categoryService.getCategory();
+  @Get('getcategorybyid/:id')
+  async getCategory(@Param('id') id: string): Promise<CategoryEntity> {
+    const data = await this.categoryService.getCategoryWithLoginId(id);
+    if (data == null) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
+  }
+  @Get('getcategory/:name?')
+  async getCategoryByName(@Param('name') name: string): Promise<CategoryEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.categoryService.getCategoryByName(searchingName)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Category created yet" })
     }
-    return data
+    return data;
   }
-
   //4.-----------------------------Product--------------------------
   @Get('getProduct')
   async getProduct(): Promise<ProductDetailsEntity[]> {
@@ -214,18 +261,10 @@ export class EmployeeController {
     return data
   }
   @Get('getProduct/:name')
-  async getProductByName(@Param() name: string): Promise<ProductDetailsEntity[]> {
+  async getProductByName(@Param('name') name: string): Promise<ProductDetailsEntity[]> {
     const data = await this.productDetailsService.getProductDetailsByName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Product created yet" })
-    }
-    return data;
-  }
-  @Get('getCategory/:name')
-  async getCategoryByName(@Param() name: string): Promise<CategoryDTO[]> {
-    const data = await this.categoryService.getCategoryByName(name)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No Category created yet" })
     }
     return data;
   }
@@ -240,7 +279,7 @@ export class EmployeeController {
     return data
   }
   @Get('getBand/:name')
-  async getBandByName(@Param() name: string): Promise<BandDTO[]> {
+  async getBandByName(@Param('name') name: string): Promise<BandDTO[]> {
     const data = await this.bandService.getBandByName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Band created yet" })
@@ -259,7 +298,7 @@ export class EmployeeController {
     return data
   }
   @Get('getGig/:name')
-  async getGigByName(@Param() name: string): Promise<GigDTO[]> {
+  async getGigByName(@Param('name') name: string): Promise<GigDTO[]> {
     const data = await this.gigService.getGigByName(name)
     if (data.length === 0) {
       throw new NotFoundException({ message: "No Gig created yet" })
@@ -333,7 +372,7 @@ export class EmployeeController {
   }
 
   @Get('getorder/:id')
-  async getOrderById(@Param() id: string): Promise<OrderEntity> {
+  async getOrderById(@Param('id') id: string): Promise<OrderEntity> {
     const data = await this.orderService.getOrderById(id);
     if (data != null) {
       throw new NotFoundException('Order with name ${name} not found');
@@ -492,4 +531,29 @@ export class EmployeeController {
       return reportArray;
     }
   }
+
+  @Get('getcount')
+  async getAllsCount(): Promise<object> {
+    const adminCount = await this.loginService.getUserTypeCount("admin");
+    const employeeCount = await this.loginService.getUserTypeCount("employee");
+    const bandManagerCount = await this.loginService.getUserTypeCount("bandmanager");
+    const gigManagerCount = await this.loginService.getUserTypeCount("gigmanager");
+    const customerCount = await this.customerService.getCount();
+    const bandCount = await this.bandService.getCount();
+    const gigCount = await this.gigService.getCount();
+    const productCount = await this.productDetailsService.getCount();
+
+    const counts = {
+      admin: adminCount,
+      employee: employeeCount,
+      bandManager: bandManagerCount,
+      gigManager: gigManagerCount,
+      customer: customerCount,
+      band: bandCount,
+      gig: gigCount,
+      product: productCount
+    };
+    return counts;
+  }
+
 }

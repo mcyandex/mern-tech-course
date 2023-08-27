@@ -14,7 +14,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly tokenService: TokenService
   ) { }
-  
+
   @Post('login')
   @UsePipes(new ValidationPipe())
   async login(@Body() data: Login, @Session() session): Promise<LoginEntity> {

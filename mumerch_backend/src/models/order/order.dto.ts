@@ -15,3 +15,11 @@ export class OrderDTO {
   @IsNotEmpty({message:"Must provide user information"})
   customer: CustomerEntity
 }
+export class OrderRegistrationDTO {
+  id: string
+  date: Date
+  login: LoginEntity
+  orderProducts: OrderProductsMapEntity[]
+  gig: GigEntity
+  customer: CustomerEntity
+}

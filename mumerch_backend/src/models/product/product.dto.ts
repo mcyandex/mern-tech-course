@@ -22,5 +22,5 @@ export class ProductRegistrationDTO {
   login:LoginEntity
   category:CategoryEntity
   band:BandEntity
-  productDetails:ProductRegistrationDetailsDTO[]
+  productDetails:ProductDetailsEntity
 }

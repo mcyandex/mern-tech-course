@@ -45,7 +45,7 @@ export class CommonService {
   forgetPasswordMailStructure(data: TokenEntity): object {
     const email = data.login.email
     const subject = "Password recovery code for MuMerch"
-    const url = `http://localhost:8000/auth/checkforgetpasswordcode/${data.login.id}`
+    const url = `http://localhost:8000/auth/checkforgetpasswordcode?id=${data.login.id}`
     const html =
       `<h4>MuMerch system received a request to recover password associated with email: ${data.login.email}.</h4>
       <p>Use this code to recover your password:</p>

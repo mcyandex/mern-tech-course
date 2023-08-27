@@ -28,6 +28,6 @@ export class ProductRegistrationDetailsDTO{
   quantity:number
   colorId:string
   sizeId:string
-  product:ProductEntity
+  productId:string
 }
   

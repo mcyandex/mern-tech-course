@@ -33,7 +33,7 @@ import { SizeEntity } from "src/models/size/size.entity";
 import { ColorEntity } from "src/models/color/color.entity";
 import { BandEntity } from "src/models/band/band.entity";
 import { GigEntity } from "src/models/gig/gig.entity";
-import { ProductDetailsDTO } from "src/models/productDetails/productDetails.dto";
+import { ProductDetailsDTO, ProductRegistrationDetailsDTO } from "src/models/productDetails/productDetails.dto";
 import { AuthService } from "src/auth/auth.service";
 import { CommonService } from "src/common/common.service";
 import { BandManagerEntity } from "src/models/bandManager/bandManager.entity";
@@ -573,7 +573,7 @@ export class AdminController {
     const data = await this.colorService.getColor();
     return data
   }
-  
+
   @Get('getcolorbyname/:name?')
   async getColorByName(@Param('name') name: string): Promise<ColorEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
@@ -614,7 +614,7 @@ export class AdminController {
     return data
   }
   @Get('getProductdetails/:id')
-  async getProductDetails(@Param('id') id:string): Promise<ProductEntity> {
+  async getProductDetails(@Param('id') id: string): Promise<ProductEntity> {
     const data = await this.productService.getProductByIdWithAllInfo(id);
     //console.log(id, data)
     return data
@@ -645,43 +645,105 @@ export class AdminController {
     return data;
   }
 
-  @Post('addProduct')
+  @Post('addproductwithpreviousinfo')
   @UsePipes(new ValidationPipe())
-  async addProduct(@Body() data: ProductRegistrationDTO, @Session() session): Promise<ProductDTO> {
-    const proData = new ProductDTO()
-    proData.login = session.user.id
-    proData.name = data.name
-    proData.price = data.price
-    proData.revenuePercentage = data.revenuePercentage
-    proData.band = data.band
-    proData.category = data.category
-
-    const product = await this.productService.addProduct(proData)
-    if (product != null) {
-      for (const item of data.productDetails) {
-        const color = await this.colorService.getColorById(item.colorId)
-        const size = await this.sizeService.getSizeById(item.sizeId)
-        if (color != null && size != null) {
-          const newData = new ProductDetailsEntity()
-          newData.color = color
-          newData.size = size
-          newData.quantity = item.quantity
-          newData.product = product
-          newData.name = product.name + ' ' + color.name + ' ' + size.name
-          await this.productDetailsService.addProductDetails(newData)
-        }
-        else {
-          await this.productService.deleteProduct(product.id)
-          throw new NotFoundException({ message: "Specific color or size not found" })
-        }
-      }
-      return product
+  async addProductWithPrevInfo(@Body() data: ProductRegistrationDetailsDTO, @Session() session): Promise<ProductDetailsEntity> {
+    const product = await this.productService.getProductById(data.productId)
+    const color = await this.colorService.getColorById(data.colorId)
+    const size = await this.sizeService.getSizeById(data.sizeId)
+    if (color != null && size != null && product != null) {
+      const newData = new ProductDetailsEntity()
+      newData.color = color
+      newData.size = size
+      newData.quantity = data.quantity
+      newData.product = product
+      newData.name = product.name + ' ' + color.name + ' ' + size.name
+      return await this.productDetailsService.addProductDetails(newData)
     }
     else {
-      throw new BadRequestException({ message: "Please fill all the fields correctly" })
+      throw new NotFoundException({ message: "Specific color or size not found" })
     }
   }
-  
+  @Post('addnewproduct')
+  @UsePipes(new ValidationPipe())
+  async addNewProduct(@Body() data: ProductRegistrationDTO, @Session() session): Promise<ProductDetailsDTO> {
+    try {
+      console.log("Received data:", data);
+
+      const proData = new ProductDTO();
+      proData.name = data.name;
+      proData.band = data.band;
+      proData.category = data.category;
+      proData.price = data.price;
+      proData.revenuePercentage = data.revenuePercentage;
+      proData.login = session.user;
+
+      console.log("proData:", proData);
+
+      const product = await this.productService.addProduct(proData);
+
+      console.log("Product:", product);
+
+      if (product !== null) {
+        const newData = new ProductDetailsEntity();
+        newData.color = data.productDetails.color;
+        newData.size = data.productDetails.size;
+        newData.quantity = data.productDetails.quantity;
+        newData.product = product;
+        newData.name = product.name + ' ' + data.productDetails.color.name + ' ' + data.productDetails.size.name;
+
+        console.log("newData:", newData);
+
+        const result = await this.productDetailsService.addProductDetails(newData);
+
+        console.log("Result:", result);
+
+        return result;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+
+
+  // @Post('addProduct')
+  // @UsePipes(new ValidationPipe())
+  // async addProduct(@Body() data: ProductRegistrationDTO, @Session() session): Promise<ProductDTO> {
+  //   const proData = new ProductDTO()
+  //   proData.login = session.user.id
+  //   proData.name = data.name
+  //   proData.price = data.price
+  //   proData.revenuePercentage = data.revenuePercentage
+  //   proData.band = data.band
+  //   proData.category = data.category
+
+  //   const product = await this.productService.addProduct(proData)
+  //   if (product != null) {
+  //     for (const item of data.productDetails) {
+  //       const color = await this.colorService.getColorById(item.colorId)
+  //       const size = await this.sizeService.getSizeById(item.sizeId)
+  //       if (color != null && size != null) {
+  //         const newData = new ProductDetailsEntity()
+  //         newData.color = color
+  //         newData.size = size
+  //         newData.quantity = item.quantity
+  //         newData.product = product
+  //         newData.name = product.name + ' ' + color.name + ' ' + size.name
+  //         await this.productDetailsService.addProductDetails(newData)
+  //       }
+  //       else {
+  //         await this.productService.deleteProduct(product.id)
+  //         throw new NotFoundException({ message: "Specific color or size not found" })
+  //       }
+  //     }
+  //     return product
+  //   }
+  //   else {
+  //     throw new BadRequestException({ message: "Please fill all the fields correctly" })
+  //   }
+  // }
+
   @Put('updateProduct/:id')
   @UsePipes(new ValidationPipe())
   async updateProduct(@Param('id') id: string, @Body() data: ProductDetailsDTO, @Session() session): Promise<ProductDetailsDTO> {

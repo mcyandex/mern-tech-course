@@ -104,63 +104,67 @@ export default function BandManagerList() {
   }
   const handleAdd = async (e) => {
     e.preventDefault()
-    if (!designation) {
-      setDesignationError('Select a designation')
-    }
-    if (!band) {
-      setBandError('Select a Band')
-    }
-    if (!checkEmail(email) || !checkPhone(phone)) {
-      showAlert('Must provide valid email and phone number')
-    }
-    if (!name || !phone || !email || !designation || !band) {
-      showAlert('Must provide name, phone, email, designation and band properly')
+
+    const result = await addProduct()
+    if (result != null) {
+      showAlert(`Product added successfully`)
+      setName('')
+      setQuantity('')
+      router.push('./productlist')
     }
     else {
-      const result = await addUser(name, email, phone, designation, band)
-      if (result != null) {
-        showAlert(`User added successfully`)
-        getAllProducts()
-        setName('')
-        setEmail('')
-        setPhone('')
-        setDesignation('')
-        setBandError('')
-      }
-      else {
-        showAlert(`User Couldnot added`)
-        setName('')
-        setEmail('')
-        setPhone('')
-        setDesignation('')
-        setBandError('')
-      }
-      setName('')
-      setEmail('')
-      setPhone('')
-      setDesignation('')
-      setBandError('')
+      showAlert(`Product Couldnot added`)
     }
   }
-  async function addUser(name, email, phone, designation, band) {
-    try {
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addbandmanager'
-      const userData = {
-        name: name,
-        email: email,
-        phoneNumber: phone,
-        designation: designation,
-        bandId: band
+  async function addProduct() {
+    if (productSelected) {
+      try {
+        const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addproductwithpreviousinfo'
+        const data = {
+          quantity: quantity,
+          colorId: color.id,
+          sizeId: size.id,
+          productId: proId
+        }
+        const result = await axios.post(url, data, {
+          withCredentials: true
+        });
+        return result.data
       }
-      const result = await axios.post(url, userData, {
-        withCredentials: true
-      });
-      return result
+      catch (err) {
+        console.log(err)
+        showAlert('Something went wrong, try again')
+      }
     }
-    catch (err) {
-      console.log(err)
-      showAlert('Something went wrong, try again')
+    else {
+      try {
+        const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/addnewproduct'
+        const productDetails = {
+          quantity: quantity,
+          color: color,
+          size: size,
+        }
+        const data = {
+          name: name,
+          price: price,
+          revenuePercentage: revenuePercentage,
+          band: band,
+          category: category,
+          productDetails: productDetails
+        }
+        console.log(data)
+        const result = await axios.post(url, data, {
+          withCredentials: true
+        });
+        return result.data
+
+      }
+      catch (err) {
+        console.log(err)
+        showAlert('Something went wrong, try again')
+      }
     }
+
   }
   const getAllProducts = async (e) => {
     try {
@@ -222,17 +226,12 @@ export default function BandManagerList() {
           withCredentials: true
         })
         setSelectedProductDetails(result.data)
-        if (result.data != null) {
-          setDropColors(selectedProductDetails.productDetails.map(detail => detail.color))
-          setDropSizes(selectedProductDetails.productDetails.map(detail => detail.size))
-        }
       }
     }
     catch (err) {
       console.log(err)
     }
   };
-  console.log(dropColors, dropSizes)
   const getAllSizes = async (e) => {
     try {
       const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getsizefordropdown';

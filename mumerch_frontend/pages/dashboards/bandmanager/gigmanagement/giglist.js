@@ -2,7 +2,7 @@ import axios from "axios"
 import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { useAlert } from "../../../utils/alertcontext"
-const AdminLayout = dynamic(()=>import("../../../components/dashboards/admin/adminlayout"))
+const BandManagerLayout = dynamic(()=>import("../../../components/dashboards/bandmanager/bandmanagerlayout"))
 const Title = dynamic(()=>import("../../../components/title"))
 
 export default function GigList() {
@@ -17,7 +17,7 @@ export default function GigList() {
   const getGigs = async (e) => {
     try {
       const searchingName = searchName == undefined ? undefined : searchName
-      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'admin/getgigbyname/' + searchingName;
+      const url = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT + 'bandmanager/getgigbyname/' + searchingName;
       const result = await axios.get(url, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true

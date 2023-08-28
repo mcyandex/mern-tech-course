@@ -3,26 +3,22 @@ import { useState } from "react";
 
 export default function VerticalNav() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [dropdownVisibleUser, setDropdownVisibleUser] = useState(false);
+ // const [dropdownVisibleUser, setDropdownVisibleUser] = useState(false);
   const [dropdownVisibleProduct, setDropdownVisibleProduct] = useState(false);
   const [dropdownVisibleReport, setDropdownVisibleReport] = useState(false);
-  const [dropdownVisibleConfigaration, setDropdownVisibleConfigaration] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const toggleDropdownUser = () => {
-    setDropdownVisibleUser(!dropdownVisibleUser);
-  };
+  // const toggleDropdownUser = () => {
+  //   setDropdownVisibleUser(!dropdownVisibleUser);
+  // };
   const toggleDropdownProduct = () => {
     setDropdownVisibleProduct(!dropdownVisibleProduct);
   };
   const toggleDropdownReport = () => {
     setDropdownVisibleReport(!dropdownVisibleReport);
-  };
-  const toggleDropdownConfigaration = () => {
-    setDropdownVisibleConfigaration(!dropdownVisibleConfigaration);
   };
 
   return (
@@ -40,38 +36,6 @@ export default function VerticalNav() {
         ${sidebarVisible ? "" : "-translate-x-full"} sm:translate-x-0`} aria-label="Sidebar">
         <div class="px-3 py-3 overflow-y-auto dark:bg-gray-800 bg-gray-100 rounded-md">
           <ul class="space-y-2 font-medium">
-            <li>
-              <button type="button"
-                onClick={toggleDropdownUser}
-                class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-blue-400 bg-gray-200"
-                aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                <svg
-                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
-                  <path d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-1.391 7.361.707-3.535a3 3 0 0 1 .82-1.533L7.929 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h4.259a2.975 2.975 0 0 1-.15-1.639ZM8.05 17.95a1 1 0 0 1-.981-1.2l.708-3.536a1 1 0 0 1 .274-.511l6.363-6.364a3.007 3.007 0 0 1 4.243 0 3.007 3.007 0 0 1 0 4.243l-6.365 6.363a1 1 0 0 1-.511.274l-3.536.708a1.07 1.07 0 0 1-.195.023Z" />
-                </svg>
-                <span class="flex-1 ml-3 text-left whitespace-nowrap">User Management</span>
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 4 4 4-4" />
-                </svg>
-              </button>
-              <ul id="dropdown-example" className={`${dropdownVisibleUser ? "" : "hidden"
-                } py-2 space-y-2`}>
-                <li>
-                  <Link href="/dashboards/admin/usermanagement/admin/adminlist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Admin</Link>
-                </li>
-                <li>
-                  <Link href="/dashboards/admin/usermanagement/employee/employeelist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Employee</Link>
-                </li>
-                <li>
-                  <Link href="/dashboards/admin/usermanagement/bandmanager/bandmanagerlist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Band Manager</Link>
-                </li>
-              </ul>
-            </li>
             <li>
               <button type="button"
                 onClick={toggleDropdownProduct}
@@ -92,37 +56,24 @@ export default function VerticalNav() {
               <ul id="dropdown-example" className={`${dropdownVisibleProduct ? "" : "hidden"
                 } py-2 space-y-2`}>
                 <li>
-                  <Link href="/dashboards/admin/productmanagement/category/categorylist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Category</Link>
-                </li>
-                <li>
-                  <Link href="/dashboards/admin/productmanagement/size/sizelist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Size</Link>
-                </li>
-                <li>
-                  <Link href="/dashboards/admin/productmanagement/color/colorlist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Color</Link>
-                </li>
-                <li>
-                  <Link href="/dashboards/admin/productmanagement/product/productlist"
+                  <Link href="/dashboards/bandmanager/productmanagement/product/productlist"
                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Product</Link>
                 </li>
               </ul>
             </li>
             <li>
-              <Link href="/dashboards/admin/bandmanagement/bandlist"
+              <Link href="/dashboards/bandmanager/gigmanagement/giglist"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-400 bg-gray-200 group">
                 <svg
-                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                  <path d="M14.316.051A1 1 0 0 0 13 1v8.473A4.49 4.49 0 0 0 11 9c-2.206 0-4 1.525-4 3.4s1.794 3.4 4 3.4 4-1.526 4-3.4a2.945 2.945 0 0 0-.067-.566c.041-.107.064-.22.067-.334V2.763A2.974 2.974 0 0 1 16 5a1 1 0 0 0 2 0C18 1.322 14.467.1 14.316.051ZM10 3H1a1 1 0 0 1 0-2h9a1 1 0 1 1 0 2Z" />
-                  <path d="M10 7H1a1 1 0 0 1 0-2h9a1 1 0 1 1 0 2Zm-5 4H1a1 1 0 0 1 0-2h4a1 1 0 1 1 0 2Z" />
+                  class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                  <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm14-7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z" />
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">Band Management</span>
+                <span class="flex-1 ml-3 whitespace-nowrap">Gig Management</span>
               </Link>
             </li>
             <li>
-              <Link href="/dashboards/admin/ordermanagement/orderlist"
+              <Link href="/dashboards/bandmanager/ordermanagement/orderlist"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-400 bg-gray-200 group">
                 <svg
                   class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
@@ -133,7 +84,7 @@ export default function VerticalNav() {
               </Link>
             </li>
             <li>
-              <Link href="/dashboards/admin/customermanagement/customerlist"
+              <Link href="/dashboards/bandmanager/customermanagement/customerlist"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-400 bg-gray-200 group">
                 <svg
                   class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
@@ -162,39 +113,17 @@ export default function VerticalNav() {
               </button>
               <ul id="dropdown-example" className={`${dropdownVisibleReport ? "" : "hidden"
                 } py-2 space-y-2`}>
-                {/* <li>
-                  <Link href="/dashboards/admin/reports/salesreport"
+                <li>
+                  <Link href="/dashboards/bandmanager/reports/salesreport"
                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Sales Report</Link>
                 </li>
                 <li>
-                  <Link href="/dashboards/admin/reports/revenuereport"
+                  <Link href="/dashboards/bandmanager/reports/revenuereport"
                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Revenue Report</Link>
-                </li> */}
-                <li>
-                  <Link href="/dashboards/admin/reports/barchart"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Bar Charts</Link>
                 </li>
-              </ul>
-            </li>
-            <li>
-              <button type="button"
-                onClick={toggleDropdownConfigaration}
-                class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-blue-400 bg-gray-200"
-                aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M1 5h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 1 0 0-2H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2Zm18 4h-1.424a3.228 3.228 0 0 0-6.152 0H1a1 1 0 1 0 0 2h10.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Zm0 6H8.576a3.228 3.228 0 0 0-6.152 0H1a1 1 0 0 0 0 2h1.424a3.228 3.228 0 0 0 6.152 0H19a1 1 0 0 0 0-2Z" />
-                </svg>
-                <span class="flex-1 ml-3 text-left whitespace-nowrap">Configaration</span>
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 4 4 4-4" />
-                </svg>
-              </button>
-              <ul id="dropdown-example" className={`${dropdownVisibleConfigaration ? "" : "hidden"
-                } py-2 space-y-2`}>
                 <li>
-                  <Link href="/dashboards/admin/configaration/designation/designationlist"
-                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Designation</Link>
+                  <Link href="/dashboards/bandmanager/reports/barchart"
+                    class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-blue-400">Bar Charts</Link>
                 </li>
               </ul>
             </li>

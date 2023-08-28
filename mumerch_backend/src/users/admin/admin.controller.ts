@@ -45,6 +45,7 @@ import { GigManagerDTO } from "src/models/gigManager/gigManager.dto";
 import { DesignationService } from "src/models/designation/designation.service";
 import { DesignationEntity } from "src/models/designation/designation.entity";
 import { DesignationDTO } from "src/models/designation/Designation.dto";
+import { CustomerEntity } from "src/models/customer/customer.entity";
 
 
 @Controller('admin')
@@ -1085,6 +1086,15 @@ export class AdminController {
       const reportArray = Object.values(report);
       return reportArray;
     }
+  }
+  @Get('getcustomer/:name?')
+  async getCustomerByName(@Param('name') name: string): Promise<CustomerEntity[]> {
+    const searchingName = name == undefined ? '%' : name + '%'
+    const data = await this.customerService.getCustomerByName(searchingName)
+    if (data.length === 0) {
+      throw new NotFoundException({ message: "No Category created yet" })
+    }
+    return data;
   }
 
   @Get('getcount')

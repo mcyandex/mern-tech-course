@@ -63,11 +63,10 @@ export class GigService {
     });
   }
   async getGigByName(name: string): Promise<GigEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
+
     return await this.gigRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
     })
   }

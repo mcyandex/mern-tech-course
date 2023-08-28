@@ -35,14 +35,16 @@ export class ProductDetailsService {
     });
   }
   async getProductDetailsByName(name: string): Promise<ProductDetailsEntity[]> {
-    let finalName = name + '%'
-    console.log(finalName)
+
     return await this.productDetailsRepo.find({
       where: {
-        name: ILike(`${finalName}`)
+        name: ILike(`${name}`)
       },
       relations:{
-        product:true,
+        product:{
+          band:true,
+          category:true
+        },
         size:true,
         color:true
       }

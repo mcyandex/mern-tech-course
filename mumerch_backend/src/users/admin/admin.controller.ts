@@ -619,13 +619,10 @@ export class AdminController {
     //console.log(id, data)
     return data
   }
-  @Get('getProduct/:name?')
-  async getProductByName(@Param('name') name: string): Promise<ProductEntity[]> {
+  @Get('getProductbyname/:name?')
+  async getProductByName(@Param('name') name: string): Promise<ProductDetailsEntity[]> {
     const searchingName = name == undefined ? '%' : name + '%'
-    const data = await this.productService.getProductByName(searchingName)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No Product created yet" })
-    }
+    const data = await this.productDetailsService.getProductDetailsByName(searchingName)
     console.log(data)
     return data;
   }

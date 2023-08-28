@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Session, Patch, UseGuards, UploadedFile, UseInterceptors, ValidationPipe, UsePipes, Put, Post, Get, Param, NotFoundException, ConflictException } from "@nestjs/common"
+import { BadRequestException, Body, Controller, ForbiddenException, Session, Patch, UseGuards, UploadedFile, UseInterceptors, ValidationPipe, UsePipes, Put, Post, Get, Param, NotFoundException, ConflictException, Query, Res } from "@nestjs/common"
 import * as fs from 'fs-extra';
 import * as bcrypt from 'bcrypt';
 import { ChangePassword } from "src/models/login/login.dto"
@@ -18,9 +18,11 @@ import { GigDTO } from "src/models/gig/gig.dto";
 import { OrderEntity } from "src/models/order/order.entity";
 import { CustomerEntity } from "src/models/customer/customer.entity";
 import { GigEntity } from "src/models/gig/gig.entity";
+import { SessionBandManagerGuard } from "./SessionBandManagerGuard.guard";
+import { UserProfileEntity } from "src/models/userProfile/userProfile.entity";
 
 @Controller('bandmanager')
-
+@UseGuards(SessionBandManagerGuard)
 export class BandManagerController {
   constructor(
     private readonly loginService: LoginService,
@@ -114,6 +116,41 @@ export class BandManagerController {
     }
     return this.userProfileService.updateUserProfile(session.user.id, data);
   }
+
+  // @Get('getuserprofile/:id')
+  // //async GetUserProfile(@Session() session) {
+  // async GetUserProfile(@Param('id') id: string) {
+  //   const data = await this.userProfileService.getUserProfileByLoginInfo(id)
+  //   if (data == null) {
+  //     throw new NotFoundException({ message: "No user profile created yet" })
+  //   }
+  //   else {
+  //     const url = 'http://localhost:3000/employee/getimage/?type=userProfile&image='
+  //     data.image = url + data.image
+  //     return data
+  //   }
+  // }
+  // @Get('getuserprofilebyname/:name?')
+
+  // async getUserProfileByName(@Param('name') name: string): Promise<UserProfileEntity[]> {
+  //   const searchingName  = name == undefined ? '%' : name + '%'
+
+  //   const data = await this.userProfileService.getUserProfileByName(searchingName)
+  //   console.log(searchingName, data)
+
+  //   return data;
+  // }
+
+  // @Get('getimage')
+  // getProfilePic(@Query() qry: any, @Res() res) {
+  //   const image = qry.image
+  //   const path = `./uploads/${qry.type}/`
+  //   const fullpath = path + image
+  //   if (!fs.existsSync(fullpath)) {
+  //     throw new NotFoundException('Image not found');
+  //   }
+  //   res.sendFile(image, { root: path })
+  // }
   //ChangePassword(Login)  
   @Patch('changepassword')
   async resetPassword(@Body() data: ChangePassword, @Session() session) {
@@ -196,12 +233,22 @@ export class BandManagerController {
     }
   }
 
-  @Get('getCustomer/:name')
+  // @Get('getCustomer/:name')
+  // async getCustomerByName(@Param('name') name: string): Promise<CustomerEntity[]> {
+  //   const data = await this.customerService.getCustomerByName(name)
+  //   if (data.length === 0) {
+  //     throw new NotFoundException({ message: "No customer created yet" })
+  //   }
+  //   return data;
+  // }
+  @Get('getcustomerbyname/:name?')
+
   async getCustomerByName(@Param('name') name: string): Promise<CustomerEntity[]> {
-    const data = await this.customerService.getCustomerByName(name)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No customer created yet" })
-    }
+    const searchingName  = name == undefined ? '%' : name + '%'
+
+    const data = await this.customerService.getCustomerByName(searchingName)
+    console.log(searchingName, data)
+
     return data;
   }
 
@@ -220,15 +267,26 @@ export class BandManagerController {
       throw new NotFoundException({ message: "There are no gigs" })
     }
   }
-  @Get('getGig/:name')
+  @Get('getgigbyname/:name?')
+
   async getGigByName(@Param('name') name: string): Promise<GigEntity[]> {
-    const newName = name+'%'
-    const data = await this.gigService.getGigByName(newName)
-    if (data.length === 0) {
-      throw new NotFoundException({ message: "No Gig created yet" })
-    }
+    const searchingName  = name == undefined ? '%' : name + '%'
+
+    const data = await this.gigService.getGigByName(searchingName)
+    console.log(searchingName, data)
+
     return data;
   }
+
+   // @Get('getGig/:name')
+  // async getGigByName(@Param('name') name: string): Promise<GigEntity[]> {
+  //   const newName = name+'%'
+  //   const data = await this.gigService.getGigByName(newName)
+  //   if (data.length === 0) {
+  //     throw new NotFoundException({ message: "No Gig created yet" })
+  //   }
+  //   return data;
+  // }
 
   // !!---Reports---!! 
   // 1.Sales Report ---------------------------------------- generate a PDF of total sales for bandId. 

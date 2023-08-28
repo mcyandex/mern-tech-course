@@ -21,19 +21,19 @@ export default function Bar() {
     },
     {
       "month": 4,
-      "sales": 0
+      "sales": 14
     },
     {
       "month": 5,
-      "sales": 0
+      "sales": 5
     },
     {
       "month": 6,
-      "sales": 6
+      "sales": 12
     },
     {
       "month": 7,
-      "sales": 0
+      "sales": 3
     },
     {
       "month": 8,

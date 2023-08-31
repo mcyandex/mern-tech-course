@@ -2,7 +2,7 @@
 <h3>Section      : B</h3>
 <h3>Project name : Merchandise Management System</h3>
 
-<h3>Group members:</h3>
+<h3>Contributor:</h3>
 <table border="2" width="100%">
     <tr>
         <th>Name</th>

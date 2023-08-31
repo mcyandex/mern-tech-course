@@ -1,0 +1,516 @@
+{
+	"info": {
+		"_postman_id": "57c64fa4-75f8-49b2-8f14-74ff470e2309",
+		"name": "My Territory",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26541999",
+		"_collection_link": "https://teamrobust.postman.co/workspace/New-Team-Workspace~2c3e33f6-267e-4dd0-94ea-857837bab5e0/collection/26541999-57c64fa4-75f8-49b2-8f14-74ff470e2309?action=share&creator=26541999&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"MM-0723-0001\",\r\n    \"password\": \"1689540654219$01911304507\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User Profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "fatherName",
+							"value": "Rafiqul Islam",
+							"type": "text"
+						},
+						{
+							"key": "motherName",
+							"value": "Israt Jahan",
+							"type": "text"
+						},
+						{
+							"key": "dateOfBirth",
+							"value": "2000-09-09",
+							"type": "text"
+						},
+						{
+							"key": "nidNo",
+							"value": "1111111111",
+							"type": "text"
+						},
+						{
+							"key": "bloodGroup",
+							"value": "AB+",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "Kuril",
+							"type": "text"
+						},
+						{
+							"key": "myfile",
+							"type": "file",
+							"src": "/D:/Software/Downloads/images/tshirt haevymetal.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/admin/adduserprofile",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"adduserprofile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Rion\",\r\n    \"userType\":\"admin\",\r\n    \"phoneNumber\":\"01911304507\",\r\n    \"email\":\"alshakibeelahi@gmail.com\",\r\n    \"designation\":\"69d710e9-e738-427a-801d-4343598fbb12\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addadmin",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addadmin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Admin",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"MM-0723-0001\",\r\n    \"name\": \"Rion\",\r\n    \"userType\": \"admin\",\r\n    \"email\": \"alshakibeelahi@gmail.com\",\r\n    \"phoneNumber\": \"01911304507\",\r\n    \"designation\": \"AGM-HR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/updateadmin/MM-0723-0001",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"updateadmin",
+						"MM-0723-0001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Category",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "e71723cd-f5ef-4238-b566-19a980b4e2e6",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"XL\",\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addsize",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addsize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Color",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Black\",\r\n    \"colorCode\":\"#000000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addcolor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addcolor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Size",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"XXL\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addsize",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addsize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Polo Shirt\",\r\n    \"price\": 400,\r\n    \"image\": \"hello\",\r\n    \"revenuePercentage\": 50,\r\n    \"productDetails\":[\r\n        {\r\n            \"quantity\":100,\r\n            \"colorId\":\"04b3b4d0-5293-445a-a53c-f1591e8d62b7\",\r\n            \"sizeId\": \"48f54bce-b33c-4114-81b7-4349264e15fd\"\r\n        }\r\n    ],\r\n    \"band\":\"2320e0c6-2aca-4ab6-9ebc-2ba010a90024\",\r\n    \"category\":\"8310cb78-85c1-418a-a35a-e68208368bf2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addproduct",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addproduct"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Band",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Ashes",
+							"type": "text"
+						},
+						{
+							"key": "myfile",
+							"type": "file",
+							"src": "/D:/Software/Downloads/images/logo ashes.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addband",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addband"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Gig",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Ashes\",\r\n    \"image\":\"hello\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addband",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addband"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"gig\": \"3c4a120c-daec-4dbf-909c-ac5e89a5face\",\r\n    \"customer\":{\r\n        \"name\": \"Elahi\",\r\n        \"email\": \"elahi@gmail.com\",\r\n        \"phoneNo\": \"01911204045\"\r\n    },\r\n    \"orderProducts\": [\r\n        {\r\n            \"orderQuantity\":100,\r\n            \"productDetails\":{\r\n                \"id\": \"0f14cb56-940b-4bc9-b731-c5951e04afaf\",\r\n                \"quantity\": 2,\r\n                \"name\": \"Polo Shirt Black XXL\",\r\n                \"product\": {\r\n                    \"id\": \"a7718a66-0786-44d6-9c95-322000e611cb\",\r\n                    \"name\": \"Polo Shirt\",\r\n                    \"price\": 400,\r\n                    \"image\": \"hello\",\r\n                    \"revenuePercentage\": 50\r\n                },\r\n                \"size\": {\r\n                    \"id\": \"48f54bce-b33c-4114-81b7-4349264e15fd\",\r\n                    \"name\": \"XXL\"\r\n                },\r\n                \"color\": {\r\n                    \"id\": \"04b3b4d0-5293-445a-a53c-f1591e8d62b7\",\r\n                    \"name\": \"Black\",\r\n                    \"colorCode\": \"#000000\"\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/addorder",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"addorder"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change password (admin)",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"oldPassword\":\"1688912518853$01911304507\",\r\n    \"password\":\"123456$\",\r\n    \"reTypePassword\":\"123456$\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/admin/changepassword",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"changepassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forgetpassword",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/forgetpassword/MM-0723-0001",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"forgetpassword",
+						"MM-0723-0001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Forget Password Code",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"397404\",\r\n    \"password\":\"123456$\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/checkforgetpasswordcode/MM-0723-0001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"checkforgetpasswordcode",
+						"MM-0723-0001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get anything",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/admin/getproduct",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"getproduct"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get anything by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/admin/getadmin/ri",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"getadmin",
+						"ri"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete anything",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/admin/deleteadmin/",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"deleteadmin",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

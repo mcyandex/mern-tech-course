@@ -11,7 +11,7 @@
         <th>Miguel Cano</th>
     </tr>
     <tr>
-        <th>AL Shakib E Elahi</th>
+        <th>AL Shakib Elahi</th>
     </tr>
     <tr>
         <th>Sadia Afrin</th>
